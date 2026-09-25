@@ -1,0 +1,19 @@
+node_modules/
+dist/
+bin/
+obj/
+.env
+.env.*
+!.env.example
+*.log
+access/
+logs/
+.vite/
+*.tsbuildinfo
+app/
+deploy-raspberry.ps1
+firebase-service-account.json
+.github/
+__pycache__/
+*.pyc
+docs/Cosas de otro bot/

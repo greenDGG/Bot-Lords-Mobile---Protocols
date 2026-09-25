@@ -1,0 +1,13 @@
+services:
+  backend:
+    build: .
+    image: botigg-backend:latest
+    container_name: botigg-backend
+    restart: always
+    ports:
+      - "3100:3100"
+    env_file:
+      - .env
+    volumes:
+      - ./access:/access
+      - ./logs:/logs

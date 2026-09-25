@@ -1,0 +1,46 @@
+export const MISSION_IDS: Record<number, string> = {
+  401: 'Compra de lotes especiales',
+  402: 'Aumentar Poder Total',
+  403: 'Usa Rollo de estrellas de castillos',
+  404: 'Enfrentate a guardianes del laberinto de elite/x10',
+  405: 'Compra De Lotes Especiales',
+  406: 'Abrir cofres de la feria de artefactos',
+  407: 'Aumentar El Poder (Artefactos)',
+  408: 'Alcanza la fase 3 (Infierno)',
+  409: 'Tiempo reduce usando velocidad Ups',
+  410: 'Encuentro de guardianes en laberinto',
+  411: 'Enfrentate a un duende guardian en el magnante del reino',
+  412: 'Abrir cofres de la feria de artefactos',
+  413: 'Aumentar El Poder (Artefactos)',
+  414: 'Gasta Energia cazando monstruos',
+  415: 'Cazar Mounstros nivel 4 o superior',
+  416: 'Tiempo reduce usando velocidad Ups',
+  417: 'Tiempo reducido usando Aceleracion de fusion',
+  418: 'Fusionar Piedras de habilidad',
+  419: 'Usar Amuletos',
+  420: 'Usa Estrellas Sagradas',
+  421: 'Gasta Energia cazando monstruos',
+  422: 'Usa RES en las etapa de heroes',
+  423: 'Aumentar Poder Total',
+  424: 'Entrenar Soldados',
+  425: 'Fusionar Pactos',
+  426: 'Consigue EXP de monstruito con articulos de EXP',
+  427: 'Gasta Energia cazando monstruos',
+  428: 'Usa RES en las etapa de heroes',
+  429: 'Aumentar Poder Total',
+  430: 'Entrenar Soldados',
+  432: 'Usar fragmentos',
+  444: 'Misión 444',
+  499: 'Compra de Lotes Especiales',
+};
+
+export function missionName(id: number): string {
+  return MISSION_IDS[id] || `Misión ${id}`;
+}
+
+export function getMissionIdByName(name: string): number | undefined {
+  for (const [id, n] of Object.entries(MISSION_IDS)) {
+    if (n === name) return Number(id);
+  }
+  return undefined;
+}

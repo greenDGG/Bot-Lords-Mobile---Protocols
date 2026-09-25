@@ -1,0 +1,62 @@
+# API WebSocket (Socket.IO)
+
+El frontend se comunica con el backend vía Socket.IO en `http://localhost:3000` (el dev server de Vite hace proxy de `/socket.io`).
+
+## Eventos cliente → servidor
+
+| Evento | Payload | Descripción |
+|--------|---------|-------------|
+| `listAccounts` | — | Pide la lista de cuentas. Respuesta: `accounts` |
+| `getItems` | — | Pide `data/items.json`. Respuesta: `items` |
+| `getRunningBots` | — | Estado de los bots corriendo. Respuesta: `runningBots` |
+| `createAccount` | `{ iggId, accessToken, proxy? }` | Crea cuenta en MongoDB (requiere DB). Respuesta: `accountCreated` |
+| `startBot` | `{ iggId }` | Inicia el bot de una cuenta. Respuesta: `botStarted` / `connectionFailed` |
+| `stopBot` | `{ iggId }` | Detiene el bot. Respuesta: `botStopped` |
+| `getBotData` | `{ iggId }` | Snapshot completo de una cuenta. Respuesta: `botData` |
+| `sendCommand` | `{ iggId, command }` | Comando de texto: `help`/`ayuda`, `chat <texto>`, `disconnect`/`desconectar`, `shield`/`escudo` |
+| `requestMapData` | `{ iggId }` | Solicita datos del mapa (2227) |
+| `requestWarData` | `{ iggId }` | Abre la ventana de guerra y pide datos (2476) |
+| `setWarViewing` | `{ iggId, viewing }` | Activa/desactiva la vista de guerra (notificaciones vs. refresco) |
+| `buyFruit` | `{ iggId }` | Compra fruta de reanimación (1408) |
+| `useFruit` | `{ iggId }` | Usa fruta de reanimación (1406) |
+| `openChest` | `{ iggId, itemId, quantity }` | Abre cofres en lotes de 100 (1406). Progreso: `chestProgress` |
+| `globalCommand` | `{ proto, body }` | Envía un packet crudo (body hex) a **todas** las cuentas online. Respuesta: `globalCommandResult` |
+| `sendWarTroops` | `{ iggId, warIndex, enemyName, tier, infantry, artillery, cavalry, infantryCount, artilleryCount, cavalryCount }` | Envía tropas a una guerra (2476 → 1144 → 2472). Progreso: `warStatus` |
+| `saveConfig` | `{ iggId, config }` | Guarda config (deep merge + MongoDB upsert). Respuesta: `configUpdated` |
+| `importCapture` | `{ json }` | Importa una captura de mitmproxy (token+proxy) a MongoDB. Respuesta: `accountCaptured` / `captureError` |
+
+## Eventos servidor → cliente
+
+| Evento | Payload | Descripción |
+|--------|---------|-------------|
+| `accounts` | `[{ iggId, token, config }]` | Lista de cuentas (files + MongoDB) |
+| `items` | `ITEMS_DB` | Items de `data/items.json` |
+| `runningBots` | `{ running, players, shields, resources, inventory, treasureChamber, buildingState }` | Estado global |
+| `botStarted` / `botStopped` | `{ iggId }` | Ciclo de vida |
+| `connectionFailed` | `{ iggId, message? }` | Falla de conexión |
+| `ready` | `{ iggId }` | Bot listo tras la secuencia de init |
+| `log` | `{ iggId, msg }` | Log en tiempo real |
+| `statusChanged` | `{ iggId, online }` | Estado online/offline |
+| `playerInfo` / `resources` / `guildInfo` / `troopTraining` / `inventory` / `buildingState` / `constructions` / `essence` / `troops` / `hospitalState` / `incomingMarches` / `leaderState` / `shield` / `mapDataUpdated` | `{ iggId, ... }` | Actualizaciones de estado parcial |
+| `wars` | `{ iggId, wars }` | Guerras activas |
+| `warNotification` | `{ iggId, count }` | Notificación de guerra pendiente |
+| `questsUpdated` | `{ iggId }` | Misiones actualizadas |
+| `chestProgress` | `{ iggId, opened, total, done }` | Progreso de apertura de cofres |
+| `warStatus` | `{ iggId, status }` | Progreso del envío de tropas |
+| `accountCaptured` | `{ iggId }` | Captura importada correctamente |
+| `captureError` | `{ message }` | Error importando captura |
+| `error` | `{ message }` | Error genérico |
+| `configUpdated` | `{ iggId, config }` | Config guardada |
+| `globalCommandResult` | `{ sent, proto }` | Resultado del comando global |
+
+## Middleware HTTP del dev server (captura MITM)
+
+`frontend/vite.config.ts` agrega endpoints HTTP en el dev server de Vite:
+
+| Endpoint | Método | Descripción |
+|----------|--------|-------------|
+| `/api/capture/start` | POST | Lanza `mitmproxy --mode local -s capture_account.py` en ventana propia + watcher de `capture_*.json` |
+| `/api/capture/stop` | POST | Detiene mitmproxy y el watcher |
+| `/api/capture/status` | GET | `{ capturing }` |
+
+La captura genera `capture_{iggid}.json` en el directorio de trabajo del frontend; el watcher lo lee y lo envía al backend con `importCapture`.

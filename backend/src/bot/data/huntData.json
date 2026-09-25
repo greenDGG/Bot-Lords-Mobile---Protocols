@@ -1,0 +1,2326 @@
+{
+  "Data": {
+    "Frostwing": {
+      "1": {
+        "Heroes": [
+          "Black Crow",
+          "Scarlet Bolt",
+          "Trickster",
+          "Demon Slayer",
+          "Tracker"
+        ],
+        "P2PHeroes": [
+          "Black Crow",
+          "Demon Slayer",
+          "Femme Fatale",
+          "Scarlet Bolt",
+          "Death Archer"
+        ]
+      },
+      "2": {
+        "Heroes": [
+          "Black Crow",
+          "Scarlet Bolt",
+          "Trickster",
+          "Demon Slayer",
+          "Tracker"
+        ],
+        "P2PHeroes": [
+          "Black Crow",
+          "Demon Slayer",
+          "Femme Fatale",
+          "Scarlet Bolt",
+          "Death Archer"
+        ]
+      },
+      "3": {
+        "Heroes": [
+          "Black Crow",
+          "Scarlet Bolt",
+          "Trickster",
+          "Demon Slayer",
+          "Tracker"
+        ],
+        "P2PHeroes": [
+          "Black Crow",
+          "Demon Slayer",
+          "Femme Fatale",
+          "Scarlet Bolt",
+          "Death Archer"
+        ]
+      },
+      "4": {
+        "Heroes": [
+          "Black Crow",
+          "Scarlet Bolt",
+          "Trickster",
+          "Demon Slayer",
+          "Tracker"
+        ],
+        "P2PHeroes": [
+          "Black Crow",
+          "Demon Slayer",
+          "Femme Fatale",
+          "Scarlet Bolt",
+          "Death Archer"
+        ]
+      },
+      "5": {
+        "Heroes": [
+          "Black Crow",
+          "Death Archer",
+          "Scarlet Bolt",
+          "Trickster",
+          "Demon Slayer"
+        ],
+        "P2PHeroes": [
+          "Black Crow",
+          "Demon Slayer",
+          "Femme Fatale",
+          "Scarlet Bolt",
+          "Death Archer"
+        ]
+      }
+    },
+    "Gargantua": {
+      "1": {
+        "Heroes": [
+          "Snow Queen",
+          "Incinerator",
+          "Child of Light",
+          "Bombin' Goblin",
+          "Elementalist"
+        ],
+        "P2PHeroes": [
+          "Twilight Priestess",
+          "Incinerator",
+          "Elementalist",
+          "Petite Devil",
+          "Dream Witch"
+        ]
+      },
+      "2": {
+        "Heroes": [
+          "Snow Queen",
+          "Incinerator",
+          "Child of Light",
+          "Bombin' Goblin",
+          "Elementalist"
+        ],
+        "P2PHeroes": [
+          "Twilight Priestess",
+          "Incinerator",
+          "Elementalist",
+          "Petite Devil",
+          "Dream Witch"
+        ]
+      },
+      "3": {
+        "Heroes": [
+          "Snow Queen",
+          "Incinerator",
+          "Child of Light",
+          "Bombin' Goblin",
+          "Elementalist"
+        ],
+        "P2PHeroes": [
+          "Twilight Priestess",
+          "Incinerator",
+          "Elementalist",
+          "Petite Devil",
+          "Dream Witch"
+        ]
+      },
+      "4": {
+        "Heroes": [
+          "Snow Queen",
+          "Prima Donna",
+          "Incinerator",
+          "Child of Light",
+          "Elementalist"
+        ],
+        "P2PHeroes": [
+          "Child of Light",
+          "Incinerator",
+          "Elementalist",
+          "Petite Devil",
+          "Dream Witch"
+        ]
+      },
+      "5": {
+        "Heroes": [
+          "Snow Queen",
+          "Prima Donna",
+          "Incinerator",
+          "Child of Light",
+          "Elementalist"
+        ],
+        "P2PHeroes": [
+          "Child of Light",
+          "Lore Weaver",
+          "Elementalist",
+          "Petite Devil",
+          "Dream Witch"
+        ]
+      }
+    },
+    "Snow Beast": {
+      "1": {
+        "Heroes": [
+          "Black Crow",
+          "Scarlet Bolt",
+          "Trickster",
+          "Demon Slayer",
+          "Tracker"
+        ],
+        "P2PHeroes": [
+          "Black Crow",
+          "Demon Slayer",
+          "Femme Fatale",
+          "Scarlet Bolt",
+          "Grove Guardian"
+        ]
+      },
+      "2": {
+        "Heroes": [
+          "Black Crow",
+          "Scarlet Bolt",
+          "Trickster",
+          "Demon Slayer",
+          "Tracker"
+        ],
+        "P2PHeroes": [
+          "Black Crow",
+          "Demon Slayer",
+          "Femme Fatale",
+          "Scarlet Bolt",
+          "Grove Guardian"
+        ]
+      },
+      "3": {
+        "Heroes": [
+          "Black Crow",
+          "Scarlet Bolt",
+          "Trickster",
+          "Demon Slayer",
+          "Tracker"
+        ],
+        "P2PHeroes": [
+          "Black Crow",
+          "Demon Slayer",
+          "Femme Fatale",
+          "Scarlet Bolt",
+          "Grove Guardian"
+        ]
+      },
+      "4": {
+        "Heroes": [
+          "Black Crow",
+          "Scarlet Bolt",
+          "Trickster",
+          "Demon Slayer",
+          "Tracker"
+        ],
+        "P2PHeroes": [
+          "Black Crow",
+          "Demon Slayer",
+          "Femme Fatale",
+          "Scarlet Bolt",
+          "Grove Guardian"
+        ]
+      },
+      "5": {
+        "Heroes": [
+          "Black Crow",
+          "Death Archer",
+          "Scarlet Bolt",
+          "Trickster",
+          "Demon Slayer"
+        ],
+        "P2PHeroes": [
+          "Black Crow",
+          "Demon Slayer",
+          "Femme Fatale",
+          "Scarlet Bolt",
+          "Grove Guardian"
+        ]
+      }
+    },
+    "Jade Wyrm": {
+      "1": {
+        "Heroes": [
+          "Sage of Storms",
+          "Snow Queen",
+          "Incinerator",
+          "Bombin' Goblin",
+          "Elementalist"
+        ],
+        "P2PHeroes": [
+          "Storm Fox",
+          "Incinerator",
+          "Elementalist",
+          "Petite Devil",
+          "Dream Witch"
+        ]
+      },
+      "2": {
+        "Heroes": [
+          "Sage of Storms",
+          "Snow Queen",
+          "Incinerator",
+          "Bombin' Goblin",
+          "Elementalist"
+        ],
+        "P2PHeroes": [
+          "Storm Fox",
+          "Incinerator",
+          "Elementalist",
+          "Petite Devil",
+          "Dream Witch"
+        ]
+      },
+      "3": {
+        "Heroes": [
+          "Sage of Storms",
+          "Snow Queen",
+          "Incinerator",
+          "Bombin' Goblin",
+          "Elementalist"
+        ],
+        "P2PHeroes": [
+          "Storm Fox",
+          "Incinerator",
+          "Elementalist",
+          "Petite Devil",
+          "Dream Witch"
+        ]
+      },
+      "4": {
+        "Heroes": [
+          "Sage of Storms",
+          "Prima Donna",
+          "Incinerator",
+          "Bombin' Goblin",
+          "Elementalist"
+        ],
+        "P2PHeroes": [
+          "Storm Fox",
+          "Incinerator",
+          "Elementalist",
+          "Petite Devil",
+          "Dream Witch"
+        ]
+      },
+      "5": {
+        "Heroes": [
+          "Sage of Storms",
+          "Prima Donna",
+          "Incinerator",
+          "Child of Light",
+          "Elementalist"
+        ],
+        "P2PHeroes": [
+          "Vengeful Centaur",
+          "Incinerator",
+          "Elementalist",
+          "Petite Devil",
+          "Dream Witch"
+        ]
+      }
+    },
+    "Gryphon": {
+      "1": {
+        "Heroes": [
+          "Black Crow",
+          "Incinerator",
+          "Scarlet Bolt",
+          "Demon Slayer",
+          "Tracker"
+        ],
+        "P2PHeroes": [
+          "Black Crow",
+          "Demon Slayer",
+          "Scarlet Bolt",
+          "Tracker",
+          "Femme Fatale"
+        ]
+      },
+      "2": {
+        "Heroes": [
+          "Black Crow",
+          "Incinerator",
+          "Scarlet Bolt",
+          "Demon Slayer",
+          "Tracker"
+        ],
+        "P2PHeroes": [
+          "Black Crow",
+          "Demon Slayer",
+          "Scarlet Bolt",
+          "Tracker",
+          "Femme Fatale"
+        ]
+      },
+      "3": {
+        "Heroes": [
+          "Black Crow",
+          "Incinerator",
+          "Scarlet Bolt",
+          "Demon Slayer",
+          "Tracker"
+        ],
+        "P2PHeroes": [
+          "Black Crow",
+          "Demon Slayer",
+          "Scarlet Bolt",
+          "Tracker",
+          "Femme Fatale"
+        ]
+      },
+      "4": {
+        "Heroes": [
+          "Black Crow",
+          "Incinerator",
+          "Scarlet Bolt",
+          "Demon Slayer",
+          "Tracker"
+        ],
+        "P2PHeroes": [
+          "Black Crow",
+          "Demon Slayer",
+          "Scarlet Bolt",
+          "Grove Guardian",
+          "Femme Fatale"
+        ]
+      },
+      "5": {
+        "Heroes": [
+          "Black Crow",
+          "Incinerator",
+          "Scarlet Bolt",
+          "Demon Slayer",
+          "Tracker"
+        ],
+        "P2PHeroes": [
+          "Black Crow",
+          "Demon Slayer",
+          "Scarlet Bolt",
+          "Mastercook",
+          "Femme Fatale"
+        ]
+      }
+    },
+    "Mega Maggot": {
+      "1": {
+        "Heroes": [
+          "Sage of Storms",
+          "Snow Queen",
+          "Incinerator",
+          "Bombin' Goblin",
+          "Elementalist"
+        ],
+        "P2PHeroes": [
+          "Storm Fox",
+          "Incinerator",
+          "Elementalist",
+          "Petite Devil",
+          "Dream Witch"
+        ]
+      },
+      "2": {
+        "Heroes": [
+          "Sage of Storms",
+          "Snow Queen",
+          "Incinerator",
+          "Bombin' Goblin",
+          "Elementalist"
+        ],
+        "P2PHeroes": [
+          "Storm Fox",
+          "Incinerator",
+          "Elementalist",
+          "Petite Devil",
+          "Dream Witch"
+        ]
+      },
+      "3": {
+        "Heroes": [
+          "Sage of Storms",
+          "Snow Queen",
+          "Incinerator",
+          "Bombin' Goblin",
+          "Elementalist"
+        ],
+        "P2PHeroes": [
+          "Storm Fox",
+          "Incinerator",
+          "Elementalist",
+          "Petite Devil",
+          "Dream Witch"
+        ]
+      },
+      "4": {
+        "Heroes": [
+          "Sage of Storms",
+          "Prima Donna",
+          "Incinerator",
+          "Bombin' Goblin",
+          "Elementalist"
+        ],
+        "P2PHeroes": [
+          "Twilight Priestess",
+          "Incinerator",
+          "Elementalist",
+          "Petite Devil",
+          "Dream Witch"
+        ]
+      },
+      "5": {
+        "Heroes": [
+          "Sage of Storms",
+          "Prima Donna",
+          "Incinerator",
+          "Child of Light",
+          "Elementalist"
+        ],
+        "P2PHeroes": [
+          "Vengeful Centaur",
+          "Incinerator",
+          "Elementalist",
+          "Petite Devil",
+          "Dream Witch"
+        ]
+      }
+    },
+    "Terrorthorn": {
+      "1": {
+        "Heroes": [
+          "Black Crow",
+          "Shade",
+          "Scarlet Bolt",
+          "Demon Slayer",
+          "Tracker"
+        ],
+        "P2PHeroes": [
+          "Black Crow",
+          "Demon Slayer",
+          "Femme Fatale",
+          "Scarlet Bolt",
+          "Shade"
+        ]
+      },
+      "2": {
+        "Heroes": [
+          "Black Crow",
+          "Shade",
+          "Scarlet Bolt",
+          "Demon Slayer",
+          "Tracker"
+        ],
+        "P2PHeroes": [
+          "Black Crow",
+          "Demon Slayer",
+          "Femme Fatale",
+          "Scarlet Bolt",
+          "Shade"
+        ]
+      },
+      "3": {
+        "Heroes": [
+          "Black Crow",
+          "Shade",
+          "Scarlet Bolt",
+          "Demon Slayer",
+          "Tracker"
+        ],
+        "P2PHeroes": [
+          "Black Crow",
+          "Demon Slayer",
+          "Femme Fatale",
+          "Scarlet Bolt",
+          "Shade"
+        ]
+      },
+      "4": {
+        "Heroes": [
+          "Black Crow",
+          "Shade",
+          "Death Archer",
+          "Scarlet Bolt",
+          "Demon Slayer"
+        ],
+        "P2PHeroes": [
+          "Black Crow",
+          "Demon Slayer",
+          "Femme Fatale",
+          "Scarlet Bolt",
+          "Shade"
+        ]
+      },
+      "5": {
+        "Heroes": [
+          "Black Crow",
+          "Shade",
+          "Scarlet Bolt",
+          "Trickster",
+          "Demon Slayer"
+        ],
+        "P2PHeroes": [
+          "Black Crow",
+          "Demon Slayer",
+          "Femme Fatale",
+          "Scarlet Bolt",
+          "Shade"
+        ]
+      }
+    },
+    "Hell Drider": {
+      "1": {
+        "Heroes": [
+          "Black Crow",
+          "Scarlet Bolt",
+          "Trickster",
+          "Demon Slayer",
+          "Tracker"
+        ],
+        "P2PHeroes": [
+          "Black Crow",
+          "Demon Slayer",
+          "Femme Fatale",
+          "Scarlet Bolt",
+          "Tracker"
+        ]
+      },
+      "2": {
+        "Heroes": [
+          "Black Crow",
+          "Scarlet Bolt",
+          "Trickster",
+          "Demon Slayer",
+          "Tracker"
+        ],
+        "P2PHeroes": [
+          "Black Crow",
+          "Demon Slayer",
+          "Femme Fatale",
+          "Scarlet Bolt",
+          "Tracker"
+        ]
+      },
+      "3": {
+        "Heroes": [
+          "Black Crow",
+          "Scarlet Bolt",
+          "Trickster",
+          "Demon Slayer",
+          "Tracker"
+        ],
+        "P2PHeroes": [
+          "Black Crow",
+          "Demon Slayer",
+          "Femme Fatale",
+          "Scarlet Bolt",
+          "Tracker"
+        ]
+      },
+      "4": {
+        "Heroes": [
+          "Black Crow",
+          "Death Archer",
+          "Scarlet Bolt",
+          "Trickster",
+          "Demon Slayer"
+        ],
+        "P2PHeroes": [
+          "Black Crow",
+          "Demon Slayer",
+          "Femme Fatale",
+          "Scarlet Bolt",
+          "Death Archer"
+        ]
+      },
+      "5": {
+        "Heroes": [
+          "Black Crow",
+          "Death Knight",
+          "Death Archer",
+          "Tracker",
+          "Demon Slayer"
+        ],
+        "P2PHeroes": [
+          "Black Crow",
+          "Vengeful Centaur",
+          "Grove Guardian",
+          "Scarlet Bolt",
+          "Death Archer"
+        ]
+      }
+    },
+    "Noceros": {
+      "1": {
+        "Heroes": [
+          "Sage of Storms",
+          "Snow Queen",
+          "Incinerator",
+          "Bombin' Goblin",
+          "Elementalist"
+        ],
+        "P2PHeroes": [
+          "Witch Doll",
+          "Incinerator",
+          "Elementalist",
+          "Petite Devil",
+          "Dream Witch"
+        ]
+      },
+      "2": {
+        "Heroes": [
+          "Sage of Storms",
+          "Snow Queen",
+          "Incinerator",
+          "Bombin' Goblin",
+          "Elementalist"
+        ],
+        "P2PHeroes": [
+          "Witch Doll",
+          "Incinerator",
+          "Elementalist",
+          "Petite Devil",
+          "Dream Witch"
+        ]
+      },
+      "3": {
+        "Heroes": [
+          "Sage of Storms",
+          "Snow Queen",
+          "Incinerator",
+          "Bombin' Goblin",
+          "Elementalist"
+        ],
+        "P2PHeroes": [
+          "Witch Doll",
+          "Incinerator",
+          "Elementalist",
+          "Petite Devil",
+          "Dream Witch"
+        ]
+      },
+      "4": {
+        "Heroes": [
+          "Sage of Storms",
+          "Prima Donna",
+          "Incinerator",
+          "Bombin' Goblin",
+          "Elementalist"
+        ],
+        "P2PHeroes": [
+          "Twilight Priestess",
+          "Incinerator",
+          "Elementalist",
+          "Petite Devil",
+          "Dream Witch"
+        ]
+      },
+      "5": {
+        "Heroes": [
+          "Sage of Storms",
+          "Prima Donna",
+          "Incinerator",
+          "Child of Light",
+          "Elementalist"
+        ],
+        "P2PHeroes": [
+          "Vengeful Centaur",
+          "Incinerator",
+          "Elementalist",
+          "Petite Devil",
+          "Dream Witch"
+        ]
+      }
+    },
+    "Grim Reaper": {
+      "1": {
+        "Heroes": [
+          "Black Crow",
+          "Scarlet Bolt",
+          "Trickster",
+          "Demon Slayer",
+          "Tracker"
+        ],
+        "P2PHeroes": [
+          "Black Crow",
+          "Demon Slayer",
+          "Femme Fatale",
+          "Scarlet Bolt",
+          "Death Archer"
+        ]
+      },
+      "2": {
+        "Heroes": [
+          "Black Crow",
+          "Scarlet Bolt",
+          "Trickster",
+          "Demon Slayer",
+          "Tracker"
+        ],
+        "P2PHeroes": [
+          "Black Crow",
+          "Demon Slayer",
+          "Femme Fatale",
+          "Scarlet Bolt",
+          "Death Archer"
+        ]
+      },
+      "3": {
+        "Heroes": [
+          "Black Crow",
+          "Scarlet Bolt",
+          "Trickster",
+          "Demon Slayer",
+          "Tracker"
+        ],
+        "P2PHeroes": [
+          "Black Crow",
+          "Demon Slayer",
+          "Femme Fatale",
+          "Scarlet Bolt",
+          "Death Archer"
+        ]
+      },
+      "4": {
+        "Heroes": [
+          "Black Crow",
+          "Death Knight",
+          "Scarlet Bolt",
+          "Trickster",
+          "Demon Slayer"
+        ],
+        "P2PHeroes": [
+          "Black Crow",
+          "Demon Slayer",
+          "Femme Fatale",
+          "Vengeful Centaur",
+          "Ethereal Guide"
+        ]
+      },
+      "5": {
+        "Heroes": [
+          "Black Crow",
+          "Prima Donna",
+          "Death Knight",
+          "Death Archer",
+          "Demon Slayer"
+        ],
+        "P2PHeroes": [
+          "Black Crow",
+          "Demon Slayer",
+          "Femme Fatale",
+          "Vengeful Centaur",
+          "Ethereal Guide"
+        ]
+      }
+    },
+    "Saberfang": {
+      "1": {
+        "Heroes": [
+          "Sage of Storms",
+          "Snow Queen",
+          "Incinerator",
+          "Bombin' Goblin",
+          "Elementalist"
+        ],
+        "P2PHeroes": [
+          "Storm Fox",
+          "Incinerator",
+          "Elementalist",
+          "Petite Devil",
+          "Dream Witch"
+        ]
+      },
+      "2": {
+        "Heroes": [
+          "Sage of Storms",
+          "Snow Queen",
+          "Incinerator",
+          "Bombin' Goblin",
+          "Elementalist"
+        ],
+        "P2PHeroes": [
+          "Storm Fox",
+          "Incinerator",
+          "Elementalist",
+          "Petite Devil",
+          "Dream Witch"
+        ]
+      },
+      "3": {
+        "Heroes": [
+          "Sage of Storms",
+          "Snow Queen",
+          "Incinerator",
+          "Bombin' Goblin",
+          "Elementalist"
+        ],
+        "P2PHeroes": [
+          "Storm Fox",
+          "Incinerator",
+          "Elementalist",
+          "Petite Devil",
+          "Dream Witch"
+        ]
+      },
+      "4": {
+        "Heroes": [
+          "Sage of Storms",
+          "Prima Donna",
+          "Incinerator",
+          "Bombin' Goblin",
+          "Elementalist"
+        ],
+        "P2PHeroes": [
+          "Storm Fox",
+          "Incinerator",
+          "Elementalist",
+          "Petite Devil",
+          "Dream Witch"
+        ]
+      },
+      "5": {
+        "Heroes": [
+          "Sage of Storms",
+          "Prima Donna",
+          "Incinerator",
+          "Child of Light",
+          "Elementalist"
+        ],
+        "P2PHeroes": [
+          "Storm Fox",
+          "Incinerator",
+          "Elementalist",
+          "Petite Devil",
+          "Dream Witch"
+        ]
+      }
+    },
+    "Hardrox": {
+      "1": {
+        "Heroes": [
+          "Sage of Storms",
+          "Snow Queen",
+          "Incinerator",
+          "Bombin' Goblin",
+          "Elementalist"
+        ],
+        "P2PHeroes": [
+          "Twilight Priestess",
+          "Incinerator",
+          "Elementalist",
+          "Petite Devil",
+          "Dream Witch"
+        ]
+      },
+      "2": {
+        "Heroes": [
+          "Sage of Storms",
+          "Snow Queen",
+          "Incinerator",
+          "Bombin' Goblin",
+          "Elementalist"
+        ],
+        "P2PHeroes": [
+          "Twilight Priestess",
+          "Incinerator",
+          "Elementalist",
+          "Petite Devil",
+          "Dream Witch"
+        ]
+      },
+      "3": {
+        "Heroes": [
+          "Sage of Storms",
+          "Snow Queen",
+          "Incinerator",
+          "Bombin' Goblin",
+          "Elementalist"
+        ],
+        "P2PHeroes": [
+          "Twilight Priestess",
+          "Incinerator",
+          "Elementalist",
+          "Petite Devil",
+          "Dream Witch"
+        ]
+      },
+      "4": {
+        "Heroes": [
+          "Snow Queen",
+          "Prima Donna",
+          "Incinerator",
+          "Bombin' Goblin",
+          "Elementalist"
+        ],
+        "P2PHeroes": [
+          "Twilight Priestess",
+          "Incinerator",
+          "Elementalist",
+          "Petite Devil",
+          "Dream Witch"
+        ]
+      },
+      "5": {
+        "Heroes": [
+          "Snow Queen",
+          "Prima Donna",
+          "Incinerator",
+          "Child of Light",
+          "Elementalist"
+        ],
+        "P2PHeroes": [
+          "Twilight Priestess",
+          "Incinerator",
+          "Storm Fox",
+          "Petite Devil",
+          "Dream Witch"
+        ]
+      }
+    },
+    "Pumpkinator": {
+      "0": {
+        "Heroes": [
+          "Black Crow",
+          "Sage of Storms",
+          "Snow Queen",
+          "Death Archer",
+          "Scarlet Bolt"
+        ],
+        "P2PHeroes": [
+          "Black Crow",
+          "Death Archer",
+          "Incinerator",
+          "Petite Devil",
+          "Tracker"
+        ]
+      }
+    },
+    "Tidal Titan": {
+      "1": {
+        "Heroes": [
+          "Sage of Storms",
+          "Snow Queen",
+          "Incinerator",
+          "Bombin' Goblin",
+          "Elementalist"
+        ],
+        "P2PHeroes": [
+          "Storm Fox",
+          "Incinerator",
+          "Elementalist",
+          "Petite Devil",
+          "Dream Witch"
+        ]
+      },
+      "2": {
+        "Heroes": [
+          "Sage of Storms",
+          "Snow Queen",
+          "Incinerator",
+          "Bombin' Goblin",
+          "Elementalist"
+        ],
+        "P2PHeroes": [
+          "Storm Fox",
+          "Incinerator",
+          "Elementalist",
+          "Petite Devil",
+          "Dream Witch"
+        ]
+      },
+      "3": {
+        "Heroes": [
+          "Sage of Storms",
+          "Snow Queen",
+          "Incinerator",
+          "Bombin' Goblin",
+          "Elementalist"
+        ],
+        "P2PHeroes": [
+          "Storm Fox",
+          "Incinerator",
+          "Elementalist",
+          "Petite Devil",
+          "Dream Witch"
+        ]
+      },
+      "4": {
+        "Heroes": [
+          "Snow Queen",
+          "Prima Donna",
+          "Incinerator",
+          "Child of Light",
+          "Elementalist"
+        ],
+        "P2PHeroes": [
+          "Storm Fox",
+          "Incinerator",
+          "Elementalist",
+          "Petite Devil",
+          "Snow Queen"
+        ]
+      },
+      "5": {
+        "Heroes": [
+          "Snow Queen",
+          "Prima Donna",
+          "Incinerator",
+          "Child of Light",
+          "Elementalist"
+        ],
+        "P2PHeroes": [
+          "Vengeful Centaur",
+          "Incinerator",
+          "Elementalist",
+          "Petite Devil",
+          "Dream Witch"
+        ]
+      }
+    },
+    "Bon Appeti": {
+      "1": {
+        "Heroes": [
+          "Black Crow",
+          "Scarlet Bolt",
+          "Trickster",
+          "Demon Slayer",
+          "Tracker"
+        ],
+        "P2PHeroes": [
+          "Demon Slayer",
+          "Scarlet Bolt",
+          "Femme Fatale",
+          "Tracker",
+          "Black Crow"
+        ]
+      },
+      "2": {
+        "Heroes": [
+          "Black Crow",
+          "Scarlet Bolt",
+          "Trickster",
+          "Demon Slayer",
+          "Tracker"
+        ],
+        "P2PHeroes": [
+          "Demon Slayer",
+          "Scarlet Bolt",
+          "Femme Fatale",
+          "Tracker",
+          "Black Crow"
+        ]
+      },
+      "3": {
+        "Heroes": [
+          "Black Crow",
+          "Scarlet Bolt",
+          "Trickster",
+          "Demon Slayer",
+          "Tracker"
+        ],
+        "P2PHeroes": [
+          "Demon Slayer",
+          "Scarlet Bolt",
+          "Femme Fatale",
+          "Tracker",
+          "Black Crow"
+        ]
+      },
+      "4": {
+        "Heroes": [
+          "Black Crow",
+          "Scarlet Bolt",
+          "Trickster",
+          "Demon Slayer",
+          "Tracker"
+        ],
+        "P2PHeroes": [
+          "Demon Slayer",
+          "Scarlet Bolt",
+          "Femme Fatale",
+          "Tracker",
+          "Black Crow"
+        ]
+      },
+      "5": {
+        "Heroes": [
+          "Black Crow",
+          "Death Knight",
+          "Scarlet Bolt",
+          "Trickster",
+          "Demon Slayer"
+        ],
+        "P2PHeroes": [
+          "Vengeful Centaur",
+          "Demon Slayer",
+          "Scarlet Bolt",
+          "Mastercook",
+          "Black Crow"
+        ]
+      }
+    },
+    "Queen Bee": {
+      "1": {
+        "Heroes": [
+          "Black Crow",
+          "Scarlet Bolt",
+          "Trickster",
+          "Demon Slayer",
+          "Tracker"
+        ],
+        "P2PHeroes": [
+          "Black Crow",
+          "Demon Slayer",
+          "Femme Fatale",
+          "Scarlet Bolt",
+          "Tracker"
+        ]
+      },
+      "2": {
+        "Heroes": [
+          "Black Crow",
+          "Scarlet Bolt",
+          "Trickster",
+          "Demon Slayer",
+          "Tracker"
+        ],
+        "P2PHeroes": [
+          "Black Crow",
+          "Demon Slayer",
+          "Femme Fatale",
+          "Scarlet Bolt",
+          "Tracker"
+        ]
+      },
+      "3": {
+        "Heroes": [
+          "Black Crow",
+          "Scarlet Bolt",
+          "Trickster",
+          "Demon Slayer",
+          "Tracker"
+        ],
+        "P2PHeroes": [
+          "Black Crow",
+          "Demon Slayer",
+          "Femme Fatale",
+          "Scarlet Bolt",
+          "Tracker"
+        ]
+      },
+      "4": {
+        "Heroes": [
+          "Black Crow",
+          "Scarlet Bolt",
+          "Trickster",
+          "Demon Slayer",
+          "Tracker"
+        ],
+        "P2PHeroes": [
+          "Black Crow",
+          "Demon Slayer",
+          "Femme Fatale",
+          "Scarlet Bolt",
+          "Tracker"
+        ]
+      },
+      "5": {
+        "Heroes": [
+          "Black Crow",
+          "Death Archer",
+          "Scarlet Bolt",
+          "Trickster",
+          "Demon Slayer"
+        ],
+        "P2PHeroes": [
+          "Black Crow",
+          "Demon Slayer",
+          "Femme Fatale",
+          "Scarlet Bolt",
+          "Ethereal Guide"
+        ]
+      }
+    },
+    "Blackwing": {
+      "1": {
+        "Heroes": [
+          "Black Crow",
+          "Scarlet Bolt",
+          "Trickster",
+          "Demon Slayer",
+          "Tracker"
+        ],
+        "P2PHeroes": [
+          "Black Crow",
+          "Demon Slayer",
+          "Femme Fatale",
+          "Scarlet Bolt",
+          "Tracker"
+        ]
+      },
+      "2": {
+        "Heroes": [
+          "Black Crow",
+          "Scarlet Bolt",
+          "Trickster",
+          "Demon Slayer",
+          "Tracker"
+        ],
+        "P2PHeroes": [
+          "Black Crow",
+          "Demon Slayer",
+          "Femme Fatale",
+          "Scarlet Bolt",
+          "Tracker"
+        ]
+      },
+      "3": {
+        "Heroes": [
+          "Black Crow",
+          "Scarlet Bolt",
+          "Trickster",
+          "Demon Slayer",
+          "Tracker"
+        ],
+        "P2PHeroes": [
+          "Black Crow",
+          "Demon Slayer",
+          "Femme Fatale",
+          "Scarlet Bolt",
+          "Tracker"
+        ]
+      },
+      "4": {
+        "Heroes": [
+          "Black Crow",
+          "Death Archer",
+          "Scarlet Bolt",
+          "Demon Slayer",
+          "Rose Knight"
+        ],
+        "P2PHeroes": [
+          "Black Crow",
+          "Demon Slayer",
+          "Femme Fatale",
+          "Rose Knight",
+          "Death Archer"
+        ]
+      },
+      "5": {
+        "Heroes": [
+          "Black Crow",
+          "Prima Donna",
+          "Death Knight",
+          "Death Archer",
+          "Demon Slayer"
+        ],
+        "P2PHeroes": [
+          "Black Crow",
+          "Demon Slayer",
+          "Steambot",
+          "Lore Weaver",
+          "Ethereal Guide"
+        ]
+      }
+    },
+    "Mecha Trojan": {
+      "1": {
+        "Heroes": [
+          "Sage of Storms",
+          "Snow Queen",
+          "Incinerator",
+          "Bombin' Goblin",
+          "Elementalist"
+        ],
+        "P2PHeroes": [
+          "Storm Fox",
+          "Incinerator",
+          "Elementalist",
+          "Petite Devil",
+          "Dream Witch"
+        ]
+      },
+      "2": {
+        "Heroes": [
+          "Sage of Storms",
+          "Snow Queen",
+          "Incinerator",
+          "Bombin' Goblin",
+          "Elementalist"
+        ],
+        "P2PHeroes": [
+          "Storm Fox",
+          "Incinerator",
+          "Elementalist",
+          "Petite Devil",
+          "Dream Witch"
+        ]
+      },
+      "3": {
+        "Heroes": [
+          "Sage of Storms",
+          "Snow Queen",
+          "Incinerator",
+          "Bombin' Goblin",
+          "Elementalist"
+        ],
+        "P2PHeroes": [
+          "Storm Fox",
+          "Incinerator",
+          "Elementalist",
+          "Petite Devil",
+          "Dream Witch"
+        ]
+      },
+      "4": {
+        "Heroes": [
+          "Sage of Storms",
+          "Incinerator",
+          "Child of Light",
+          "Bombin' Goblin",
+          "Elementalist"
+        ],
+        "P2PHeroes": [
+          "Storm Fox",
+          "Incinerator",
+          "Elementalist",
+          "Petite Devil",
+          "Dream Witch"
+        ]
+      },
+      "5": {
+        "Heroes": [
+          "Sage of Storms",
+          "Prima Donna",
+          "Incinerator",
+          "Child of Light",
+          "Elementalist"
+        ],
+        "P2PHeroes": [
+          "Storm Fox",
+          "Incinerator",
+          "Elementalist",
+          "Petite Devil",
+          "Dream Witch"
+        ]
+      }
+    },
+    "Serpent Gladiator": {
+      "1": {
+        "Heroes": [
+          "Elementalist",
+          "Incinerator",
+          "Prima Donna",
+          "Snow Queen",
+          "Sage of Storms"
+        ],
+        "P2PHeroes": [
+          "Storm Fox",
+          "Petite Devil",
+          "Dream Witch",
+          "Elementalist",
+          "Incinerator"
+        ]
+      },
+      "2": {
+        "Heroes": [
+          "Elementalist",
+          "Incinerator",
+          "Prima Donna",
+          "Snow Queen",
+          "Sage of Storms"
+        ],
+        "P2PHeroes": [
+          "Storm Fox",
+          "Petite Devil",
+          "Dream Witch",
+          "Elementalist",
+          "Incinerator"
+        ]
+      },
+      "3": {
+        "Heroes": [
+          "Elementalist",
+          "Bombin' Goblin",
+          "Incinerator",
+          "Prima Donna",
+          "Sage of Storms"
+        ],
+        "P2PHeroes": [
+          "Storm Fox",
+          "Petite Devil",
+          "Dream Witch",
+          "Elementalist",
+          "Incinerator"
+        ]
+      },
+      "4": {
+        "Heroes": [
+          "Elementalist",
+          "Child of Light",
+          "Incinerator",
+          "Prima Donna",
+          "Snow Queen"
+        ],
+        "P2PHeroes": [
+          "Twilight Priestess",
+          "Petite Devil",
+          "Dream Witch",
+          "Elementalist",
+          "Incinerator"
+        ]
+      }
+    },
+    "Necrosis": {
+      "1": {
+        "Heroes": [
+          "Bombin' Goblin",
+          "Sage of Storms",
+          "Incinerator",
+          "Elementalist",
+          "Snow Queen"
+        ],
+        "P2PHeroes": [
+          "Storm Fox",
+          "Incinerator",
+          "Elementalist",
+          "Petite Devil",
+          "Dream Witch"
+        ]
+      },
+      "2": {
+        "Heroes": [
+          "Bombin' Goblin",
+          "Incinerator",
+          "Elementalist",
+          "Snow Queen",
+          "Sage of Storms"
+        ],
+        "P2PHeroes": [
+          "Storm Fox",
+          "Incinerator",
+          "Elementalist",
+          "Petite Devil",
+          "Dream Witch"
+        ]
+      },
+      "3": {
+        "Heroes": [
+          "Bombin' Goblin",
+          "Incinerator",
+          "Elementalist",
+          "Snow Queen",
+          "Prima Donna"
+        ],
+        "P2PHeroes": [
+          "Storm Fox",
+          "Incinerator",
+          "Elementalist",
+          "Petite Devil",
+          "Dream Witch"
+        ]
+      },
+      "4": {
+        "Heroes": [
+          "Sage of Storms",
+          "Incinerator",
+          "Elementalist",
+          "Prima Donna",
+          "Bombin' Goblin"
+        ],
+        "P2PHeroes": [
+          "Twilight Priestess",
+          "Storm Fox",
+          "Petite Devil",
+          "Incinerator",
+          "Elementalist"
+        ]
+      },
+      "5": {
+        "Heroes": [
+          "Sage of Storms",
+          "Incinerator",
+          "Elementalist",
+          "Prima Donna",
+          "Child of Light"
+        ],
+        "P2PHeroes": [
+          "Twilight Priestess",
+          "Storm Fox",
+          "Petite Devil",
+          "Incinerator",
+          "Elementalist"
+        ]
+      }
+    },
+    "Goblin": {
+      "0": {
+        "Heroes": [
+          "Black Crow",
+          "Sage of Storms",
+          "Snow Queen",
+          "Death Archer",
+          "Scarlet Bolt"
+        ],
+        "P2PHeroes": [
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      }
+    },
+    "Evil Weevil": {
+      "0": {
+        "Heroes": [
+          "Black Crow",
+          "Sage of Storms",
+          "Snow Queen",
+          "Death Archer",
+          "Scarlet Bolt"
+        ],
+        "P2PHeroes": [
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      }
+    },
+    "Totempest": {
+      "0": {
+        "Heroes": [
+          "Black Crow",
+          "Sage of Storms",
+          "Snow Queen",
+          "Death Archer",
+          "Scarlet Bolt"
+        ],
+        "P2PHeroes": [
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      }
+    },
+    "Bouldur": {
+      "0": {
+        "Heroes": [
+          "Black Crow",
+          "Sage of Storms",
+          "Snow Queen",
+          "Death Archer",
+          "Scarlet Bolt"
+        ],
+        "P2PHeroes": [
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      }
+    },
+    "Krabby": {
+      "0": {
+        "Heroes": [
+          "Black Crow",
+          "Sage of Storms",
+          "Snow Queen",
+          "Death Archer",
+          "Scarlet Bolt"
+        ],
+        "P2PHeroes": [
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      }
+    },
+    "Voodoo Shaman": {
+      "1": {
+        "Heroes": [
+          "Black Crow",
+          "Death Archer",
+          "Trickster",
+          "Demon Slayer",
+          "Tracker"
+        ],
+        "P2PHeroes": [
+          "Black Crow",
+          "Demon Slayer",
+          "Mastercook",
+          "Ethereal Guide",
+          "Tracker"
+        ]
+      },
+      "2": {
+        "Heroes": [
+          "Black Crow",
+          "Death Archer",
+          "Trickster",
+          "Demon Slayer",
+          "Tracker"
+        ],
+        "P2PHeroes": [
+          "Black Crow",
+          "Demon Slayer",
+          "Mastercook",
+          "Ethereal Guide",
+          "Tracker"
+        ]
+      },
+      "3": {
+        "Heroes": [
+          "Black Crow",
+          "Death Archer",
+          "Trickster",
+          "Demon Slayer",
+          "Tracker"
+        ],
+        "P2PHeroes": [
+          "Black Crow",
+          "Demon Slayer",
+          "Mastercook",
+          "Ethereal Guide",
+          "Tracker"
+        ]
+      },
+      "4": {
+        "Heroes": [
+          "Black Crow",
+          "Death Archer",
+          "Trickster",
+          "Demon Slayer",
+          "Tracker"
+        ],
+        "P2PHeroes": [
+          "Black Crow",
+          "Demon Slayer",
+          "Mastercook",
+          "Ethereal Guide",
+          "Tracker"
+        ]
+      },
+      "5": {
+        "Heroes": [
+          "Black Crow",
+          "Trickster",
+          "Demon Slayer",
+          "Tracker",
+          "Rose Knight"
+        ],
+        "P2PHeroes": [
+          "Black Crow",
+          "Demon Slayer",
+          "Mastercook",
+          "Ethereal Guide",
+          "Rose Knight"
+        ]
+      }
+    },
+    "Hootclaw": {
+      "1": {
+        "Heroes": [
+          "Sage of Storms",
+          "Incinerator",
+          "Elementalist",
+          "Snow Queen",
+          "Bombin' Goblin"
+        ],
+        "P2PHeroes": [
+          "Storm Fox",
+          "Incinerator",
+          "Elementalist",
+          "Petite Devil",
+          "Twilight Priestess"
+        ]
+      },
+      "2": {
+        "Heroes": [
+          "Sage of Storms",
+          "Incinerator",
+          "Elementalist",
+          "Snow Queen",
+          "Bombin' Goblin"
+        ],
+        "P2PHeroes": [
+          "Storm Fox",
+          "Incinerator",
+          "Elementalist",
+          "Petite Devil",
+          "Twilight Priestess"
+        ]
+      },
+      "3": {
+        "Heroes": [
+          "Prima Donna",
+          "Incinerator",
+          "Elementalist",
+          "Snow Queen",
+          "Bombin' Goblin"
+        ],
+        "P2PHeroes": [
+          "Storm Fox",
+          "Incinerator",
+          "Elementalist",
+          "Petite Devil",
+          "Twilight Priestess"
+        ]
+      },
+      "4": {
+        "Heroes": [
+          "Prima Donna",
+          "Incinerator",
+          "Elementalist",
+          "Snow Queen",
+          "Bombin' Goblin"
+        ],
+        "P2PHeroes": [
+          "The Big Guy",
+          "Incinerator",
+          "Elementalist",
+          "Petite Devil",
+          "Storm Fox"
+        ]
+      },
+      "5": {
+        "Heroes": [
+          "Prima Donna",
+          "Incinerator",
+          "Elementalist",
+          "Snow Queen",
+          "Child of Light"
+        ],
+        "P2PHeroes": [
+          "The Big Guy",
+          "Incinerator",
+          "Elementalist",
+          "Petite Devil",
+          "Storm Fox"
+        ]
+      }
+    },
+    "Cottageroar": {
+      "1": {
+        "Heroes": [
+          "Black Crow",
+          "Tracker",
+          "Demon Slayer",
+          "Death Archer",
+          "Scarlet Bolt"
+        ],
+        "P2PHeroes": [
+          "Demon Slayer",
+          "Scarlet Bolt",
+          "Black Crow",
+          "Mastercook",
+          "Boommeister"
+        ]
+      },
+      "2": {
+        "Heroes": [
+          "Black Crow",
+          "Tracker",
+          "Demon Slayer",
+          "Death Archer",
+          "Scarlet Bolt"
+        ],
+        "P2PHeroes": [
+          "Demon Slayer",
+          "Black Crow",
+          "Femme Fatale",
+          "Mastercook",
+          "Boommeister"
+        ]
+      },
+      "3": {
+        "Heroes": [
+          "Black Crow",
+          "Tracker",
+          "Demon Slayer",
+          "Death Archer",
+          "Scarlet Bolt"
+        ],
+        "P2PHeroes": [
+          "Demon Slayer",
+          "Black Crow",
+          "Tracker",
+          "Femme Fatale",
+          "Boommeister"
+        ]
+      },
+      "4": {
+        "Heroes": [
+          "Black Crow",
+          "Tracker",
+          "Demon Slayer",
+          "Death Archer",
+          "Scarlet Bolt"
+        ],
+        "P2PHeroes": [
+          "Demon Slayer",
+          "Black Crow",
+          "Grove Guardian",
+          "Femme Fatale",
+          "Boommeister"
+        ]
+      },
+      "5": {
+        "Heroes": [
+          "Black Crow",
+          "Death Knight",
+          "Demon Slayer",
+          "Death Archer",
+          "Scarlet Bolt"
+        ],
+        "P2PHeroes": [
+          "Demon Slayer",
+          "Scarlet Bolt",
+          "Black Crow",
+          "Grove Guardian",
+          "Boommeister"
+        ]
+      }
+    },
+    "Gemming Gremlin": {
+      "0": {
+        "Heroes": [
+          "Black Crow",
+          "Sage of Storms",
+          "Snow Queen",
+          "Death Archer",
+          "Scarlet Bolt"
+        ],
+        "P2PHeroes": [
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      }
+    },
+    "Trickstar": {
+      "0": {
+        "Heroes": [
+          "Black Crow",
+          "Sage of Storms",
+          "Snow Queen",
+          "Death Archer",
+          "Scarlet Bolt"
+        ],
+        "P2PHeroes": [
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      }
+    },
+    "Troubledough": {
+      "0": {
+        "Heroes": [
+          "Black Crow",
+          "Sage of Storms",
+          "Snow Queen",
+          "Death Archer",
+          "Scarlet Bolt"
+        ],
+        "P2PHeroes": [
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      }
+    },
+    "Animare": {
+      "0": {
+        "Heroes": [
+          "Black Crow",
+          "Sage of Storms",
+          "Snow Queen",
+          "Death Archer",
+          "Scarlet Bolt"
+        ],
+        "P2PHeroes": [
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      }
+    },
+    "Phantom Knight": {
+      "0": {
+        "Heroes": [
+          "Black Crow",
+          "Sage of Storms",
+          "Snow Queen",
+          "Death Archer",
+          "Scarlet Bolt"
+        ],
+        "P2PHeroes": [
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      }
+    },
+    "Arctic Flipper": {
+      "1": {
+        "Heroes": [
+          "Bombin' Goblin",
+          "Snow Queen",
+          "Incinerator",
+          "Elementalist",
+          "Sage of Storms"
+        ],
+        "P2PHeroes": [
+          "Sage of Storms",
+          "Incinerator",
+          "Petite Devil",
+          "Storm Fox",
+          "Twilight Priestess"
+        ]
+      },
+      "2": {
+        "Heroes": [
+          "Bombin' Goblin",
+          "Snow Queen",
+          "Incinerator",
+          "Elementalist",
+          "Sage of Storms"
+        ],
+        "P2PHeroes": [
+          "Sage of Storms",
+          "Incinerator",
+          "Petite Devil",
+          "Storm Fox",
+          "Twilight Priestess"
+        ]
+      },
+      "3": {
+        "Heroes": [
+          "Prima Donna",
+          "Bombin' Goblin",
+          "Snow Queen",
+          "Incinerator",
+          "Elementalist"
+        ],
+        "P2PHeroes": [
+          "Incinerator",
+          "Snail Princess",
+          "Petite Devil",
+          "Storm Fox",
+          "Dream Witch"
+        ]
+      },
+      "4": {
+        "Heroes": [
+          "Child of Light",
+          "Prima Donna",
+          "Incinerator",
+          "Elementalist",
+          "Snow Queen"
+        ],
+        "P2PHeroes": [
+          "Incinerator",
+          "Chronicler",
+          "Petite Devil",
+          "Storm Fox",
+          "Dream Witch"
+        ]
+      },
+      "5": {
+        "Heroes": [
+          "Child of Light",
+          "Prima Donna",
+          "Incinerator",
+          "Elementalist",
+          "Snow Queen"
+        ],
+        "P2PHeroes": [
+          "Witch Doll",
+          "Twilight Priestess",
+          "Petite Devil",
+          "Storm Fox",
+          "Dream Witch"
+        ]
+      }
+    },
+    "Fortune Dragon": {
+      "0": {
+        "Heroes": [
+          "Black Crow",
+          "Sage of Storms",
+          "Snow Queen",
+          "Death Archer",
+          "Scarlet Bolt"
+        ],
+        "P2PHeroes": [
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      }
+    },
+    "Gawrilla": {
+      "1": {
+        "Heroes": [
+          "Bombin' Goblin",
+          "Snow Queen",
+          "Incinerator",
+          "Elementalist",
+          "Sage of Storms"
+        ],
+        "P2PHeroes": [
+          "Elementalist",
+          "Incinerator",
+          "Petite Devil",
+          "Storm Fox",
+          "Twilight Priestess"
+        ]
+      },
+      "2": {
+        "Heroes": [
+          "Bombin' Goblin",
+          "Snow Queen",
+          "Incinerator",
+          "Elementalist",
+          "Sage of Storms"
+        ],
+        "P2PHeroes": [
+          "Elementalist",
+          "Incinerator",
+          "Petite Devil",
+          "Storm Fox",
+          "Twilight Priestess"
+        ]
+      },
+      "3": {
+        "Heroes": [
+          "Prima Donna",
+          "Bombin' Goblin",
+          "Snow Queen",
+          "Incinerator",
+          "Elementalist"
+        ],
+        "P2PHeroes": [
+          "Incinerator",
+          "Snail Princess",
+          "Petite Devil",
+          "Storm Fox",
+          "Dream Witch"
+        ]
+      },
+      "4": {
+        "Heroes": [
+          "Child of Light",
+          "Prima Donna",
+          "Incinerator",
+          "Elementalist",
+          "Snow Queen"
+        ],
+        "P2PHeroes": [
+          "Incinerator",
+          "Chronicler",
+          "Petite Devil",
+          "Storm Fox",
+          "Dream Witch"
+        ]
+      },
+      "5": {
+        "Heroes": [
+          "Child of Light",
+          "Prima Donna",
+          "Incinerator",
+          "Elementalist",
+          "Snow Queen"
+        ],
+        "P2PHeroes": [
+          "Witch Doll",
+          "Twilight Priestess",
+          "Petite Devil",
+          "Storm Fox",
+          "Dream Witch"
+        ]
+      }
+    },
+    "Armored Soul": {
+      "1": {
+        "Heroes": [
+          "Sage of Storms",
+          "Snow Queen",
+          "Incinerator",
+          "Bombin' Goblin",
+          "Elementalist"
+        ],
+        "P2PHeroes": [
+          "Petite Devil",
+          "Snow Queen",
+          "Incinerator",
+          "Bombin' Goblin",
+          "Elementalist"
+        ]
+      },
+      "2": {
+        "Heroes": [
+          "Sage of Storms",
+          "Snow Queen",
+          "Incinerator",
+          "Bombin' Goblin",
+          "Elementalist"
+        ],
+        "P2PHeroes": [
+          "Petite Devil",
+          "Snow Queen",
+          "Incinerator",
+          "Bombin' Goblin",
+          "Elementalist"
+        ]
+      },
+      "3": {
+        "Heroes": [
+          "Sage of Storms",
+          "Child of Light",
+          "Incinerator",
+          "Bombin' Goblin",
+          "Elementalist"
+        ],
+        "P2PHeroes": [
+          "Petite Devil",
+          "Child of Light",
+          "Incinerator",
+          "Bombin' Goblin",
+          "Elementalist"
+        ]
+      },
+      "4": {
+        "Heroes": [
+          "Sage of Storms",
+          "Child of Light",
+          "Incinerator",
+          "Bombin' Goblin",
+          "Elementalist"
+        ],
+        "P2PHeroes": [
+          "Petite Devil",
+          "Child of Light",
+          "Incinerator",
+          "Bombin' Goblin",
+          "Elementalist"
+        ]
+      },
+      "5": {
+        "Heroes": [
+          "Sage of Storms",
+          "Child of Light",
+          "Incinerator",
+          "Bombin' Goblin",
+          "Elementalist"
+        ],
+        "P2PHeroes": [
+          "Petite Devil",
+          "Child of Light",
+          "Incinerator",
+          "Bombin' Goblin",
+          "Elementalist"
+        ]
+      }
+    },
+    "Goal Bandit": {
+      "0": {
+        "Heroes": [
+          "Black Crow",
+          "Sage of Storms",
+          "Snow Queen",
+          "Death Archer",
+          "Scarlet Bolt"
+        ],
+        "P2PHeroes": [
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      }
+    },
+    "Undead Ogre": {
+      "0": {
+        "Heroes": [
+          "Black Crow",
+          "Sage of Storms",
+          "Snow Queen",
+          "Death Archer",
+          "Scarlet Bolt"
+        ],
+        "P2PHeroes": [
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      }
+    },
+    "Huey Hops": {
+      "0": {
+        "Heroes": [
+          "Black Crow",
+          "Sage of Storms",
+          "Snow Queen",
+          "Death Archer",
+          "Scarlet Bolt"
+        ],
+        "P2PHeroes": [
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      }
+    },
+    "Hoarder": {
+      "0": {
+        "Heroes": [
+          "Black Crow",
+          "Sage of Storms",
+          "Snow Queen",
+          "Death Archer",
+          "Scarlet Bolt"
+        ],
+        "P2PHeroes": [
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      }
+    }
+  }
+}
