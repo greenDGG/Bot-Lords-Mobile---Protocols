@@ -59,7 +59,7 @@
 - [`2202`](2202.md) — Consultar información de tile (C→S, 3 bytes coord — necesario antes de cada 2452; responde `2220` de 60 B con `NOT`/`YES`)
 - [`2204`](2204.md) — Buscar jugador por nombre (C→S, 13 bytes: nombre null-padded)
 - [`2205`](2205.md) — Respuesta ubicación de jugador (S→C, 4 bytes: status + coord)
-- [`2220`](2220.md) — Datos del mapa (S→C, header 25B + tiles de 51B cada uno) o variante march de 73B (marcha en curso)
+- [`2220`](2220.md) — Datos del mapa (S→C, header 25B + tiles de 51B cada uno), variante march de 73B (marcha en curso), monster hit de 104B y ocupación de tile de 48B (quién recolecta un tile de recurso + cantidad restante)
 
 ## Carta de la Suerte (cofres especie 217)
 

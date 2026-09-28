@@ -1,5 +1,6 @@
 import { decodeCoordId, encodeCoordId, encodeCoord } from '../../models/map-coords';
 import { parseMapMarch } from './map-march.types';
+import type { TileOccupant } from './map-occupant.types';
 
 export interface ParsedMapTile {
   id: number;
@@ -17,6 +18,8 @@ export interface ParsedMapTile {
   monster?: { level: number; id: string; hp: number };
   /** Castillo/nido (type 8): reino (u16 LE @20), nivel @22, escudo @23 y skin (2B raw @28) */
   castle?: { kingdom: number; level: number; darkness: boolean; shield: boolean; skin: string };
+  /** Quién ocupa el tile según el push 0x03 (llega antes/después que el tile) */
+  occupiedBy?: TileOccupant;
   empty: boolean;
   rawData: Buffer;
   /** Compat: nombre */

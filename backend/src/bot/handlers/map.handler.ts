@@ -3,6 +3,7 @@ import { classifyMapBody, parse2220, parseMapPacket } from '../models/map.types'
 import { parseMapMarches } from '../models/map-march.types';
 import { parseMonsterHit } from '../models/monster-hit.types';
 import { parseTileInfo } from '../models/lucky-card.types';
+import { parseTileOccupants, occupantTailOffset } from '../models/map-occupant.types';
 
 export function handleMapData(bot: BotInstance, body: Buffer): void {
   if (body.length < 10) return;
@@ -13,6 +14,18 @@ export function handleMapData(bot: BotInstance, body: Buffer): void {
     const tileInfo = parseTileInfo(body);
     if (tileInfo) {
       bot.onTileInfo(tileInfo);
+      return;
+    }
+
+    // Ocupación de tile (record 0x03): quién está en la coordenada y cuánto
+    // recurso le queda (nombre vacío = nadie visible). Sin esto, los cuerpos de
+    // 63 B caían en 'delivery' y creaban un tile fantasma en (64,0). El resto
+    // del body (marcha, otro record) se procesa en la recursión.
+    const occupants = parseTileOccupants(body);
+    if (occupants.length > 0) {
+      for (const hit of occupants) bot.onTileOccupant(hit.occupant);
+      const rest = body.subarray(occupantTailOffset(occupants));
+      if (rest.length >= 10 && rest.length < body.length) handleMapData(bot, rest);
       return;
     }
 
@@ -63,6 +76,8 @@ export function handleMapData(bot: BotInstance, body: Buffer): void {
             // Tile con contenido → agregar/actualizar
             if (!bot.mapTiles.has(tile.id)) added++;
             else updated++;
+            const occ = bot.mapOccupants.get(tile.id);
+            if (occ) tile.occupiedBy = occ;
             bot.mapTiles.set(tile.id, tile);
           }
         }
@@ -83,6 +98,8 @@ export function handleMapData(bot: BotInstance, body: Buffer): void {
         if (!bot.mapTiles.has(tile.id)) {
           added++;
         }
+        const occ = bot.mapOccupants.get(tile.id);
+        if (occ) tile.occupiedBy = occ;
         bot.mapTiles.set(tile.id, tile);
       }
       bot.bot.log(`[MAPA] Recibidos ${parsed.tiles.length} tiles (${added} nuevos, total=${bot.mapTiles.size})`);

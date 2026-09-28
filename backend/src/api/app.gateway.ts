@@ -47,6 +47,7 @@ function serializeMapTiles(tiles: any[]): any[] {
     monster: t.monster,
     castle: t.castle,
     empty: t.empty,
+    occupiedBy: t.occupiedBy,
     text: t.text,
     entityType: t.entityType,
   }));

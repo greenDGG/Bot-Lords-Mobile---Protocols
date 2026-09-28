@@ -11,6 +11,7 @@ import { TroopState } from '../../models/troop-state';
 import { HospitalState } from '../models/hospital.types';
 import { ParsedMapTile } from '../models/map.types';
 import { MapMarch } from '../models/map-march.types';
+import { TileOccupant } from '../models/map-occupant.types';
 import { ResearchData } from '../models/research.types';
 import { TroopTraining } from '../models/troops.types';
 import { GuildInfo } from '../models/guild.types';
@@ -156,6 +157,8 @@ export class BotInstance extends EventEmitter {
   captiveData?: LordCaptivePacket;
   mapTiles = new Map<number, ParsedMapTile>();
   mapMarches = new Map<string, MapMarch>();
+  /** tileId → quién ocupa ese tile según los pushes 0x03 (solo tiles ocupados) */
+  mapOccupants = new Map<number, TileOccupant>();
   /** Caza activa (proto 2488); null cuando no hay objetivo en curso */
   huntTarget: HuntTarget | null = null;
   private huntRunning = false;
@@ -717,6 +720,61 @@ export class BotInstance extends EventEmitter {
     // HP 0 compartido: el resto del squad sale como "bicho muerto"
     huntCoordinator.updateHp(t.tileId, 0, '2220');
     this.finishHunt('gone', 'Bicho ya no existe (servidor rechazó el golpe)');
+  }
+
+  /**
+   * 2220 variante "ocupación de tile" (record 0x03): quién recolecta un tile
+   * de recurso y cuánta cantidad le queda. Nombre vacío = nadie visible.
+   * Si el tile ya está en mapTiles se le pega `occupiedBy` y se le refresca
+   * `resource.amount`, para que el front lo muestre junto al resto del tile.
+   */
+  onTileOccupant(o: TileOccupant): void {
+    const occupied = o.name !== '';
+    const prev = this.mapOccupants.get(o.tileId);
+    if (occupied) this.mapOccupants.set(o.tileId, o);
+    else this.mapOccupants.delete(o.tileId);
+    const unchanged = occupied
+      ? !!prev &&
+        prev.name === o.name &&
+        prev.guild === o.guild &&
+        prev.kingdom === o.kingdom &&
+        prev.resourceAmount === o.resourceAmount &&
+        prev.unknownF32 === o.unknownF32
+      : !prev;
+
+    const tile = this.mapTiles.get(o.tileId);
+    let tileDirty = false;
+    if (tile) {
+      if (occupied) {
+        const cur = tile.occupiedBy;
+        if (!cur || cur.name !== o.name || cur.resourceAmount !== o.resourceAmount || cur.time !== o.time) {
+          tile.occupiedBy = o;
+          tileDirty = true;
+        }
+      } else if (tile.occupiedBy) {
+        delete tile.occupiedBy;
+        tileDirty = true;
+      }
+      if (tile.resource && tile.resource.amount !== o.resourceAmount) {
+        tile.resource.amount = o.resourceAmount;
+        tileDirty = true;
+      }
+    }
+    if (unchanged) {
+      if (tileDirty) this.emit('mapDataUpdated');
+      return;
+    }
+    if (tileDirty) this.emit('mapDataUpdated');
+
+    if (occupied) {
+      const when = new Date(o.time * 1000).toISOString().slice(0, 19).replace('T', ' ');
+      this.bot.log(
+        `[MAPA] (${o.x},${o.y}) ocupa ${o.name}${o.guild ? ` [${o.guild}]` : ''} · k=${o.kingdom} · ` +
+        `rec=${o.resourceAmount} f32=${o.unknownF32.toFixed(2)} · ${when}Z`,
+      );
+    } else {
+      this.bot.log(`[MAPA] (${o.x},${o.y}) sin ocupante · rec=${o.resourceAmount}`);
+    }
   }
 
   /** Espera (máx timeoutMs) a que llegue el 2220 con el HP del golpe. */
