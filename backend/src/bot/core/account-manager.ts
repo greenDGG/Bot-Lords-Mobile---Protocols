@@ -104,6 +104,8 @@ export class AccountManager extends EventEmitter {
       coliseum: doc.coliseum || { reclaimGems: false, autoAttack: false, hero0: 1, hero1: 3, hero2: 6, hero3: 5, hero4: 23 },
       sweep: doc.sweep || { enable: false, payload: '0202010001' },
       missions: doc.missions || { autoEliminate: false, wantedMissionIds: [] },
+      hunt: { ...defaultBotConfig('').hunt, ...(doc.hunt || {}) },
+      luckyCards: { ...defaultBotConfig('').luckyCards, ...(doc.luckyCards || {}) },
     };
   }
 

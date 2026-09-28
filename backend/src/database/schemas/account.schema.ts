@@ -51,6 +51,8 @@ export interface IConfig extends Document {
   coliseum: any;
   sweep: any;
   missions: any;
+  hunt: any;
+  luckyCards: any;
 }
 
 const ConfigSchema = new Schema<IConfig>({
@@ -84,6 +86,8 @@ const ConfigSchema = new Schema<IConfig>({
   coliseum: { type: Schema.Types.Mixed, default: {} },
   sweep: { type: Schema.Types.Mixed, default: { enable: false, payload: '0202010001' } },
   missions: { type: Schema.Types.Mixed, default: { autoEliminate: false, wantedMissionIds: [] } },
+  hunt: { type: Schema.Types.Mixed, default: {} },
+  luckyCards: { type: Schema.Types.Mixed, default: {} },
 }, { timestamps: true });
 
 export const ConfigModel = model<IConfig>('Config', ConfigSchema);

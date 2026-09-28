@@ -7,8 +7,9 @@ Flujo para detectar guerras (castillos, torres, fortalezas) y enviar tropas. Imp
 | Proto | Dirección | Descripción |
 |-------|-----------|-------------|
 | 2476 | C → S | Abrir apartado de guerra (payload vacío) |
-| 2477 | S → C | Notificación: inicio/fin de guerra |
+| 2477 | S → C | Agrupaciones **restantes** que quedan (uint32 LE) |
 | 2478 | S → C | Respuesta: guerras activas a **castillos** |
+| 2479 | S → C | Terminó/canceló la agrupación en esa **posición** (uint32 = index * 256) |
 | 6611 | S → C | Respuesta: guerras activas a **torres** |
 | 7315 | S → C | Respuesta: guerras activas a **fortalezas** |
 | 2481 | S → C | Confirmación de ventana de guerra |
@@ -93,71 +94,53 @@ Cada entrada:
 
 ### Payload (S → C)
 
-Estructura diferente a 2478/6611. Los campos están en orden distinto y tiene datos extra de capacidad.
+Estructura diferente a 2478/6611. Sin header fijo; **cada entrada = 53 bytes**.
+Spec completa en [`../protocols/7315.md`](../protocols/7315.md).
 
 ```
-Cada entrada (longitud variable):
-  [0-3]   uint32 = 00000000 (padding/vacío)
-  [4]     uint8  = 00 (separador)
+Cada entrada (53 bytes):
+  [0-3]   uint32 = 00000000 (padding)
+  [4]     uint8  = flag de estado (00 = en espera, 01 = en marcha)
   [5-8]   uint32 = timestamp de inicio (unix seconds, LE)
-  [9-12]  uint32 = 00000000 (padding/vacío)
+  [9-12]  uint32 = 00000000 (padding)
   [13-14] uint16 = tiempo restante en segundos (LE)
   [15-16] uint16 = 0000 (padding)
-  [17-18] uint16 = 2602 (tipo/bando del ícono)
-  [19-20] uint16 = id del ícono del atacante (LE)
-  [21-33] string = nombre del atacante (13 bytes, null-terminated)
-  [34]    uint8  = 00 (separador)
-  [35-36] uint16 = 0d02 (tipo de agrupación/sub-índice)
-  [37-40] uint32 = tropas actuales en la agrupación (LE)
-  [41-44] uint32 = capacidad máxima de tropas (LE)
+  [17-19] bytes  = ubicación 3 bytes (⚠ sin determinar; NO es pad ni iconType)
+  [20-21] uint16 = id del ícono del atacante (LE)
+  [22-34] string = nombre del atacante (13 bytes, null-padded, sin separador posterior)
+  [35-36] uint16 = sub-tipo (ej: 0f03) ⚠ sin investigar
+  [37-40] uint32 = tropas actuales (LE)
+  [41-44] uint32 = capacidad máxima (LE)
   [45-46] uint16 = reino (LE, ej: cf04 = 1231)
-  [47-49] bytes = ubicación (3 bytes)
+  [47-49] bytes  = ubicación de la FORTALEZA (3 bytes)
   [50]    uint8  = nivel de la fortaleza
-  [51-52] uint16 = desconocido (0100)
+  [51-52] uint16 = 0100 ⚠ sin investigar
 ```
 
 ### Campos importantes
 
 | Offset | Tamaño | Campo | Descripción |
 |--------|--------|-------|-------------|
+| 4 | 1 | flag | `01` = en marcha, `00` = en espera → `WarEvent.inMarch` |
 | 5-8 | 4 | timestamp | Cuándo empezó la agrupación |
-| 13-14 | 2 | timeRemaining | Segundos restantes (ej: 0x012c = 300s = 5min) |
-| 17-18 | 2 | tipoBando | Parece ser fijo `2602` |
-| 19-20 | 2 | iconId | ID del ícono del atacante |
-| 21-33 | 13 | enemyName | Nombre del atacante (fijo 13 bytes) |
-| 35-36 | 2 | subType | Tipo de agrupación (0d02 en el ejemplo) |
-| 37-40 | 4 | troopsCurrent | Tropas actuales (uint32 LE) |
-| 41-44 | 4 | troopsMax | Capacidad máxima (uint32 LE) |
+| 13-14 | 2 | timeRemaining | Segundos restantes |
+| 17-19 | 3 | locOrigen | Ubicación sin determinar |
+| 22-34 | 13 | rallyLeader | Nombre del atacante (null-padded) |
+| 37-40 | 4 | troopsCurrent | Tropas actuales |
+| 41-44 | 4 | troopsMax | Capacidad máxima |
 | 45-46 | 2 | kingdom | Reino del jugador |
-| 47-49 | 3 | location | Coordenadas/ubicación |
+| 47-49 | 3 | locFortaleza | **Se usa como coordX/coordY del grupo** |
 | 50 | 1 | level | Nivel de la fortaleza |
 
 ### Ejemplo real (hex)
 
 ```
-3900931c00000000 000ea4956a 00000000 2c01 0000
-2602 2d1a 0c50616e2052656c6c656e6f 00
-0d02 70820300 f0062200 cf04 2602bb 05 0100
+00000000 pad | 01 flag(en marcha) | 670db76a ts | 00000000 pad
+1500 timeRem(21s) | 0000 pad | 270274 loc(17-19) | 260c iconId
+4e6967687444726167306e3300 nombre="NightDrag0n3"
+0f03 subType | 22282400 tropas | 40282400 max | cf04 reino
+270263 loc fortaleza | 06 nivel | 0100 ?
 ```
-
-Desglose:
-- `00000000` = padding
-- `00` = separador
-- `000ea4956a` = timestamp (0x6aa40e00 = Junio 2026)
-- `00000000` = padding
-- `2c01` = 300 segundos = 5 minutos
-- `0000` = padding
-- `2602` = tipo/bando
-- `2d1a` = icon ID
-- `0c50616e2052656c6c656e6f` = "Pan Relleno" (13 bytes con null terminator)
-- `00` = separador
-- `0d02` = sub-tipo
-- `70820300` = 232,000 tropas actuales
-- `f0062200` = 2,232,000 capacidad máxima
-- `cf04` = reino 1231
-- `2602bb` = ubicación (3 bytes)
-- `05` = nivel 5
-- `0100` = desconocido
 
 ---
 
@@ -247,7 +230,7 @@ warSelectIndex(index: number) {
 |-------|------|--------|
 | 2478 | Castillos | ✅ Implementado (`handle2478`) |
 | 6611 | Torres | ✅ Implementado (`handle6611`) |
-| 7315 | Fortalezas | ⏳ Parser pendiente (hex documentado) |
+| 7315 | Fortalezas | ✅ Implementado (`handle7315`) |
 
 ---
 
@@ -273,8 +256,11 @@ Cuando `warMode=true` y una marcha llega en ≤2s:
 
 ## Notas técnicas
 
-- El **índice** se recalcula cada vez que llega una nueva lista (2478/6611/7315)
+- El **índice** se recalcula cada vez que llega una nueva lista (2478/6611)
+- Las **fortalezas (7315)** llegan 1 paquete por entrada y se numeran por orden de llegada
+- `2479` elimina la agrupación de esa posición (mismo encoding index*256 que el 2480) y se renumera
+- `2477` trae el nº de agrupaciones restantes → `notifyCount`
 - El servidor reenvía la lista completa, no hay "diff"
 - `WarDetector` mantiene `activeWars[]` en memoria y actualiza por coordenadas + nombre
 - Los protos 2477 y 2485 son notificaciones/confirmaciones que disparan re-consulta
-- 7315 aún no tiene handler — solo loguea el hex crudo para análisis
+- 7315 loguea el hex crudo (`[AGRU] 7315 raw`) además de parsearlo

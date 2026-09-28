@@ -17,3 +17,4 @@ export { acceptGuildApplication, rejectGuildApplication } from './guild-accept-r
 export { buyShield24h, activateShield } from './shield.commands';
 export { requestMarchData } from './march.commands';
 export { claimEvent } from './event.commands';
+export { huntMonster } from './hunt.commands';

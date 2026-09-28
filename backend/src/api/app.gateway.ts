@@ -24,6 +24,7 @@ import { COSTUME_DB } from '../bot/data/costume-db';
 import { acceptGuildApplication, rejectGuildApplication } from '../bot/commands/guild-accept-reject.commands';
 import { DiscordNotificationService } from '../discord/discord-notification.service';
 import { EventRewardData } from '../bot/models/event-rewards.types';
+import { huntCoordinator } from '../bot/models/hunt-coordinator';
 
 const ITEMS_DATA = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'bot', 'data', 'items.json'), 'utf-8'));
 const ITEMS_DB: Record<string, { name: string }> = ITEMS_DATA.ITEMS_DB || {};
@@ -68,6 +69,8 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   private clients = new Map<string, ClientState>();
 
+  private squadTimer: ReturnType<typeof setTimeout> | null = null;
+
   constructor(
     private accountManager: AccountManager,
     private discordNotifications: DiscordNotificationService,
@@ -79,6 +82,17 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.accountManager.onStatusChanged = (iggId) => {
       this.server.emit('statusChanged', { iggId, online: this.accountManager.instances.get(iggId)?.bot.isOnline });
     };
+    // Squad de caza compartido entre bots: HP + quiénes van al mismo bicho.
+    // Throttle de 1s: los 2201 de refresco cambian el HP muy seguido.
+    huntCoordinator.on('changed', () => this.queueSquadEmit());
+  }
+
+  private queueSquadEmit(): void {
+    if (this.squadTimer) return;
+    this.squadTimer = setTimeout(() => {
+      this.squadTimer = null;
+      this.server?.emit('huntSquad', { squads: huntCoordinator.snapshot() });
+    }, 1000);
   }
 
   handleConnection(client: Socket): void {
@@ -87,6 +101,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
       subscribedLogs: new Set(),
       subscribedWars: new Set(),
     });
+    client.emit('huntSquad', { squads: huntCoordinator.snapshot() });
   }
 
   handleDisconnect(client: Socket): void {
@@ -178,22 +193,47 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   /** Lógica compartida de arranque (usada por startBot y por el auto-arranque al iniciar el servidor). */
-  private async startBotInternal(iggId: number): Promise<{ ok: boolean; error?: string }> {
-    if (this.startingBots.has(iggId)) return { ok: false, error: 'Bot ya está iniciando para esta cuenta' };
-    if (this.accountManager.instances.has(iggId)) return { ok: false, error: 'Bot ya iniciado para esta cuenta' };
+  private async startBotInternal(iggId: number): Promise<{ ok: boolean; error?: string; code?: 'ALREADY' | 'STARTING' }> {
+    if (this.startingBots.has(iggId)) return { ok: false, code: 'STARTING', error: 'Bot ya está iniciando para esta cuenta' };
+
+    const existing = this.accountManager.instances.get(iggId);
+    if (existing && (existing.bot.isOnline || existing.connecting)) {
+      return { ok: false, code: 'ALREADY', error: 'Bot ya iniciado para esta cuenta' };
+    }
 
     this.startingBots.add(iggId);
+    try {
+      if (existing) {
+        // Instancia registrada pero desconectada (caída o en reconexión): reconectar en vez de rechazar.
+        this.server.emit('botStarting', { iggId });
+        const ok = await existing.connect();
+        if (ok) this.server.emit('botStarted', { iggId });
+        return { ok: true };
+      }
+      return await this.startBotLocked(iggId);
+    } catch (e: any) {
+      const msg = e?.message || 'Error inesperado al iniciar el bot';
+      const inst = this.accountManager.instances.get(iggId);
+      if (inst && !inst.bot.isOnline) this.accountManager.instances.delete(iggId);
+      this.server.emit('statusChanged', { iggId, online: false });
+      this.server.emit('connectionFailed', { iggId, message: msg });
+      notifyBotConnectionFailed(iggId, msg).catch(() => {});
+      return { ok: false, error: msg };
+    } finally {
+      this.startingBots.delete(iggId);
+    }
+  }
 
+  /** Crea la instancia y conecta. Debe invocarse con el lock `startingBots` ya adquirido. */
+  private async startBotLocked(iggId: number): Promise<{ ok: boolean; error?: string }> {
     let account: AccountInfo | null = null;
     try {
       account = await this.accountManager.loadAccountFromDB(iggId);
     } catch {
-      this.startingBots.delete(iggId);
       return { ok: false, error: 'Cuenta no encontrada en MongoDB' };
     }
 
     if (!account) {
-      this.startingBots.delete(iggId);
       return { ok: false, error: 'Cuenta no encontrada en MongoDB' };
     }
 
@@ -314,6 +354,13 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
         mapMarches: Array.from(instance.mapMarches.values()),
       });
     });
+    instance.on('huntUpdated', () => {
+      this.server.emit('huntUpdated', {
+        iggId,
+        huntTarget: instance.huntTarget,
+        energy: instance.getCurrentEnergy(),
+      });
+    });
     instance.on('eventRewardsUpdated', ({ data, body }: { data: EventRewardData; body: Buffer }) => {
       this.server.emit('eventRewards', { iggId, data });
       this.notifyEventRewards(iggId, data, body).catch(() => {});
@@ -328,10 +375,10 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
     });
 
     const connected = await instance.connect();
-    this.startingBots.delete(iggId);
     if (connected) {
       this.server.emit('botStarted', { iggId });
     } else {
+      if (!instance.bot.isOnline && !instance.connecting) this.accountManager.instances.delete(iggId);
       this.server.emit('connectionFailed', { iggId, message: 'No se pudo conectar' });
       notifyBotConnectionFailed(iggId, 'No se pudo conectar').catch(() => {});
     }
@@ -341,7 +388,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage('startBot')
   async handleStartBot(client: Socket, payload: { iggId: number }): Promise<void> {
     const res = await this.startBotInternal(payload.iggId);
-    if (!res.ok) client.emit('error', { message: res.error });
+    if (!res.ok) client.emit('error', { iggId: payload.iggId, message: res.error });
   }
 
   /** Auto-arranque al iniciar el servidor: levanta todas las cuentas con config.autoStart = true. */
@@ -384,6 +431,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @SubscribeMessage('stopBot')
   async handleStopBot(client: Socket, payload: { iggId: number }): Promise<void> {
+    this.startingBots.delete(payload.iggId);
     this.accountManager.stopAccount(payload.iggId);
     this.server.emit('statusChanged', { iggId: payload.iggId, online: false });
     this.server.emit('shield', { iggId: payload.iggId, remaining: 0, name: '' });
@@ -429,6 +477,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
       fdgExtension: instance.fdgExtension || null,
       config: instance.config,
       mapTiles: serializeMapTiles(Array.from(instance.mapTiles.values())),
+      huntTarget: instance.huntTarget,
       chatMessages: instance.chatMessages || [],
       guildApplications: instance.guildApplications?.applications || null,
       costumes: instance.costumes || [],
@@ -471,6 +520,23 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const instance = this.accountManager.instances.get(payload.iggId);
     if (!instance) return;
     instance.requestMapData(payload.x, payload.y);
+  }
+
+  /** Cazar el monstruo de un tile (2488); tileId opcional → mejor candidato del mapa. */
+  @SubscribeMessage('huntMonster')
+  handleHuntMonster(client: Socket, payload: { iggId: number; tileId?: number }): void {
+    const instance = this.accountManager.instances.get(payload.iggId);
+    if (!instance) return;
+    const res = instance.startHunt(payload.tileId);
+    client.emit('huntResult', { iggId: payload.iggId, ...res });
+    instance.emitHuntUpdate();
+  }
+
+  @SubscribeMessage('huntStop')
+  handleHuntStop(client: Socket, payload: { iggId: number }): void {
+    const instance = this.accountManager.instances.get(payload.iggId);
+    if (!instance) return;
+    instance.stopHunt();
   }
 
   @SubscribeMessage('setWarViewing')
@@ -586,15 +652,36 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     let sent = 0;
     let failed = 0;
-    for (const id of unique) {
-      const instance = this.accountManager.instances.get(id);
-      if (!instance || !instance.bot.isOnline) { failed++; continue; }
-      const result = await instance.manualSupply(payload.targetPlayer.trim(), payload.resources);
-      if (result.ok) sent++;
-      else failed++;
-      client.emit('supplyResult', { iggId: id, ok: result.ok, message: result.message });
-    }
+    const target = payload.targetPlayer.trim();
+    const results = await Promise.all(unique.map(async (id) => {
+      try {
+        const instance = this.accountManager.instances.get(id);
+        if (!instance || !instance.bot.isOnline) {
+          client.emit('supplyResult', { iggId: id, ok: false, message: instance ? 'Bot no conectado' : 'Bot no encontrado' });
+          return false;
+        }
+        client.emit('supplyStarted', { iggId: id });
+        const result = await instance.manualSupply(target, payload.resources);
+        client.emit('supplyResult', { iggId: id, ok: result.ok, message: result.message });
+        return result.ok;
+      } catch (err: any) {
+        client.emit('supplyResult', { iggId: id, ok: false, message: `Error inesperado: ${err?.message ?? err}` });
+        return false;
+      }
+    }));
+    for (const ok of results) { if (ok) sent++; else failed++; }
     client.emit('supplyBatchResult', { total: unique.length, sent, failed, targetPlayer: payload.targetPlayer });
+  }
+
+  @SubscribeMessage('stopManualSupply')
+  handleStopManualSupply(client: Socket, payload: { iggId: number }): void {
+    const instance = this.accountManager.instances.get(payload.iggId);
+    if (!instance) {
+      client.emit('supplyStopped', { iggId: payload.iggId, stopped: false, message: 'Bot no encontrado' });
+      return;
+    }
+    const res = instance.stopSupply();
+    client.emit('supplyStopped', { iggId: payload.iggId, stopped: res.stopped, message: res.message });
   }
 
   @SubscribeMessage('sendRawProto')

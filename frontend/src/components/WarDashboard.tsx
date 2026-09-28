@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Socket } from 'socket.io-client';
 import { colors } from './Theme';
 
@@ -13,6 +13,10 @@ interface WarEvent {
   warTimestamp: string;
   index: number;
   type: string;
+  level?: number;
+  inMarch?: boolean;
+  troopsCurrent?: number;
+  troopsMax?: number;
 }
 
 interface TroopInfo { type: number; tier: number; count: number; }
@@ -31,10 +35,23 @@ interface Group {
   type: string;
   timeRemainingSec: number;
   warTimestamp: string;
+  level?: number;
+  inMarch?: boolean;
+  troopsCurrent?: number;
+  troopsMax?: number;
 }
 
 const PRESETS_KEY = 'war_presets';
 const TROOPS_PER_ACCOUNT = 200000;
+
+const groupKey = (g: Group) => `${g.rallyLeader}|${g.coordX}|${g.coordY}|${g.type}`;
+
+// El "enemigo" real: para fortalezas es la propia fortaleza (enemyName viene vacío
+// y rallyLeader es el aliado que inició la agrupación)
+const enemyLabel = (g: Group) =>
+  g.enemyName || (g.type === 'fortress' ? `Fortaleza${g.level ? ` ${g.level}` : ''}` : g.rallyLeader);
+
+const TYPE_LABEL: Record<string, string> = { castle: 'Castillo', tower: 'Torre', fortress: 'Fortaleza' };
 
 function loadPresets(): string[] {
   try { return JSON.parse(localStorage.getItem(PRESETS_KEY) || '[]'); } catch { return []; }
@@ -138,6 +155,9 @@ export default function WarDashboard({ socket, bots }: Props) {
   const [troopStates, setTroopStates] = useState<Map<number, TroopInfo[]>>(new Map());
   const [statusMsg, setStatusMsg] = useState('');
   const [expandedKey, setExpandedKey] = useState<string | null>(null);
+  const [expandedSnapshot, setExpandedSnapshot] = useState<Group | null>(null);
+  const requestedBotsRef = useRef('');
+  const botsKey = [...bots].sort((a, b) => a - b).join(',');
   const [selectedAccounts, setSelectedAccounts] = useState<Set<number>>(new Set());
   const [tier, setTier] = useState(4);
   const [ratioInput, setRatioInput] = useState('');
@@ -162,29 +182,44 @@ export default function WarDashboard({ socket, bots }: Props) {
     socket.on('warStatus', onWarStatus);
     socket.on('troops', onTroops);
 
-    // Re-fetch on mount so data persists across open/close
-    for (const id of bots) socket.emit('requestWarData', { iggId: id });
+    // Re-fetch on mount / cuando cambia el conjunto de cuentas (no en cada re-render)
+    if (requestedBotsRef.current !== botsKey) {
+      requestedBotsRef.current = botsKey;
+      for (const id of bots) socket.emit('requestWarData', { iggId: id });
+    }
 
     return () => { socket.off('wars', onWars); socket.off('warStatus', onWarStatus); socket.off('troops', onTroops); };
-  }, [socket, bots]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [socket, botsKey]);
 
   const activeWars = wars.filter(w => w.active && bots.includes(w.iggId));
 
   const groups = new Map<string, Group>();
   for (const w of activeWars) {
     const key = `${w.rallyLeader}|${w.coordX}|${w.coordY}|${w.type}`;
-    if (!groups.has(key)) groups.set(key, { wars: [], rallyLeader: w.rallyLeader, enemyName: w.enemyName, coordX: w.coordX, coordY: w.coordY, type: w.type, timeRemainingSec: w.timeRemainingSec, warTimestamp: w.warTimestamp });
-    groups.get(key)!.wars.push(w);
+    if (!groups.has(key)) groups.set(key, { wars: [], rallyLeader: w.rallyLeader, enemyName: w.enemyName, coordX: w.coordX, coordY: w.coordY, type: w.type, timeRemainingSec: w.timeRemainingSec, warTimestamp: w.warTimestamp, level: w.level, inMarch: w.inMarch, troopsCurrent: w.troopsCurrent, troopsMax: w.troopsMax });
+    const g = groups.get(key)!;
+    g.wars.push(w);
+    if (w.inMarch) g.inMarch = true;
   }
-  const sortedGroups = [...groups.values()].sort((a, b) => a.timeRemainingSec - b.timeRemainingSec);
-  const expandedGroup = sortedGroups.find(g => `${g.rallyLeader}|${g.coordX}|${g.coordY}|${g.type}` === expandedKey) || null;
 
-  // Clear expanded if group no longer exists
+  const liveGroup = expandedKey ? groups.get(expandedKey) || null : null;
+  // Si el grupo abierto desaparece momentáneamente de los datos en vivo, se mantiene
+  // en la lista con la última copia (snapshot) para que el panel no se cierre ni se
+  // reinicie mientras se está configurando el envío.
+  if (!liveGroup && expandedKey && expandedSnapshot) groups.set(expandedKey, expandedSnapshot);
+
+  // Orden por timestamp de inicio (constante) para que las filas no salten con cada actualización
+  const sortedGroups = [...groups.values()].sort((a, b) =>
+    new Date(a.warTimestamp).getTime() - new Date(b.warTimestamp).getTime() || groupKey(a).localeCompare(groupKey(b))
+  );
+  const expandedGroup = expandedKey ? sortedGroups.find(g => groupKey(g) === expandedKey) || null : null;
+
+  const liveSig = liveGroup ? `${groupKey(liveGroup)}|${liveGroup.wars.map(w => w.iggId).sort((a, b) => a - b).join(',')}` : '';
   useEffect(() => {
-    if (expandedKey && !sortedGroups.some(g => `${g.rallyLeader}|${g.coordX}|${g.coordY}|${g.type}` === expandedKey)) {
-      setExpandedKey(null);
-    }
-  }, [sortedGroups, expandedKey]);
+    if (liveSig && liveGroup) setExpandedSnapshot(liveGroup);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [liveSig]);
 
   const getTierTroops = useCallback((iggId: number, t: number) => {
     const troops = troopStates.get(iggId) || [];
@@ -259,11 +294,13 @@ export default function WarDashboard({ socket, bots }: Props) {
   const removePreset = (p: string) => { const next = presets.filter(x => x !== p); setPresets(next); savePresets(next); };
 
   const expandGroup = (g: Group) => {
-    const key = `${g.rallyLeader}|${g.coordX}|${g.coordY}|${g.type}`;
+    const key = groupKey(g);
     if (expandedKey === key) {
       setExpandedKey(null);
+      setExpandedSnapshot(null);
     } else {
       setExpandedKey(key);
+      setExpandedSnapshot(g);
       setSelectedAccounts(new Set(g.wars.map(w => w.iggId)));
       setTier(4); setRatioInput(''); setInf(0); setArt(0); setCav(0);
       for (const w of g.wars) socket.emit('requestTroops', { iggId: w.iggId });
@@ -275,6 +312,7 @@ export default function WarDashboard({ socket, bots }: Props) {
       for (const w of expandedGroup.wars) socket.emit('requestWarData', { iggId: w.iggId });
     }
     setExpandedKey(null);
+    setExpandedSnapshot(null);
   };
 
   const sendToAll = () => {
@@ -289,10 +327,9 @@ export default function WarDashboard({ socket, bots }: Props) {
     }
     const ids = expandedGroup.wars.map(w => w.iggId);
     setExpandedKey(null);
+    setExpandedSnapshot(null);
     for (const id of ids) socket.emit('requestWarData', { iggId: id });
   };
-
-  const groupKey = (g: Group) => `${g.rallyLeader}|${g.coordX}|${g.coordY}|${g.type}`;
 
   return (
     <div>
@@ -308,8 +345,11 @@ export default function WarDashboard({ socket, bots }: Props) {
               <>
                 <button onClick={collapseGroup} style={{ background: 'none', border: 'none', color: colors.textSecondary, fontSize: 16, cursor: 'pointer', padding: 0 }}>&larr;</button>
                 <div>
-                  <span style={{ fontWeight: 600, fontSize: 14 }}>{expandedGroup.enemyName || expandedGroup.rallyLeader}</span>
+                  <span style={{ fontWeight: 600, fontSize: 14 }}>{enemyLabel(expandedGroup)}</span>
                   <span style={{ fontSize: 12, color: colors.textSecondary, marginLeft: 8 }}>[{expandedGroup.coordX},{expandedGroup.coordY}]</span>
+                  {enemyLabel(expandedGroup) !== expandedGroup.rallyLeader && (
+                    <span style={{ fontSize: 12, color: colors.textSecondary, marginLeft: 8 }}>por {expandedGroup.rallyLeader}</span>
+                  )}
                 </div>
               </>
             ) : (
@@ -343,52 +383,61 @@ export default function WarDashboard({ socket, bots }: Props) {
             <div style={{ fontSize: 11, color: colors.textSecondary, marginTop: 4, opacity: 0.6 }}>Las agrupaciones aparecen aqui cuando se detectan</div>
           </div>
         ) : (
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
-            <thead>
-              <tr style={{ borderBottom: `1px solid ${colors.border}`, color: colors.textSecondary, textAlign: 'left', fontSize: 11, textTransform: 'uppercase', letterSpacing: 0.5 }}>
-                <th style={{ padding: '6px 12px', width: 36 }}>#</th>
-                <th style={{ padding: '6px 12px' }}>Enemigo</th>
-                <th style={{ padding: '6px 12px' }}>Tipo</th>
-                <th style={{ padding: '6px 12px', textAlign: 'center' }}>Cuentas</th>
-                <th style={{ padding: '6px 12px', width: 180 }}>Tiempo</th>
-                <th style={{ padding: '6px 12px', width: 80 }}></th>
-              </tr>
-            </thead>
-            <tbody>
-              {sortedGroups.map((g, i) => {
-                const key = groupKey(g);
-                const isExpanded = expandedKey === key;
-                return (
-                  <React.Fragment key={key}>
-                    <tr style={{
-                      borderBottom: `1px solid ${colors.border}`,
-                      background: isExpanded ? `${colors.primary}08` : 'transparent',
-                    }}>
-                      <td style={{ padding: '8px 12px', fontWeight: 600, color: colors.textSecondary }}>{i}</td>
-                      <td style={{ padding: '8px 12px' }}>
-                        <div style={{ fontWeight: 600 }}>{g.enemyName || g.rallyLeader}</div>
-                        <div style={{ fontSize: 11, color: colors.textSecondary }}>[{g.coordX},{g.coordY}]</div>
-                      </td>
-                      <td style={{ padding: '8px 12px', fontSize: 12, color: colors.textSecondary }}>{g.type}</td>
-                      <td style={{ padding: '8px 12px', textAlign: 'center', fontWeight: 600 }}>{g.wars.length}</td>
-                      <td style={{ padding: '8px 12px' }}>
-                        <UrgencyBar warTimestamp={g.warTimestamp} timeRemainingSec={g.timeRemainingSec} />
-                      </td>
-                      <td style={{ padding: '8px 12px' }}>
-                        <button
-                          className={isExpanded ? '' : 'danger'}
-                          style={{ fontSize: 11, padding: '4px 12px' }}
-                          onClick={() => expandGroup(g)}
-                        >
-                          {isExpanded ? 'Cerrar' : 'Unirse'}
-                        </button>
-                      </td>
-                    </tr>
+          <div>
+            {sortedGroups.map((g) => {
+              const key = groupKey(g);
+              const isExpanded = expandedKey === key;
+              return (
+                <React.Fragment key={key}>
+                  <div
+                    onClick={() => (isExpanded ? collapseGroup() : expandGroup(g))}
+                    style={{
+                      display: 'grid', gridTemplateColumns: '1fr 180px 1fr', alignItems: 'center', gap: 12,
+                      padding: '14px 16px', borderBottom: `1px solid ${colors.border}`, cursor: 'pointer',
+                      background: isExpanded ? `${colors.primary}0a` : 'transparent', transition: 'background 0.15s',
+                    }}
+                  >
+                    {/* Izquierda: aliado que agrupa */}
+                    <div style={{ minWidth: 0 }}>
+                      <div style={{ fontSize: 10, color: colors.textSecondary, textTransform: 'uppercase', letterSpacing: 1, fontWeight: 700 }}>Agrupa</div>
+                      <div style={{ fontWeight: 600, fontSize: 14, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{g.rallyLeader || '—'}</div>
+                      {g.troopsMax ? (
+                        <div style={{ fontSize: 11, color: colors.textSecondary }}>
+                          {formatNum(g.troopsCurrent || 0)} / {formatNum(g.troopsMax)} tropas
+                        </div>
+                      ) : null}
+                      <div style={{ fontSize: 11, color: colors.textSecondary }}>
+                        [{g.coordX},{g.coordY}] · {g.wars.length} cuenta{g.wars.length !== 1 ? 's' : ''}
+                      </div>
+                    </div>
 
-                    {isExpanded && (
-                      <tr>
-                        <td colSpan={6} style={{ padding: 0, border: 'none' }}>
-                          <div style={{ background: '#0c1322', borderTop: `1px solid ${colors.border}`, borderBottom: `1px solid ${colors.border}`, padding: '16px 20px' }}>
+                    {/* Centro: VS + tiempo */}
+                    <div style={{ textAlign: 'center' }}>
+                      <div style={{ fontSize: 15, fontWeight: 800, color: colors.textSecondary, letterSpacing: 4 }}>VS</div>
+                      <div style={{ width: '100%', marginTop: 4 }}>
+                        <UrgencyBar warTimestamp={g.warTimestamp} timeRemainingSec={g.timeRemainingSec} />
+                      </div>
+                    </div>
+
+                    {/* Derecha: enemigo (fortaleza / castillo / torre) */}
+                    <div style={{ minWidth: 0, textAlign: 'right' }}>
+                      <div style={{ fontSize: 10, color: colors.textSecondary, textTransform: 'uppercase', letterSpacing: 1, fontWeight: 700 }}>{TYPE_LABEL[g.type] || g.type}</div>
+                      <div style={{ fontWeight: 600, fontSize: 14, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{enemyLabel(g)}</div>
+                      {g.inMarch !== undefined && (
+                        <span style={{
+                          display: 'inline-block', fontSize: 10, fontWeight: 700, marginTop: 3,
+                          padding: '1px 7px', borderRadius: 8,
+                          background: g.inMarch ? '#22c55e22' : '#f59e0b22',
+                          color: g.inMarch ? '#22c55e' : '#f59e0b',
+                        }}>
+                          {g.inMarch ? 'EN VIAJE' : 'EN ESPERA'}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  {isExpanded && (
+                    <div style={{ background: '#0c1322', borderTop: `1px solid ${colors.border}`, borderBottom: `1px solid ${colors.border}`, padding: '16px 20px' }}>
 
                             {/* Accounts */}
                             <div style={{ marginBottom: 16 }}>
@@ -472,15 +521,12 @@ export default function WarDashboard({ socket, bots }: Props) {
                               </button>
                             </div>
 
-                          </div>
-                        </td>
-                      </tr>
+                      </div>
                     )}
                   </React.Fragment>
                 );
               })}
-            </tbody>
-          </table>
+            </div>
         )}
       </div>
 

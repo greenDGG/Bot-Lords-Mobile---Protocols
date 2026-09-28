@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { BotEngine } from '../engine/bot-engine';
 import { configService, normalizeKeys } from '../../config/config.service';
-import { BotConfig, defaultBotConfig } from '../../models/bot-config';
+import { BotConfig, defaultBotConfig, getLuckyCardsConfig } from '../../models/bot-config';
 import { PlayerInfo, RESISTENCIA_MAX } from '../models/player.types';
 import { ResourcesData } from '../models/resources.types';
 import { ConstructionData } from '../models/buildings.types';
@@ -48,11 +48,19 @@ import { findActionByName } from '../actions/bot-action';
 import { dispatchPacket } from '../handlers/index';
 import { WarParticipant, parse2483 as parse2483Participants, loadMarchHistory as loadMarchHistoryDb, checkExpiredMarches as checkExpiredMarchesImpl, serializableMarches as serializableMarchesImpl } from '../war/march-manager';
 import { armCounter, armCounterTimer, fireCounterNow, revertCounter } from '../war/counter-logic';
-import { requestMapData as sendMapData, refreshMapCoord } from '../commands/map.commands';
-import { decodeCoordBytes } from '../../models/map-coords';
+import { requestMapData as sendMapData, refreshMapCoord, buildScanWindows } from '../commands/map.commands';
+import { queryTileInfo, startLuckyCardSearch, exchangeLuckyCards } from '../commands/lucky-card.commands';
+import { LuckyCardInfo, LuckyExchangeResult, LuckySearchResult, TileInfoResult } from '../models/lucky-card.types';
+import { decodeCoordBytes, encodeCoordId } from '../../models/map-coords';
 import { getPlayerLocation as getPlayerLocationCmd } from '../commands/player.commands';
 import { selectAction11, selectWarIndex, sendTroops, send2476 } from '../commands/war.commands';
 import { requestRivals, attackRival, claimColiseumGems } from '../commands/coliseum.commands';
+import { huntMonster } from '../commands/hunt.commands';
+import { getHuntLevel, getHuntPayloadHex, getHuntSquad } from '../../models/bot-config';
+import { getMonster, getMonsterDebilidad, isMonsterChest, monsterName } from '../data/monsters';
+import { huntCoordinator, SquadPolicy } from '../models/hunt-coordinator';
+import { HuntTarget, HuntStatus } from '../models/hunt.types';
+import { matchHpScale, toHpPercent, MonsterHitUpdate } from '../models/monster-hit.types';
 
 export type { WarParticipant };
 
@@ -60,6 +68,45 @@ const ITEMS_DATA = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data',
 
 /** 2453 sin datos seguidos antes de abortar el lote de supply */
 const MAX_CONSECUTIVE_SEND_FAILS = 3;
+
+/**
+ * Capacidad máxima de recursos por caravana (proto 2452).
+ * Si la cantidad enviada supera este tope el servidor responde 2453 <17B con
+ * code `0x07` = "capacidad de suministros excedida": no sale ninguna caravana.
+ * Ver `docs/protocols/2453.md`.
+ */
+export const SUPPLY_CARAVAN_LIMIT = 1_000_000;
+
+/** ms entre ventanas (2201) del escaneo del mapa para Caza */
+const MAP_SCAN_INTERVAL_MS = 3500;
+  /** ms mínimos entre escaneos consecutivos del mapa */
+  const MAP_SCAN_REPEAT_MS = 60_000;
+  /** ms mínimos entre avisos "sin energía" al chat de gremio */
+  const NO_ENERGY_CHAT_COOLDOWN_MS = 5 * 60_000;
+
+  /**
+   * Salvaguarda de una búsqueda de carta (9866) si no llega ni el ack 9867 ni
+   * la marcha de vuelta: el slot se libera igual para no bloquear el bucle.
+   */
+  const LUCKY_SEARCH_FALLBACK_MS = 60_000;
+  /** margen sobre ida+vuelta (2×duración del ack) antes de permitir otra */
+  const LUCKY_SEARCH_MARGIN_MS = 3_000;
+  /** espera entre reintentos de un cofre sin respuesta / rechazado */
+  const LUCKY_CHEST_BACKOFF_MS = 60_000;
+  /** cofres a consultar como máximo en UN paso (se saltan los que ya están) */
+  const LUCKY_TILE_TRIES_PER_STEP = 3;
+  /** backoff de un tile que respondió sin flag de reclamo (no sirve como cofre) */
+  const LUCKY_NO_FLAG_BACKOFF_MS = 10 * 60_000;
+  /** salvaguarda del 9864 (canje) si no llega el 9865 */
+  const LUCKY_EXCHANGE_TIMEOUT_MS = 15_000;
+  /** espera entre intentos de canje */
+  const LUCKY_EXCHANGE_RETRY_MS = 60_000;
+  /** intentos de canje por evento antes de avisar y frenar */
+  const LUCKY_EXCHANGE_MAX_ATTEMPTS = 3;
+  /** dígitos necesarios del mismo valor (tres 9 = 999) para canjear */
+  const LUCKY_EXCHANGE_MIN_NINES = 3;
+  /** la mano sólo admite 10 cartas: las de mayor dígito (ver 9862.md) */
+  const LUCKY_HAND_SIZE = 10;
 
 export class BotInstance extends EventEmitter {
   readonly iggId: number;
@@ -109,6 +156,61 @@ export class BotInstance extends EventEmitter {
   captiveData?: LordCaptivePacket;
   mapTiles = new Map<number, ParsedMapTile>();
   mapMarches = new Map<string, MapMarch>();
+  /** Caza activa (proto 2488); null cuando no hay objetivo en curso */
+  huntTarget: HuntTarget | null = null;
+  private huntRunning = false;
+  /** Último reino (K) observado en un push 2220 (monster hit) */
+  private lastKingdom = 0;
+  /** Date.now() del último aviso "sin energía" al gremio */
+  private lastNoEnergyChatAt = 0;
+  /** escaneo del mapa (2201 ventana por ventana) para hallar bichos */
+  private mapScanRunning = false;
+  private mapScanStartAt = 0;
+  /** Carta de la Suerte: cofres ya consultados/reclamados en esta sesión */
+  claimedChests = new Set<number>();
+  /** Cartas obtenidas por dígito (0-9) en esta sesión */
+  luckyCards: number[] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+  /** inicio (ms) del ciclo de cartas actual y búsquedas enviadas en él */
+  private luckyCycleAt = 0;
+  private luckyCycleSent = 0;
+  /** instante (ms) mínimo para el próximo 9866: ida+vuelta de la tropa */
+  private luckySearchBusyUntil = 0;
+  private luckySearchTarget: { x: number; y: number } | null = null;
+  private luckySearchTileId = 0;
+  private lastLuckyCardAt = 0;
+  /** tileId → instante (ms) en que vuelve a intentarse (rechazo/sin respuesta) */
+  private luckyChestBackoff = new Map<number, number>();
+  /** u32 ts del evento actual (byte 0..3 del 9861); 0 mientras no llega */
+  private luckyEventTs = 0;
+  /** duración del evento en segundos (byte 8..11 del 9861; 172740 ≈ 2 días) */
+  private luckyEventDuration = 0;
+  /** clave única del evento = `${eventTs}_${duration}` ('' hasta el primer 9861) */
+  private luckyEventKey = '';
+  /** la DB dice que este evento ya fue canjeado → sin buscar ni canjear */
+  private luckyExchangeReclaimed = false;
+  /** true cuando terminó la consulta a la DB del `luckyEventKey` vigente */
+  private luckyExchangeHydrated = false;
+  /** eventKey por el que se mandó el 9864 (contexto para aceptar el 9865) */
+  private luckyExchangeEventKey = '';
+  /** cache eventKey → ya canjeado: una sola consulta a la DB por evento */
+  private luckyExchangeCache = new Map<string, boolean>();
+  /** true mientras espera el 9865 tras haber mandado un 9864 */
+  private luckyExchangePending = false;
+  private luckyExchangeSentAt = 0;
+  /** valor (número) enviado en el último 9864, para contrastar el 9865 */
+  private luckyExchangeSentValue = 0;
+  private luckyExchangeAttempts = 0;
+  private luckyExchangeRetryAt = 0;
+  private luckyExchangeWarned = false;
+  private pendingTileInfo: {
+    x: number;
+    y: number;
+    timer: NodeJS.Timeout;
+    resolve: (v: TileInfoResult | null) => void;
+  } | null = null;
+  /** ventanas 2201 pendientes por recorrer cuando no hay cofres a la vista */
+  private luckyScanWindows: { x: number; y: number }[] = [];
+  private luckyScanIdx = 0;
   chatMessages: ChatMessage[] = [];
   guildApplications?: GuildApplicationsData;
   warParticipants: WarParticipant[] = [];
@@ -137,6 +239,12 @@ export class BotInstance extends EventEmitter {
   /** 2453 sin datos seguidos; al llegar a 3 se aborta el lote */
   supplyConsecutiveFails = 0;
   supplyManualFailed = false;
+  /** usuario pidió parar el lote actual */
+  supplyStopRequested = false;
+  /** el lote manual se cortó por petición del usuario (se lee en manualSupply) */
+  supplyStoppedByUser = false;
+  /** despierta las esperas del lote cuando el usuario pide parar */
+  supplyStopWakeup: (() => void) | null = null;
   marchQueue: MarchQueue;
   resourcesUpdatePending = false;
   lastRequestedMarchId = 0;
@@ -162,6 +270,11 @@ export class BotInstance extends EventEmitter {
   private logFile: string = '';
   private logDir: string = '';
   private midnightTimer?: NodeJS.Timeout;
+  // Timers creados en cada connect(): se limpian al reconectar/desconectar para
+  // que no se acumulen (doble login → reconexión → intervals duplicados)
+  private atalayaTimer?: NodeJS.Timeout;
+  private eventsTimer?: NodeJS.Timeout;
+  private eventSchedulerStarted = false;
 
   constructor(iggId: number, private token: string, private proxy: string, config?: BotConfig) {
     super();
@@ -193,6 +306,8 @@ export class BotInstance extends EventEmitter {
         this.connected = false;
         this.connecting = false;
         this.resTracker.stop();
+        this.clearCoreTimers();
+        this.stopHunt('Conexión perdida — caza cancelada');
         if (this.intentionalDisconnect) return;
         this.resetTransientState();
         const delay = Math.max(this.config.reconnectTime, 5) * 1000;
@@ -227,6 +342,11 @@ export class BotInstance extends EventEmitter {
     this.loadGuildApplications();
   }
 
+  private clearCoreTimers(): void {
+    if (this.atalayaTimer) { clearInterval(this.atalayaTimer); this.atalayaTimer = undefined; }
+    if (this.eventsTimer) { clearInterval(this.eventsTimer); this.eventsTimer = undefined; }
+  }
+
   resetTransientState(): void {
     for (const march of this.incomingMarches) {
       if (march.timer) { clearTimeout(march.timer); march.timer = undefined; }
@@ -243,6 +363,16 @@ export class BotInstance extends EventEmitter {
     this.supplyInFlight = [];
     this.eternalTreasureAvailable = false;
     this.eternalTreasureItems = [];
+    // Carta de la Suerte: nada pendiente debe sobrevivir a una reconexión
+    this.luckySearchBusyUntil = 0;
+    this.luckySearchTarget = null;
+    this.luckySearchTileId = 0;
+    if (this.pendingTileInfo) {
+      clearTimeout(this.pendingTileInfo.timer);
+      const resolve = this.pendingTileInfo.resolve;
+      this.pendingTileInfo = null;
+      resolve(null);
+    }
   }
 
   async connect(): Promise<boolean> {
@@ -314,7 +444,8 @@ export class BotInstance extends EventEmitter {
       }
     };
 
-    setInterval(() => {
+    this.clearCoreTimers(); // por si quedó alguno de una conexión anterior
+    this.atalayaTimer = setInterval(() => {
       try {
         checkExpiredMarchesImpl(this).catch((e: any) => this.bot.log(`[ATALAYA] error checkExpiredMarches: ${e?.message || e}`));
       } catch (e: any) { this.bot.log(`[ATALAYA] error checkExpiredMarches: ${e?.message || e}`); }
@@ -322,8 +453,11 @@ export class BotInstance extends EventEmitter {
 
     loadMarchHistoryDb(this).catch(() => {});
     this.loadEvents(true).catch(() => {});
-    setInterval(() => this.loadEvents().catch(() => {}), 60000);
-    startEventRewardScheduler(this).catch(e => this.bot.log(`[EVENT-REWARDS] Error scheduler: ${e?.message || e}`));
+    this.eventsTimer = setInterval(() => this.loadEvents().catch(() => {}), 60000);
+    if (!this.eventSchedulerStarted) {
+      this.eventSchedulerStarted = true;
+      startEventRewardScheduler(this).catch(e => this.bot.log(`[EVENT-REWARDS] Error scheduler: ${e?.message || e}`));
+    }
 
     this.bot.log('[+] Conectado y en línea');
     return true;
@@ -331,6 +465,7 @@ export class BotInstance extends EventEmitter {
 
   disconnect(): void {
     this.intentionalDisconnect = true;
+    this.clearCoreTimers();
     if (this.reconnectTimer) clearTimeout(this.reconnectTimer);
     if (this.midnightTimer) clearTimeout(this.midnightTimer);
     this.bot.disconnect();
@@ -487,6 +622,407 @@ export class BotInstance extends EventEmitter {
     this.bot.log('[COLISEO] 5204 enviado — solicitando rivales');
   }
 
+  // ── Caza de monstruos (2488) ──
+
+  getCurrentEnergy(): number {
+    return this.playerInfo?.energy ?? 0;
+  }
+
+  consumeEnergy(amount: number): void {
+    if (!this.playerInfo) return;
+    this.playerInfo.energy = Math.max(0, this.playerInfo.energy - amount);
+    this.bot.log(`[ENERG] -${amount} → ${this.playerInfo.energy}`);
+    this.emit('playerInfoUpdated');
+  }
+
+  isHunting(): boolean {
+    return this.huntTarget?.status === 'hunting';
+  }
+
+  emitHuntUpdate(): void {
+    this.emit('huntUpdated');
+  }
+
+  /**
+   * 2220 variante "monster hit" (golpe de caza): actualiza el HP del tile en
+   * mapTiles y, si es el objetivo, el estado de caza + cuándo vuelve la marcha.
+   */
+  onMonsterHit(hit: MonsterHitUpdate): void {
+    if (hit.kingdom >= 100) this.lastKingdom = hit.kingdom;
+    const tileId = encodeCoordId(hit.monster.x, hit.monster.y);
+    const tile = this.mapTiles.get(tileId);
+    const hpBefore = tile?.monster ? toHpPercent(tile.monster.hp) : hit.hp;
+    if (tile?.monster) {
+      const scaled = matchHpScale(tile.monster.hp, hit.hp);
+      if (tile.monster.hp !== scaled) {
+        tile.monster.hp = scaled;
+        this.emit('mapDataUpdated');
+      }
+    }
+    // HP del squad compartido + daño observado (todos los bots lo ven)
+    huntCoordinator.reportHit(this.iggId, tileId, hpBefore, tile?.monster ? toHpPercent(tile.monster.hp) : hit.hp);
+
+    const t = this.huntTarget;
+    const isTarget = !!t && t.x === hit.monster.x && t.y === hit.monster.y;
+    const hpPercent = tile?.monster ? toHpPercent(tile.monster.hp) : hit.hp;
+    this.bot.log(
+      `[CAZA] HP ${hpPercent.toFixed(1)}% en (${hit.monster.x},${hit.monster.y}) ` +
+      `de ${hit.name}${hit.guild ? ` [${hit.guild}]` : ''} · vuelta ${hit.returnSeconds}s` +
+      (isTarget ? '' : ' (no es el objetivo)'),
+    );
+
+    if (t && isTarget) {
+      if (tile?.monster) t.hp = tile.monster.hp;
+      t.hitsLanded++;
+      t.lastHitAt = Date.now();
+      t.returnAt = hit.returnSeconds > 0 ? Math.floor(Date.now() / 1000) + hit.returnSeconds : 0;
+      this.emitHuntUpdate();
+    }
+    // Solo despierta al bucle si el golpe es del objetivo (o no hay caza activa)
+    if (isTarget || !t || t.status !== 'hunting') this.emit('huntHitLanded');
+    if (t && isTarget && hit.hp <= 0) this.finishHunt('killed', 'Bicho muerto (confirmado por servidor)');
+  }
+
+  /**
+   * Marcha detectada en el mapa: si va hacia el objetivo de caza, registra la
+   * hora de salida y la duración de la ida (la vuelta llega en onMonsterHit).
+   */
+  onHuntMarch(march: MapMarch): void {
+    const t = this.huntTarget;
+    if (!t || t.status !== 'hunting') return;
+    if (march.destination.x !== t.x || march.destination.y !== t.y) return;
+    if (march.origin.x !== (this.playerInfo?.castleX ?? -1) || march.origin.y !== (this.playerInfo?.castleY ?? -1)) return;
+    t.departedAt = march.startTime;
+    t.outboundSeconds = march.duration;
+    this.bot.log(
+      `[CAZA] Ida → (${t.x},${t.y}) en ${march.duration}s (sale ${new Date(march.startTime * 1000).toLocaleTimeString()})`,
+    );
+    this.emitHuntUpdate();
+  }
+
+  /**
+   * El servidor rechazó el 2488 (`2489 ← 01`): el bicho ya no existe en el
+   * mapa (alguien lo mató). El tile sigue con el HP viejo en mapTiles porque
+   * el 2201 de refresh solo devuelve el eco de las celdas, nunca reenvía tiles
+   * ya entregados, así que hay que marcarlo acá para que el bucle no siga
+   * gastando energía y el squad se libere.
+   */
+  onHuntAttackRejected(): void {
+    const t = this.huntTarget;
+    if (!t || t.status !== 'hunting') return;
+    // ack viejo: si el objetivo ya cambió, este rechazo no es de este tile
+    if (Date.now() - t.lastHitAt > 15_000) return;
+    this.bot.log(`[CAZA] Golpe rechazado (2489 ← 01) — el bicho de (${t.x},${t.y}) ya no existe`);
+    if (this.mapTiles.delete(t.tileId)) this.emit('mapDataUpdated');
+    // HP 0 compartido: el resto del squad sale como "bicho muerto"
+    huntCoordinator.updateHp(t.tileId, 0, '2220');
+    this.finishHunt('gone', 'Bicho ya no existe (servidor rechazó el golpe)');
+  }
+
+  /** Espera (máx timeoutMs) a que llegue el 2220 con el HP del golpe. */
+  waitForHuntHit(timeoutMs: number): Promise<boolean> {
+    return new Promise(resolve => {
+      let done = false;
+      let timer: ReturnType<typeof setTimeout>;
+      const cleanup = () => {
+        clearTimeout(timer);
+        this.removeListener('huntHitLanded', onHit);
+        this.removeListener('huntUpdated', onUpdate);
+      };
+      const finish = (landed: boolean) => {
+        if (done) return;
+        done = true;
+        cleanup();
+        resolve(landed);
+      };
+      const onHit = () => finish(true);
+      // Si la caza se detiene a mitad de la espera, no colgar hasta el timeout
+      const onUpdate = () => {
+        if (!this.huntTarget || this.huntTarget.status !== 'hunting') finish(false);
+      };
+      timer = setTimeout(() => finish(false), timeoutMs);
+      this.on('huntHitLanded', onHit);
+      this.on('huntUpdated', onUpdate);
+    });
+  }
+
+  /** Política de squad (config.hunt.squad) tolerando configs viejas. */
+  private huntPolicy(): SquadPolicy {
+    return getHuntSquad(this.config.hunt);
+  }
+
+  /**
+   * Monstruos cazables ordenados por PS: **menor HP primero** (matarlo sale
+   * más barato), y a igual HP el más cerca del castillo.
+   *
+   * Se entra al squad del de menor HP siempre que haya lugar (o al bicho
+   * directo si nadie lo está cazando); si el squad ya cubre todos los golpes
+   * que faltan, ese tile queda fuera y sigue el siguiente de la lista.
+   */
+  listHuntCandidates(): ParsedMapTile[] {
+    const cx = this.playerInfo?.castleX ?? 0;
+    const cy = this.playerInfo?.castleY ?? 0;
+    const policy = this.huntPolicy();
+    const out: { tile: ParsedMapTile; hp: number }[] = [];
+    for (const t of this.mapTiles.values()) {
+      if (!t.monster || t.monster.hp <= 0) continue;
+      if (isMonsterChest(t.monster.id)) continue; // cofres de evento: no son monstruos
+      if (!getHuntLevel(this.config.hunt, t.monster.level)) continue;
+      const tileHp = toHpPercent(t.monster.hp);
+      const sq = huntCoordinator.peek(t.id);
+      if (sq && sq.hp <= 0) continue; // el squad ya sabe que ese bicho murió
+      if (sq && !huntCoordinator.hasRoom(t.id, policy)) continue; // squad completo: no nos sumamos
+      // HP = lo más fresco de lo que sabemos (solo baja: el mínimo es el más nuevo)
+      out.push({ tile: t, hp: sq ? Math.min(sq.hp, tileHp) : tileHp });
+    }
+    out.sort(
+      (a, b) =>
+        a.hp - b.hp ||
+        this.calculateDistance(a.tile.x, a.tile.y, cx, cy) -
+          this.calculateDistance(b.tile.x, b.tile.y, cx, cy),
+    );
+    return out.map(o => o.tile);
+  }
+
+  /**
+   * Arranca la caza de un tile (o del mejor candidato si no se pasa tileId).
+   * El bucle sigue hasta matar al bicho, que desaparezca o que se acabe la energía.
+   */
+  startHunt(tileId?: number): { ok: boolean; message: string } {
+    if (!this.bot.isOnline) return { ok: false, message: 'Bot no conectado' };
+    if (this.huntRunning) return { ok: false, message: 'Ya hay una caza en curso' };
+
+    let tile: ParsedMapTile | undefined;
+    if (tileId !== undefined) {
+      tile = this.mapTiles.get(tileId);
+      if (!tile || !tile.monster) return { ok: false, message: 'Tile sin monstruo' };
+      if (tile.monster.hp <= 0) return { ok: false, message: 'El monstruo ya está muerto' };
+      if (isMonsterChest(tile.monster.id)) return { ok: false, message: 'Ese tile es un cofre, no un monstruo' };
+      if (!getHuntLevel(this.config.hunt, tile.monster.level)) {
+        return { ok: false, message: `Nivel ${tile.monster.level} no configurado en Caza` };
+      }
+    } else {
+      const cands = this.listHuntCandidates();
+      if (cands.length === 0) return { ok: false, message: 'Sin bichos cazables en el mapa' };
+      tile = cands[0];
+    }
+
+    const claim = huntCoordinator.claim(
+      this.iggId,
+      { id: tile.id, x: tile.x, y: tile.y, level: tile.monster!.level, hp: toHpPercent(tile.monster!.hp) },
+      this.huntPolicy(),
+    );
+    if (!claim.ok) return { ok: false, message: claim.message || 'Tile ya ocupado por otro bot' };
+
+    this.huntTarget = {
+      tileId: tile.id,
+      x: tile.x,
+      y: tile.y,
+      level: tile.monster!.level,
+      hp: tile.monster!.hp,
+      hits: 0,
+      energySpent: 0,
+      status: 'hunting',
+      startedAt: Date.now(),
+      lastHitAt: 0,
+      hitsLanded: 0,
+      departedAt: 0,
+      outboundSeconds: 0,
+      returnAt: 0,
+    };
+    this.emitHuntUpdate();
+    const info = getMonster(tile.monster!.id);
+    const debilidad = info?.debilidad;
+    this.bot.log(
+      `[CAZA] Objetivo: ${monsterName(tile.monster!.id)} nivel ${tile.monster!.level} en (${tile.x},${tile.y}) ` +
+      `HP=${toHpPercent(tile.monster!.hp).toFixed(1)}% · ` +
+      `${debilidad ? `débil contra ${debilidad}` : 'debilidad desconocida'} · energía ${this.getCurrentEnergy()}`,
+    );
+    // Abrir la ventana del mapa: el 2220 con el HP solo llega mientras la región está cargada
+    this.requestMapData(tile.x, tile.y);
+    void this.runHuntLoop();
+    return { ok: true, message: `Cazando nivel ${tile.monster!.level} en (${tile.x},${tile.y})` };
+  }
+
+  stopHunt(reason = 'Detenido por el usuario'): void {
+    if (!this.huntTarget) return;
+    if (this.huntTarget.status !== 'hunting') return;
+    this.huntTarget.status = 'stopped';
+    this.bot.log(`[CAZA] ${reason}`);
+    this.emitHuntUpdate();
+  }
+
+  private finishHunt(status: HuntStatus, reason: string): void {
+    if (!this.huntTarget) return;
+    this.huntTarget.status = status;
+    this.bot.log(
+      `[CAZA] ${reason} — ${this.huntTarget.hits} golpe(s), -${this.huntTarget.energySpent} energía, ` +
+      `quedan ${this.getCurrentEnergy()}`,
+    );
+    this.emitHuntUpdate();
+    if (status === 'no-energy') this.announceNoEnergy();
+  }
+
+  /** Reino (K) del bicho: tile del castillo propio → visto en 2220 → gremio. */
+  private currentKingdom(): number {
+    const cx = this.playerInfo?.castleX;
+    const cy = this.playerInfo?.castleY;
+    if (cx !== undefined && cy !== undefined) {
+      const tile = this.mapTiles.get(encodeCoordId(cx, cy));
+      if (tile?.castle?.kingdom) return tile.castle.kingdom;
+    }
+    if (this.lastKingdom >= 100) return this.lastKingdom;
+    return this.guildInfo?.kingdomId ?? 0;
+  }
+
+  /**
+   * Se acabó la energía a mitad de caza: avisa en el chat de gremio con el bicho
+   * que queda a medias para que otro lo remate:
+   *   `Nv.2 Buen Apetito K: 1231 X:218 Y:582 87%`
+   */
+  private announceNoEnergy(): void {
+    const t = this.huntTarget;
+    if (!t || t.hp <= 0) return;
+    const now = Date.now();
+    if (now - this.lastNoEnergyChatAt < NO_ENERGY_CHAT_COOLDOWN_MS) {
+      this.bot.log('[CHAT] Aviso "sin energía" omitido (ya se avisó hace poco)');
+      return;
+    }
+    const monster = this.mapTiles.get(t.tileId)?.monster;
+    const name = monster ? monsterName(monster.id) : `monstruo ${t.level}`;
+    const kingdom = this.currentKingdom();
+    const hp = toHpPercent(t.hp).toFixed(0);
+    const text =
+      `Nv.${t.level} ${name}` +
+      (kingdom ? ` K:${kingdom}` : '') +
+      ` X:${t.x} Y:${t.y} ${hp}%`;
+    this.lastNoEnergyChatAt = now;
+    this.bot.sendChat(text);
+    this.bot.log(`[CHAT] Aviso gremio: ${text}`);
+  }
+
+  /**
+   * Bucle de caza: un golpe (2488) por vuelta, con el cooldown de config.hunt.cooldown.
+   * Cada vuelta relee el tile en mapTiles: si el HP llegó a 0 o el tile se borró, termina.
+   */
+  private async runHuntLoop(): Promise<void> {
+    this.huntRunning = true;
+    try {
+      while (this.bot.isOnline && this.huntTarget && this.huntTarget.status === 'hunting') {
+        const t = this.huntTarget;
+        const tile = this.mapTiles.get(t.tileId);
+
+        if (!tile || !tile.monster) {
+          this.finishHunt('gone', 'El bicho desapareció del mapa');
+          break;
+        }
+        t.level = tile.monster.level;
+        t.hp = tile.monster.hp;
+        // HP leído en el 2201 → el squad compartido de todos los bots lo ve
+        huntCoordinator.updateHp(t.tileId, toHpPercent(tile.monster.hp), '2201');
+        if (tile.monster.hp <= 0) {
+          this.finishHunt('killed', 'Bicho muerto');
+          break;
+        }
+
+        const cfg = getHuntLevel(this.config.hunt, t.level);
+        if (!cfg) {
+          this.finishHunt('no-target', `Sin config de caza para nivel ${t.level}`);
+          break;
+        }
+        const energy = this.getCurrentEnergy();
+        if (energy < cfg.energyCost) {
+          this.finishHunt('no-energy', `Energía insuficiente (${energy}/${cfg.energyCost})`);
+          break;
+        }
+
+        // ¿Hace falta mi golpe? needed = ceil(HP restante / daño medio).
+        // Si otros ya cubren los golpes que faltan → me libero y voy a otro bicho.
+        const squad = huntCoordinator.peek(t.tileId);
+        if (!squad || !squad.members.has(this.iggId)) {
+          // squad borrado (miembro pruneado) u ocupado por otro bot: reclamar o salir
+          const re = huntCoordinator.claim(
+            this.iggId,
+            { id: t.tileId, x: t.x, y: t.y, level: t.level, hp: toHpPercent(t.hp) },
+            this.huntPolicy(),
+          );
+          if (!re.ok) {
+            this.finishHunt('stopped', re.message || 'Otro bot tomó ese bicho');
+            break;
+          }
+        }
+        const gate = huntCoordinator.canHit(this.iggId, t.tileId, this.huntPolicy());
+        if (!gate.ok) {
+          if (gate.reason === 'dead') {
+            this.finishHunt('killed', 'Bicho muerto (HP compartido del squad)');
+          } else {
+            this.finishHunt(
+              'stopped',
+              `Sobra en el squad: HP ${gate.hp.toFixed(0)}% · ${gate.active} bot(s) cubren ${gate.needed} golpe(s) — va a por otro bicho`,
+            );
+          }
+          break;
+        }
+        if (gate.needed > 1 || gate.active > 0) {
+          this.bot.log(
+            `[SQUAD] (${t.x},${t.y}) HP ${gate.hp.toFixed(0)}% · daño medio ${gate.avgDamage.toFixed(1)}% · ` +
+            `faltan ${gate.needed} golpe(s) · ${gate.active} en vuelo`,
+          );
+        }
+
+        const cooldownMs = Math.max(1, this.config.hunt.cooldown || 8) * 1000;
+        // Espera el 2220 con el HP nuevo: ida (conocida por la marcha anterior) + impacto.
+        // Si no llega, fallback al cooldown.
+        const outboundMs = t.outboundSeconds > 0 ? (t.outboundSeconds + 5) * 1000 : 20_000;
+        const hitTimeoutMs = Math.min(Math.max(cooldownMs, outboundMs), 60_000);
+        // Ocupado: golpe en vuelta + espera (los demás no se suben mientras tanto)
+        huntCoordinator.markBusy(this.iggId, t.tileId, Date.now() + hitTimeoutMs + cooldownMs);
+
+        const payload = getHuntPayloadHex(cfg, getMonsterDebilidad(tile.monster.id));
+        if (!payload) {
+          this.finishHunt('no-target', `Sin hex de ataque para nivel ${t.level} (magia/físico)`);
+          break;
+        }
+        if (!huntMonster(this.bot, t.x, t.y, payload)) {
+          this.finishHunt('stopped', 'Fallo al enviar el 2488');
+          break;
+        }
+        this.consumeEnergy(cfg.energyCost);
+        t.hits++;
+        t.energySpent += cfg.energyCost;
+        t.lastHitAt = Date.now();
+        this.emitHuntUpdate();
+        this.bot.log(
+          `[CAZA] Golpe ${t.hits} → nivel ${t.level} en (${t.x},${t.y}) · HP=${toHpPercent(t.hp).toFixed(1)}% · ` +
+          `energía ${this.getCurrentEnergy()}`,
+        );
+
+        const landed = await this.waitForHuntHit(hitTimeoutMs);
+        if (!landed && this.huntTarget?.status === 'hunting') {
+          this.bot.log(
+            `[CAZA] Sin 2220 de HP tras ${(hitTimeoutMs / 1000).toFixed(0)}s — sigo en UI map, espero el próximo update`,
+          );
+        }
+        if (!this.huntTarget || this.huntTarget.status !== 'hunting') break;
+        if (!this.bot.isOnline) break;
+
+        // No volver a golpear hasta que la marcha regrese (vuelta informada en el 2220)
+        const now = Math.floor(Date.now() / 1000);
+        const waitUntil = Math.max(now + Math.ceil(cooldownMs / 1000), this.huntTarget.returnAt);
+        // El squad ve la espera real (ida + vuelta), no el fallback
+        huntCoordinator.markBusy(this.iggId, t.tileId, Math.max(Date.now(), waitUntil * 1000));
+        await this.sleep(Math.min(Math.max((waitUntil - now) * 1000 + (landed ? 500 : 0), 1000), 120_000));
+        if (!this.huntTarget || this.huntTarget.status !== 'hunting') break;
+        if (!this.bot.isOnline) break;
+        // El mapa ya se cargó con el 2201 de startHunt: la UI map queda abierta
+        // y los updates (HP, muerte) llegan solos por 2220. No se re-pide.
+      }
+    } finally {
+      this.huntRunning = false;
+      huntCoordinator.release(this.iggId);
+    }
+  }
+
   waitForColiseumUpdate(prevFights: number, timeoutMs = 6000): Promise<void> {
     return new Promise(resolve => {
       const check = () => {
@@ -516,11 +1052,663 @@ export class BotInstance extends EventEmitter {
     this.bot.log(`[COLISEO] 5208: atacando rival index=${rivalIndex} id=${rivalId} héroes=[${heroIds.join(',')}]`);
   }
 
+  isMapScanning(): boolean {
+    return this.mapScanRunning;
+  }
+
+  /**
+   * Escanea el mapa alrededor del castillo para localizar monstruos (Caza):
+   * pide ventana por ventana (2201) hasta cubrir config.hunt.scanRadius tiles.
+   * Se corta si aparece un bicho cazable, arranca una caza o se desconecta.
+   * Devuelve false si ya hay un escaneo en curso o si el último arrancó hace poco.
+   */
+  startMapScan(): boolean {
+    if (this.mapScanRunning || this.huntRunning) return false;
+    if (!this.bot.isOnline) return false;
+    const cx = this.playerInfo?.castleX;
+    const cy = this.playerInfo?.castleY;
+    if (cx === undefined || cy === undefined) return false;
+    const now = Date.now();
+    if (this.mapScanStartAt > 0 && now - this.mapScanStartAt < MAP_SCAN_REPEAT_MS) return false;
+    const radius = Math.max(0, this.config.hunt.scanRadius ?? 50);
+    const windows = buildScanWindows(cx, cy, radius);
+    if (windows.length === 0) return false;
+    this.mapScanStartAt = now;
+    void this.runMapScan(windows, radius);
+    return true;
+  }
+
+  private async runMapScan(windows: { x: number; y: number }[], radius: number): Promise<void> {
+    this.mapScanRunning = true;
+    try {
+      this.bot.log(`[CAZA] Escaneando mapa: ${windows.length} ventana(s), radio ${radius}`);
+      for (const w of windows) {
+        if (!this.bot.isOnline || this.huntRunning) {
+          this.bot.log('[CAZA] Escaneo interrumpido');
+          break;
+        }
+        if (this.listHuntCandidates().length > 0) {
+          break;
+        }
+        this.requestMapData(w.x, w.y);
+        await this.sleep(MAP_SCAN_INTERVAL_MS);
+      }
+      this.bot.log(`[CAZA] Escaneo terminado: ${this.listHuntCandidates().length} bicho(s) cazable(s) en el mapa`);
+    } finally {
+      this.mapScanRunning = false;
+      this.mapScanStartAt = Date.now();
+    }
+  }
+
   requestMapData(x?: number, y?: number): void {
     const cx = x ?? this.playerInfo?.castleX ?? 0;
     const cy = y ?? this.playerInfo?.castleY ?? 0;
     sendMapData(this.bot, cx, cy);
     this.bot.log(`[MAPA] Solicitando tiles alrededor de (${cx}, ${cy})...`);
+  }
+
+  // ── Carta de la Suerte (cofres de especie 217 en el mapa) ─────────────
+  //
+  // Los envíos (2202/9866) salen SOLO desde runLuckyCardStep(), que ejecuta
+  // LuckyCardAction dentro del bucle principal de ActionRunner. Nada externo
+  // al bucle manda comandos: acá vive el estado y la lógica de cada paso.
+
+  /**
+   * Un paso del ciclo de cartas (lo llama el bucle principal):
+   *  - si todavía no llegó el 9861 o la DB no confirmó el estado del canje:
+   *    no hace nada (no se busca cofre a ciegas);
+   *  - si ya hay 3 nueves en mano: canjea con 9864 y deja de buscar cofres;
+   *  - si la DB dice que el evento actual ya fue canjeado: no hace nada;
+   *  - consulta cofres con 2202 de a UNO por el más cercano (hasta
+   *    `LUCKY_TILE_TRIES_PER_STEP` por paso): el que conteste "reclamado" o
+   *    "sin flag" se cachea y se pasa al siguiente; con `NOT` manda la tropa
+   *    (9866);
+   *  - mientras la tropa no vuelve (ida+vuelta = 2×duración del 9867) no hace
+   *    nada, así que sólo hay UNA búsqueda por cuenta;
+   *  - devuelve true si llamó al juego (el runner apaga su cooldown).
+   */
+  async runLuckyCardStep(): Promise<boolean> {
+    const cfg = getLuckyCardsConfig(this.config);
+    const now = Date.now();
+    if (!cfg.enable || !this.bot.isOnline) return false;
+
+    // Sin 9861 no hay evento definido y sin la consulta a la DB no se sabe si
+    // ya se canjeó: mientras tanto no se busca ni se reclama ningún cofre.
+    if (!this.luckyEventKey || !this.luckyExchangeHydrated) return false;
+
+    // Tropa fuera: si ya venció la vuelta se libera el slot. Mientras esté
+    // fuera no se consulta ningún cofre, salvo en modo canje (que no usa slot).
+    const exchanging = this.isLuckyExchanged() || this.luckyHasExchangeDigits();
+    if (this.luckySearchTarget) {
+      if (now < this.luckySearchBusyUntil) {
+        if (!exchanging) return false;
+      } else {
+        this.releaseLuckySearch(false);
+      }
+    }
+
+    // Evento vencido (inicio + duración del 9861): ya no se busca ni se canjea.
+    if (this.luckyEventDuration > 0 && now / 1000 > this.luckyEventTs + this.luckyEventDuration) {
+      return false;
+    }
+
+    // Evento marcado como canjeado en la DB: el bot ya no busca ni reclama.
+    if (this.isLuckyExchanged()) return false;
+
+    // Tres 9 en la mano: se canjea (9864) en vez de buscar más cofres.
+    if (this.luckyHasExchangeDigits()) return this.runLuckyExchangeStep(now);
+
+    const newCycle = this.luckyCycleAt === 0 || now - this.luckyCycleAt >= cfg.intervalSec * 1000;
+    if (newCycle) {
+      this.luckyCycleAt = now;
+      this.luckyCycleSent = 0;
+    }
+    if (this.luckyCycleSent >= cfg.maxPerCycle) return false;
+
+    const cx = this.playerInfo?.castleX ?? 0;
+    const cy = this.playerInfo?.castleY ?? 0;
+    const chests = this.findLuckyChests(cx, cy, now, LUCKY_TILE_TRIES_PER_STEP);
+    if (chests.length === 0) {
+      // Sin cofres a la vista: una ventana 2201 por ciclo (no spamear 2201)
+      if (newCycle) this.refreshLuckyScan(cx, cy);
+      return false;
+    }
+
+    // Se recorren candidatos de a uno (el 2202 comparte el cooldown de 1 s):
+    // el que contesta "reclamado" o "sin flag" se CACHEA y se pasa al
+    // siguiente sin cancelar el paso; sólo un cofre reclamable manda el 9866.
+    let consulto = false;
+    for (const chest of chests) {
+      const info = await this.requestTileInfo(chest.x, chest.y);
+      consulto = true;
+      if (!this.bot.isOnline) return true;
+      if (!info) {
+        this.bot.log(`[CARTA] (${chest.x},${chest.y}) sin respuesta 2202`);
+        this.luckyChestBackoff.set(chest.id, Date.now() + LUCKY_CHEST_BACKOFF_MS);
+        continue;
+      }
+      if (info.claimed === true) {
+        this.claimedChests.add(chest.id);
+        this.bot.log(`[CARTA] (${chest.x},${chest.y}) ya reclamado por esta cuenta — cacheado, sigue con otro`);
+        continue;
+      }
+      if (info.claimed === null) {
+        this.bot.log(
+          `[CARTA] (${chest.x},${chest.y}) sin flag de reclamo (serial ${info.serial}) — cacheado ${LUCKY_NO_FLAG_BACKOFF_MS / 60000} min, sigue con otro`,
+        );
+        this.luckyChestBackoff.set(chest.id, Date.now() + LUCKY_NO_FLAG_BACKOFF_MS);
+        continue;
+      }
+
+      await this.sendLuckySearch(chest.x, chest.y, chest.id);
+      this.luckyCycleSent++;
+      return true;
+    }
+    return consulto;
+  }
+
+  /** true si ya hay al menos tres nueves entre las cartas: hora de canjear. */
+  private luckyHasExchangeDigits(): boolean {
+    return (this.luckyCards[9] ?? 0) >= LUCKY_EXCHANGE_MIN_NINES;
+  }
+
+  /**
+   * El evento actual (`luckyEventKey`) ya quedó canjeado. Lo decide la DB
+   * (`LuckyExchangeClaim.reclaimed`), hidratada con cada 9861: `config.
+   * luckyCards.exchangedTs` es legacy y ya no se lee.
+   */
+  private isLuckyExchanged(): boolean {
+    return this.luckyExchangeReclaimed;
+  }
+
+  /**
+   * Número a canjear (u32 del 9864): los tres slots libres armados con los
+   * dígitos más altos en mano. Capturas reales dan 843, 986 y 643 (siempre
+   * los 3 más altos en orden descendente) y con tres nueves da 999.
+   */
+  private luckyExchangeValue(): number {
+    const digits: number[] = [];
+    for (let d = 9; d >= 0; d--) {
+      for (let i = 0; i < (this.luckyCards[d] ?? 0); i++) digits.push(d);
+    }
+    const a = digits[0] ?? 0;
+    const b = digits[1] ?? 0;
+    const c = digits[2] ?? 0;
+    return a * 100 + b * 10 + c;
+  }
+
+  /**
+   * Con tres nueves en la mano ya no se buscan más cofres: se manda el canje
+   * (9864) y se espera el 9865. Devuelve true sólo si acaba de enviarlo.
+   * Agota los reintentos → cierra el evento en la DB (ver markLuckyExchanged).
+   */
+  private async runLuckyExchangeStep(now: number): Promise<boolean> {
+    if (this.luckyExchangePending) {
+      if (now - this.luckyExchangeSentAt <= LUCKY_EXCHANGE_TIMEOUT_MS) return false;
+      this.luckyExchangePending = false;
+      this.bot.log('[CARTA] 9864 sin respuesta 9865 (timeout) — se reintenta');
+    }
+    if (now < this.luckyExchangeRetryAt) return false;
+    if (this.luckyExchangeAttempts >= LUCKY_EXCHANGE_MAX_ATTEMPTS) {
+      if (!this.luckyExchangeWarned) {
+        this.luckyExchangeWarned = true;
+        void this.markLuckyExchanged(
+          `${LUCKY_EXCHANGE_MAX_ATTEMPTS} intentos de canje sin respuesta`,
+          -1,
+          this.luckyExchangeSentValue,
+        );
+      }
+      return false;
+    }
+    await this.sendLuckyExchange();
+    return true;
+  }
+
+  private async sendLuckyExchange(): Promise<void> {
+    const value = this.luckyExchangeValue();
+    this.luckyExchangeRetryAt = Date.now() + LUCKY_EXCHANGE_RETRY_MS;
+    try {
+      await exchangeLuckyCards(this.bot, value);
+    } catch (e: any) {
+      // No llegó a salir: NO cuenta como intento (el evento sigue abierto)
+      this.bot.log(`[CARTA] error 9864: ${e?.message || e} — no se contó como intento`);
+      return;
+    }
+    this.luckyExchangePending = true;
+    this.luckyExchangeSentAt = Date.now();
+    this.luckyExchangeSentValue = value;
+    this.luckyExchangeEventKey = this.luckyEventKey;
+    this.luckyExchangeAttempts++;
+    this.bot.log(
+      `[CARTA] 9864 → canjear ${value} (${this.luckyCards[9] ?? 0} nueve(s)) — se deja de buscar cofres`,
+    );
+  }
+
+  /**
+   * 9865: respuesta al 9864. Layout confirmado: status 0 = canje aplicado y
+   * `[1..4]` eco del número enviado. Sólo se acepta si el 9864 se mandó para
+   * el evento vigente; cualquier status (o no poder parsearlo) cierra el
+   * evento: sólo existe UN canje por evento. Ver `docs/protocols/9865.md`.
+   */
+  onLuckyExchangeResponse(res: LuckyExchangeResult | null, body: Buffer): void {
+    if (!this.luckyExchangePending) {
+      this.bot.log(`[CARTA] 9865 sin canje pendiente — se ignora (${body.toString('hex')})`);
+      return;
+    }
+    this.luckyExchangePending = false;
+    if (this.luckyExchangeEventKey && this.luckyExchangeEventKey !== this.luckyEventKey) {
+      this.bot.log('[CARTA] 9865 de otro evento — se ignora');
+      return;
+    }
+    if (!res) {
+      this.bot.log(`[CARTA] 9865 sin parsear (${body.length} B): ${body.toString('hex')}`);
+      void this.markLuckyExchanged('9865 sin parsear (no se pudo confirmar)', -2, this.luckyExchangeSentValue);
+      return;
+    }
+    const echoOk = res.echo === this.luckyExchangeSentValue;
+    this.bot.log(
+      `[CARTA] 9865 status=${res.status} número=${res.echo}` +
+        `${echoOk ? '' : ` (esperaba ${this.luckyExchangeSentValue})`}` +
+        ` → saldo ${res.gemsTotal} gems (tail=${res.tail})`,
+    );
+    if (res.status !== 0x00) {
+      void this.markLuckyExchanged(
+        `9865 rechazado (status=0x${res.status.toString(16)}) — sólo existe un canje, se cierra el evento`,
+        res.status,
+        res.echo,
+        res.gemsTotal,
+      );
+      return;
+    }
+    if (!echoOk) this.bot.log('[CARTA] 9865 eco distinto al enviado — se marca igual (status 0)');
+    void this.markLuckyExchanged('¡CANJE CONFIRMADO! (9865 status 00)', 0, res.echo, res.gemsTotal);
+  }
+
+  /**
+   * Cierra el canje del evento ACTUAL en la DB (`reclaimed = true`): desde
+   * acá esta cuenta no vuelve a buscar cofres ni a canjear en este evento.
+   * Sólo existe UN canje por evento, así que cualquier respuesta del servidor
+   * (o su falta, tras los reintentos) cierra el evento — ver 9865.md.
+   */
+  private async markLuckyExchanged(reason: string, status: number, value = 0, gemsTotal = 0): Promise<void> {
+    const key = this.luckyEventKey;
+    if (!key) {
+      this.bot.log(`[CARTA] ${reason} — sin eventKey (no llegó el 9861): NO se pudo registrar en la DB`);
+      return;
+    }
+    this.luckyExchangeReclaimed = true;
+    this.luckyExchangeHydrated = true;
+    this.luckyExchangeCache.set(key, true);
+    this.luckyExchangePending = false;
+    this.emit('luckyCardUpdated');
+    this.bot.log(
+      `[CARTA] ${reason}${gemsTotal ? ` · saldo ${gemsTotal} gems` : ''} → evento ${key} marcado en la DB · el bot ya no busca ni reclama cofres`,
+    );
+    if (!databaseService.isConnected()) {
+      this.bot.log('[CARTA] DB sin conexión: el canje queda en memoria; se reintentará en el próximo 9861');
+      return;
+    }
+    try {
+      await databaseService.LuckyExchangeClaimModel.updateOne(
+        { iggId: this.iggId, eventKey: key },
+        {
+          $set: {
+            iggId: this.iggId,
+            eventKey: key,
+            eventStartTs: this.luckyEventTs,
+            eventDuration: this.luckyEventDuration,
+            eventEndTs: this.luckyEventTs + this.luckyEventDuration,
+            reclaimed: true,
+            status,
+            value,
+            gemsTotal,
+            at: Math.floor(Date.now() / 1000),
+          },
+        },
+        { upsert: true },
+      );
+    } catch (e: any) {
+      this.bot.log(`[CARTA] error guardando el canje en la DB: ${e?.message || e}`);
+    }
+  }
+
+  /**
+   * Define el evento vigente a partir del 9861. Si cambia la ronda se limpia
+   * el estado de canje (intentos, pendiente, avisos) y se consulta a la DB si
+   * ese evento ya fue canjeado por esta cuenta.
+   */
+  private setLuckyEvent(eventTs: number, duration: number): void {
+    const key = `${eventTs}_${duration}`;
+    if (key === this.luckyEventKey) return;
+    this.luckyEventKey = key;
+    this.luckyEventTs = eventTs;
+    this.luckyEventDuration = duration;
+    this.luckyExchangePending = false;
+    this.luckyExchangeAttempts = 0;
+    this.luckyExchangeRetryAt = 0;
+    this.luckyExchangeWarned = false;
+    this.luckyExchangeEventKey = '';
+    this.luckyExchangeReclaimed = this.luckyExchangeCache.get(key) ?? false;
+    this.luckyExchangeHydrated = this.luckyExchangeCache.has(key);
+    const fin = duration > 0 ? new Date((eventTs + duration) * 1000).toISOString() : '¿?';
+    this.bot.log(`[CARTA] evento ${key} (fin ${fin})`);
+    void this.hydrateLuckyExchange(key);
+  }
+
+  /**
+   * Trae de la DB si este evento ya fue canjeado por esta cuenta (una consulta
+   * por evento, cacheada). Si no hay DB conectada se confía en el 9861.
+   */
+  private async hydrateLuckyExchange(key: string): Promise<void> {
+    if (this.luckyExchangeCache.has(key)) {
+      this.luckyExchangeHydrated = true;
+      return;
+    }
+    if (!databaseService.isConnected()) {
+      this.luckyExchangeHydrated = true;
+      return;
+    }
+    try {
+      const doc = await databaseService.LuckyExchangeClaimModel
+        .findOne({ iggId: this.iggId, eventKey: key })
+        .lean();
+      if (doc?.reclaimed) {
+        this.luckyExchangeCache.set(key, true);
+        this.bot.log(`[CARTA] evento ${key} ya canjeado en la DB (status=${doc.status}) — sin buscar ni canjear`);
+      }
+      this.seedLuckyExchangeFromConfig(key);
+    } catch (e: any) {
+      this.bot.log(`[CARTA] error leyendo el canje en la DB: ${e?.message || e}`);
+    } finally {
+      if (this.luckyEventKey === key) {
+        if (!this.luckyExchangeReclaimed && this.luckyExchangeCache.get(key)) {
+          this.luckyExchangeReclaimed = true;
+          this.emit('luckyCardUpdated');
+        }
+        this.luckyExchangeHydrated = true;
+      }
+    }
+  }
+
+  /**
+   * Migración del estado viejo: el canje se guardaba en
+   * `config.luckyCards.exchangedTs` (que sólo vivía en el JSON, que la carga
+   * desde la DB ni lee). Si ese ts coincide con el evento vigente se siembra
+   * la fila en la DB para que esas cuentas no vuelvan a canjear.
+   */
+  private seedLuckyExchangeFromConfig(key: string): void {
+    const legacy = this.config.luckyCards?.exchangedTs ?? 0;
+    if (legacy && legacy === this.luckyEventTs && !this.luckyExchangeCache.get(key)) {
+      this.plantLegacyExchanged(key, legacy, 'config de la DB');
+      return;
+    }
+    // El JSON de la cuenta (fuente original de ese campo) puede traerlo aunque
+    // la DB no: ahí estaban las cuentas que ya canjearon este evento.
+    try {
+      const raw = JSON.parse(fs.readFileSync(configService.getConfigPath(this.iggId), 'utf-8'));
+      const fromFile = normalizeKeys(raw)?.luckyCards?.exchangedTs ?? 0;
+      if (fromFile && fromFile === this.luckyEventTs && !this.luckyExchangeCache.get(key)) {
+        this.plantLegacyExchanged(key, fromFile, 'config.json');
+      }
+    } catch {
+      /* sin config.json o ilegible: no hay nada que migrar */
+    }
+  }
+
+  /** Siembra la fila del evento a partir del `exchangedTs` legacy (status -3). */
+  private plantLegacyExchanged(key: string, legacyTs: number, origen: string): void {
+    this.luckyExchangeCache.set(key, true);
+    this.bot.log(`[CARTA] migración: exchangedTs=${legacyTs} (${origen}) → evento ${key} marcado como canjeado`);
+    if (!databaseService.isConnected()) return;
+    void databaseService.LuckyExchangeClaimModel
+      .updateOne(
+        { iggId: this.iggId, eventKey: key },
+        {
+          $set: {
+            iggId: this.iggId,
+            eventKey: key,
+            eventStartTs: legacyTs,
+            eventDuration: this.luckyEventDuration,
+            eventEndTs: legacyTs + this.luckyEventDuration,
+            reclaimed: true,
+            status: -3,
+            value: 0,
+            gemsTotal: 0,
+            at: Math.floor(Date.now() / 1000),
+          },
+        },
+        { upsert: true },
+      )
+      .catch((e: any) => this.bot.log(`[CARTA] error migrando el canje a la DB: ${e?.message || e}`));
+  }
+
+  /**
+   * Cofres sin reclamar y fuera de backoff, ordenados por distancia al
+   * castillo (los `limit` más cercanos). Los que ya se consultaron y
+   * respondieron "reclamado" / "sin flag" quedan cacheados y no vuelven a
+   * salir hasta que venza su backoff.
+   */
+  private findLuckyChests(cx: number, cy: number, now: number, limit: number): ParsedMapTile[] {
+    const cand: { t: ParsedMapTile; d: number }[] = [];
+    for (const t of this.mapTiles.values()) {
+      if (!t.monster || !isMonsterChest(t.monster.id)) continue;
+      if (this.claimedChests.has(t.id)) continue;
+      const retryAt = this.luckyChestBackoff.get(t.id);
+      if (retryAt !== undefined) {
+        if (retryAt <= now) this.luckyChestBackoff.delete(t.id);
+        else continue;
+      }
+      cand.push({ t, d: this.calculateDistance(t.x, t.y, cx, cy) });
+    }
+    cand.sort((a, b) => a.d - b.d);
+    return cand.slice(0, Math.max(1, limit)).map(c => c.t);
+  }
+
+  /**
+   * Sin cofres a la vista: pide la siguiente ventana 2201 alrededor del
+   * castillo para que lleguen tiles nuevos (no mientras corre el escaneo
+   * de caza, que cancelaría su tanda). Recorre hunt.scanRadius y repite.
+   */
+  private refreshLuckyScan(cx: number, cy: number): void {
+    if (this.mapScanRunning || this.huntRunning) return;
+    if (this.luckyScanWindows.length === 0 || this.luckyScanIdx >= this.luckyScanWindows.length) {
+      const radius = Math.max(0, this.config.hunt.scanRadius ?? 50);
+      this.luckyScanWindows = buildScanWindows(cx, cy, radius);
+      this.luckyScanIdx = 0;
+    }
+    const w = this.luckyScanWindows[this.luckyScanIdx++];
+    if (w) this.requestMapData(w.x, w.y);
+  }
+
+  /** 2202 al tile del cofre; devuelve el 2220 de 60 B (NOT/YES) o null si expira. */
+  private requestTileInfo(x: number, y: number, timeoutMs = 5000): Promise<TileInfoResult | null> {
+    if (this.pendingTileInfo) {
+      const prev = this.pendingTileInfo;
+      this.pendingTileInfo = null;
+      clearTimeout(prev.timer);
+      prev.resolve(null);
+    }
+    return new Promise<TileInfoResult | null>(resolve => {
+      const timer = setTimeout(() => {
+        if (this.pendingTileInfo?.timer === timer) this.pendingTileInfo = null;
+        resolve(null);
+      }, timeoutMs);
+      this.pendingTileInfo = {
+        x,
+        y,
+        timer,
+        resolve: v => {
+          clearTimeout(timer);
+          if (this.pendingTileInfo?.timer === timer) this.pendingTileInfo = null;
+          resolve(v);
+        },
+      };
+      queryTileInfo(this.bot, x, y).catch(e => this.bot.log(`[CARTA] error 2202: ${e?.message || e}`));
+    });
+  }
+
+  /** Llegó la respuesta del 2202 (60 B): despierta la espera si es el tile nuestro. */
+  onTileInfo(info: TileInfoResult): void {
+    const p = this.pendingTileInfo;
+    if (!p || p.x !== info.x || p.y !== info.y) return;
+    p.resolve(info);
+  }
+
+  private async sendLuckySearch(x: number, y: number, tileId: number): Promise<void> {
+    // Salvaguarda del slot hasta que llegue el 9867 (trae la duración real)
+    this.luckySearchTarget = { x, y };
+    this.luckySearchTileId = tileId;
+    this.luckySearchBusyUntil = Date.now() + LUCKY_SEARCH_FALLBACK_MS;
+    try {
+      await startLuckyCardSearch(this.bot, x, y);
+    } catch (e: any) {
+      this.luckySearchTarget = null;
+      this.luckySearchTileId = 0;
+      this.luckySearchBusyUntil = 0;
+      this.bot.log(`[CARTA] error 9866: ${e?.message || e}`);
+      return;
+    }
+    this.claimedChests.add(tileId);
+    this.bot.log(`[CARTA] 9866 → (${x},${y}) buscando carta…`);
+  }
+
+  /**
+   * Libera el slot de búsqueda. `retry` = el servidor rechazó el 9866 (no
+   * salió ninguna marcha): el cofre se desmarca y se reintenta más tarde.
+   */
+  private releaseLuckySearch(retry: boolean): void {
+    const t = this.luckySearchTarget;
+    if (!t) return;
+    const tileId = this.luckySearchTileId;
+    this.luckySearchTarget = null;
+    this.luckySearchTileId = 0;
+    this.luckySearchBusyUntil = 0;
+    if (retry && tileId) {
+      this.claimedChests.delete(tileId);
+      this.luckyChestBackoff.set(tileId, Date.now() + LUCKY_CHEST_BACKOFF_MS);
+      this.bot.log(`[CARTA] (${t.x},${t.y}) rechazada — slot libre, reintento en ${LUCKY_CHEST_BACKOFF_MS / 1000}s`);
+    } else {
+      this.bot.log('[CARTA] búsqueda terminada — slot libre');
+    }
+  }
+
+  /**
+   * 9867: respuesta al 9866. status 0 = aceptada (la tropa sale con ida y
+   * vuelta de `durationSec`); cualquier otro status = rechazo (no sale marcha).
+   */
+  onLuckySearchAck(res: LuckySearchResult | null, raw: Buffer): void {
+    if (!res) {
+      this.bot.log(`[CARTA] 9867 sin parsear: ${raw.toString('hex')}`);
+      return;
+    }
+    if (res.status !== 0x00) {
+      this.bot.log(`[CARTA] 9867 rechazado (status=0x${res.status.toString(16)})`);
+      this.releaseLuckySearch(true);
+      return;
+    }
+    const ack = res.ack;
+    if (!ack) return;
+    this.bot.log(`[CARTA] 9867 ack (${ack.x},${ack.y}) duración ${ack.durationSec}s`);
+    if (!this.luckySearchTarget) return;
+    // Ida + vuelta + margen: hasta que la tropa no regresa no se manda otra
+    this.luckySearchBusyUntil = Date.now() + ack.durationSec * 2 * 1000 + LUCKY_SEARCH_MARGIN_MS;
+  }
+
+  /**
+   * 9861: el servidor manda el conjunto REAL de cartas (login y reset diario)
+   * más el inicio y la duración del evento. Manda sobre el contador local, que
+   * sólo refleja lo visto desde el último 9861 (si el jugador canjea desde el
+   * móvil, esto lo pone en cero).
+   */
+  onLuckyCardInfo(info: LuckyCardInfo): void {
+    if (info.eventTs) this.setLuckyEvent(info.eventTs, info.duration);
+    const counts = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    for (const digit of info.cards) counts[digit] = (counts[digit] ?? 0) + 1;
+    const changed = counts.some((c, i) => c !== this.luckyCards[i]);
+    this.luckyCards = counts;
+    const total = info.cards.length;
+    const nines = counts[9] ?? 0;
+    const extra = this.isLuckyExchanged()
+      ? ' — evento ya canjeado, sin buscar más'
+      : nines >= LUCKY_EXCHANGE_MIN_NINES
+        ? ` — ¡${nines} nueves! se canjea (9864)`
+        : '';
+    this.bot.log(
+      total > 0
+        ? `[CARTA] 9861 INFO: ${total} carta(s) en mano: ${info.cards.join(',')}${extra}`
+        : `[CARTA] 9861 INFO: sin cartas en mano${extra}`,
+    );
+    // El servidor volvió a mandar el estado con las manos vacías después del
+    // 9864 (aunque ya haya pasado el timeout del 9865): otra señal de que el
+    // canje se aplicó, así que cierra el evento sin esperar el 9865.
+    if (
+      info.cardCount === 0 &&
+      this.luckyEventKey &&
+      this.luckyExchangeEventKey === this.luckyEventKey &&
+      !this.isLuckyExchanged()
+    ) {
+      void this.markLuckyExchanged('9861 con mano vacía tras el 9864', 0, this.luckyExchangeSentValue);
+    }
+    if (changed) this.emit('luckyCardUpdated');
+  }
+
+  /**
+   * Llegó una carta que ENTRÓ a la mano (9862 con flag 01). La mano sólo admite
+   * 10 cartas y son las de mayor dígito: si está llena, la que se cae es la
+   * menor. El servidor ya validó la entrada, así que acá se replica el descarte
+   * para que `luckyCards[]` no sobre-cuente (ver docs/protocols/9862.md).
+   *
+   * Un duplicado dentro de los 5 s no suma dos veces.
+   */
+  onLuckyCardEvent(digit: number | null, source: string, raw: Buffer): void {
+    if (digit === null) {
+      if (raw.length > 0)
+        this.bot.log(`[CARTA] ${source} no sumada (flag 00 = fuera del top 10, o sin dígito): ${raw.toString('hex')}`);
+      return;
+    }
+    const now = Date.now();
+    if (now - this.lastLuckyCardAt < 5000) return;
+    this.lastLuckyCardAt = now;
+
+    const dropped: number[] = [];
+    let total = this.luckyCards.reduce((a, b) => a + b, 0);
+    while (total >= LUCKY_HAND_SIZE) {
+      const min = this.luckyCards.findIndex((c) => c > 0);
+      if (min < 0) break;
+      this.luckyCards[min] -= 1;
+      dropped.push(min);
+      total -= 1;
+    }
+
+    this.luckyCards[digit] = (this.luckyCards[digit] ?? 0) + 1;
+    const hand = this.luckyCards.reduce((a, b) => a + b, 0);
+    const nines = this.luckyCards[9] ?? 0;
+    const hint = nines >= LUCKY_EXCHANGE_MIN_NINES ? ' — ¡3 nueves! se canjea (9864)' : '';
+    const out = dropped.length > 0 ? `, sale ${dropped.join('/')} del top 10` : '';
+    const drift = dropped.some((d) => digit <= d) ? ' (drift local: recheck en el próximo 9861)' : '';
+    this.bot.log(
+      `[CARTA] +1 carta dígito ${digit} (dígito ${digit}: ${this.luckyCards[digit]} · total: ${hand})${out}${hint}${drift}`,
+    );
+    this.emit('luckyCardUpdated');
+  }
+
+  /**
+   * Marcha vista en el mapa: si es la vuelta de la búsqueda de carta
+   * (cofre → castillo) se adelanta la liberación del slot, pero NUNCA antes
+   * de que la tropa llegue: se usa startTime + 2×duration (ida completa), que
+   * sirve tanto si el registro es la ida como si es la vuelta.
+   */
+  onLuckyCardMarch(march: MapMarch): void {
+    const t = this.luckySearchTarget;
+    if (!t) return;
+    const cx = this.playerInfo?.castleX ?? -1;
+    const cy = this.playerInfo?.castleY ?? -1;
+    if (march.origin.x !== t.x || march.origin.y !== t.y) return;
+    if (march.destination.x !== cx || march.destination.y !== cy) return;
+    const releaseAt = (march.startTime + march.duration * 2) * 1000 + LUCKY_SEARCH_MARGIN_MS;
+    this.luckySearchBusyUntil = Math.min(this.luckySearchBusyUntil, releaseAt);
+    const secs = Math.max(0, Math.round((releaseAt - Date.now()) / 1000));
+    this.bot.log(`[CARTA] vuelta de (${t.x},${t.y}) observada — slot en ${secs}s`);
   }
 
   async getPlayerLocation(name: string): Promise<import('../models/player.types').PlayerLocationResult | null> {
@@ -553,11 +1741,27 @@ export class BotInstance extends EventEmitter {
     if (this.supplyBusy) return { ok: false, message: 'Supply ya en progreso' };
     if (!targetPlayer) return { ok: false, message: 'Sin jugador objetivo' };
 
+    this.supplyStopRequested = false;
+    this.supplyStoppedByUser = false;
+    this.supplyManualActive = true;
+
     const resolveErr = await this.resolveTargetLocation(targetPlayer);
-    if (resolveErr) return { ok: false, message: resolveErr };
+    if (resolveErr) {
+      this.supplyManualActive = false;
+      return { ok: false, message: resolveErr };
+    }
+    if (this.supplyStopRequested) {
+      this.supplyStopRequested = false;
+      this.supplyStoppedByUser = false;
+      this.supplyManualActive = false;
+      return { ok: false, message: `Supply detenido por el usuario en "${targetPlayer}"` };
+    }
 
     const res = this.resources;
-    if (!res) return { ok: false, message: 'Sin recursos disponibles' };
+    if (!res) {
+      this.supplyManualActive = false;
+      return { ok: false, message: 'Sin recursos disponibles' };
+    }
 
     const allEntries: { name: string; amount: number }[] = [
       { name: 'trigo', amount: res.wheat },
@@ -573,21 +1777,29 @@ export class BotInstance extends EventEmitter {
     for (const r of allEntries) {
       if (specificResources && specificResources.length > 0 && !specificResources.includes(r.name)) continue;
       if (r.amount <= 0) continue;
+      if (!cfg.maxAmount || cfg.maxAmount <= 0) continue;
       const totalCaravans = Math.ceil(r.amount / cfg.maxAmount);
       entries.push({ name: r.name, amount: totalCaravans * cfg.maxAmount });
     }
 
-    if (entries.length === 0) return { ok: false, message: 'Sin recursos para enviar' };
+    if (entries.length === 0) {
+      this.supplyManualActive = false;
+      return { ok: false, message: 'Sin recursos para enviar' };
+    }
 
     this.actions.pause();
     this.supplyPending = entries;
     this.supplyBusy = false;
     this.supplyCurrentTarget = targetPlayer;
-    this.supplyManualActive = true;
     const summary = entries.map(e => `${e.name} ${(e.amount / 1e6).toFixed(1)}M`).join(', ');
     this.bot.log(`[SUPPLY-MANUAL] Pausando acciones, enviando a "${targetPlayer}": ${summary}`);
 
     await this.sendCaravanBatch(true);
+    if (this.supplyStoppedByUser) {
+      this.supplyStoppedByUser = false;
+      this.supplyStopRequested = false;
+      return { ok: false, message: `Supply detenido por el usuario en "${targetPlayer}"` };
+    }
     if (this.supplyManualFailed) {
       this.supplyManualFailed = false;
       return { ok: false, message: `Supply abortado para "${targetPlayer}" (ver log: gremio/ubicación/mapa)` };
@@ -595,8 +1807,47 @@ export class BotInstance extends EventEmitter {
     return { ok: true, message: `Supply enviado a "${targetPlayer}": ${summary}` };
   }
 
+  /**
+   * Botón "Parar": corta el lote de supply de ESTA cuenta.
+   * Limpia la cola, corta la espera del ack 2453 y el bucle de caravanas
+   * termina en la siguiente vuelta (waitForSupplySlot ve la cola vacía).
+   */
+  stopSupply(): { stopped: boolean; message: string } {
+    const active = this.supplyBusy || this.supplyManualActive || this.supplyPending.length > 0;
+    if (!active) return { stopped: false, message: 'No hay supply en curso en esta cuenta' };
+
+    this.supplyStopRequested = true;
+    if (this.supplyManualActive) this.supplyStoppedByUser = true;
+    this.supplyPending = [];
+
+    const resolveAck = this.supplyCaravanAckResolve;
+    if (resolveAck) {
+      this.supplyCaravanAckResolve = null;
+      resolveAck();
+    }
+    const wake = this.supplyStopWakeup;
+    if (wake) wake();
+
+    this.bot.log(`[SUPPLY] Parar solicitado: cancelando lote (${this.supplyInFlight.length} caravanas en vuelo)`);
+    return { stopped: true, message: 'Supply detenido (las caravanas ya en vuelo siguen su curso)' };
+  }
+
   private sleep(ms: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  /**
+   * Igual que sleep(), pero si llega un stopSupply() durante la espera
+   * se despierta de inmediato (el botón "Parar" no tiene que esperar al timer).
+   */
+  private stopAwareSleep(ms: number): Promise<void> {
+    if (!this.supplyStopRequested) {
+      return new Promise(resolve => {
+        const timer = setTimeout(resolve, ms);
+        this.supplyStopWakeup = () => { clearTimeout(timer); this.supplyStopWakeup = null; resolve(); };
+      });
+    }
+    return Promise.resolve();
   }
 
   private nowSec(): number {
@@ -734,7 +1985,7 @@ export class BotInstance extends EventEmitter {
       }
       const waitSec = minFree === Infinity ? 5 : Math.min(Math.max(minFree - now + 1, 1), 30);
       this.bot.log(`[SUPPLY] Slots ${active}/${limit} ocupados, esperando ${waitSec}s`);
-      await this.sleep(waitSec * 1000);
+      await this.stopAwareSleep(waitSec * 1000);
     }
     return false;
   }
@@ -767,6 +2018,12 @@ export class BotInstance extends EventEmitter {
           refineMana: { ...original.refineMana },
           mysteryBox: { ...original.mysteryBox, next: this.config.mysteryBox.next },
           ship: { ...original.ship, next: this.config.ship.next, reclaim: this.config.ship.reclaim, lastExchangedTs: this.config.ship.lastExchangedTs },
+          // exchangedTs es legacy (el canje vive en la DB, LuckyExchangeClaim):
+          // se preserva el que ya trae el archivo para no perder la migración
+          luckyCards: {
+            ...original.luckyCards,
+            exchangedTs: this.config.luckyCards?.exchangedTs || original.luckyCards?.exchangedTs || 0,
+          },
           forgeGift: { ...original.forgeGift, next: this.config.forgeGift.next },
         };
         fs.writeFileSync(configPath, JSON.stringify(updated, null, 2), 'utf-8');
@@ -1006,7 +2263,7 @@ export class BotInstance extends EventEmitter {
         await this.waitForCaravanAck(3000);
 
         if (this.supplyPending.length > 0 && this.bot.isOnline) {
-          await this.sleep(1200);
+          await this.stopAwareSleep(1200);
         }
       }
     } finally {

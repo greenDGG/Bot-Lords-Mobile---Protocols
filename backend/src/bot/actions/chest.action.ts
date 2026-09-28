@@ -2,6 +2,7 @@ import type { BotInstance } from '../core/bot-instance';
 import type { BotAction } from './bot-action';
 import { openArtifactChest, claimArtifactReward, closeArtifactChest } from '../commands/artifact.commands';
 import { claimVipChest } from '../commands/supply.commands';
+import { VIP_CHEST_SLOTS, VIP_CHEST_COOLDOWN } from '../models/vip-chest.types';
 import { openGuildGift } from '../features/open-gift';
 
 export class ArtifactFairAction implements BotAction {
@@ -34,15 +35,23 @@ export class ChestVipAction implements BotAction {
     if (!bot.config.chestVip.enable) return false;
     if (!bot.vipChestMem) { return false; }
     const mem = bot.vipChestMem;
+    if (!Number.isFinite(mem.nextClaim) || mem.nextClaim < 0) { return false; }
+    if (mem.nextIndex === -1) { return false; }
+    if (mem.mask & (1 << mem.nextIndex)) {
+      mem.nextIndex = -1;
+      for (let i = 0; i < VIP_CHEST_SLOTS; i++) {
+        if (!(mem.mask & (1 << i))) { mem.nextIndex = i; break; }
+      }
+    }
     if (mem.nextIndex === -1) { return false; }
     if (Date.now() < mem.nextClaim * 1000) { return false; }
     bot.bot.log(`[ACTION] Reclamando chest VIP índice ${mem.nextIndex}...`);
     claimVipChest(bot.bot, mem.nextIndex);
     const idx = mem.nextIndex;
     mem.mask |= (1 << idx);
-    mem.nextClaim = Math.floor(Date.now() / 1000) + 3600;
+    mem.nextClaim = Math.floor(Date.now() / 1000) + VIP_CHEST_COOLDOWN;
     let next = -1;
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < VIP_CHEST_SLOTS; i++) {
       if (!(mem.mask & (1 << i))) { next = i; break; }
     }
     mem.nextIndex = next;

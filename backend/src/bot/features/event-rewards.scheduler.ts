@@ -72,6 +72,17 @@ async function waitForBotReady(bot: BotInstance): Promise<void> {
   });
 }
 
+/**
+ * Con una caza activa no se manda nada que no sea caza: si el turno de este
+ * scheduler cae en plena caza, espera (revisando cada 60s) a que termine.
+ * Si se desconecta, sale y el cronograma se reprograma solo.
+ */
+async function waitForHuntWindow(bot: BotInstance): Promise<void> {
+  while (bot.connected && bot.isHunting()) {
+    await new Promise(r => setTimeout(r, 60_000));
+  }
+}
+
 export async function startEventRewardScheduler(bot: BotInstance): Promise<void> {
   bot.bot.log('[EVENT-REWARDS] Scheduler iniciado, verificando DB...');
 
@@ -82,6 +93,7 @@ export async function startEventRewardScheduler(bot: BotInstance): Promise<void>
   await waitForBotReady(bot);
 
   bot.bot.log('[EVENT-REWARDS] Enviando infierno actual...');
+  await waitForHuntWindow(bot);
   requestHellEvent(bot.bot);
   await new Promise(r => setTimeout(r, 2000));
 
@@ -91,6 +103,7 @@ export async function startEventRewardScheduler(bot: BotInstance): Promise<void>
     const hasData = await hasDataForHour(1, ts);
     if (!hasData) {
       bot.bot.log(`[EVENT-REWARDS] Solitario perdido hace ${h}h (ts=${ts}), solicitando...`);
+      await waitForHuntWindow(bot);
       requestSolitaryEvent(bot.bot);
       await new Promise(r => setTimeout(r, 2000));
     } else {
@@ -108,10 +121,13 @@ function scheduleHell(bot: BotInstance): void {
   bot.bot.log(`[EVENT-REWARDS] Infierno programado en ${Math.round(delay / 60000)}min (${nextTime.toISOString().slice(11, 16)} UTC)`);
 
   setTimeout(() => {
-    if (!bot.connected) { scheduleHell(bot); return; }
-    bot.bot.log('[EVENT-REWARDS] Solicitando infierno (3609)...');
-    requestHellEvent(bot.bot);
-    scheduleHell(bot);
+    void (async () => {
+      await waitForHuntWindow(bot);
+      if (!bot.connected) { scheduleHell(bot); return; }
+      bot.bot.log('[EVENT-REWARDS] Solicitando infierno (3609)...');
+      requestHellEvent(bot.bot);
+      scheduleHell(bot);
+    })();
   }, delay);
 }
 
@@ -121,9 +137,12 @@ function scheduleSolitary(bot: BotInstance): void {
   bot.bot.log(`[EVENT-REWARDS] Solitario programado en ${Math.round(delay / 60000)}min (${nextTime.toISOString().slice(11, 16)} UTC)`);
 
   setTimeout(() => {
-    if (!bot.connected) { scheduleSolitary(bot); return; }
-    bot.bot.log('[EVENT-REWARDS] Solicitando solitario (3609)...');
-    requestSolitaryEvent(bot.bot);
-    scheduleSolitary(bot);
+    void (async () => {
+      await waitForHuntWindow(bot);
+      if (!bot.connected) { scheduleSolitary(bot); return; }
+      bot.bot.log('[EVENT-REWARDS] Solicitando solitario (3609)...');
+      requestSolitaryEvent(bot.bot);
+      scheduleSolitary(bot);
+    })();
   }, delay + 2000);
 }

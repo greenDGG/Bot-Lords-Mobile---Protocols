@@ -30,12 +30,23 @@ export interface MapRegion {
   tiles: MapTile[];
 }
 
+/**
+ * 3 bytes del tile: [b0][b1][b2]
+ *   xi (8 bits) = b0[3:0] + b2[3:0]      → x = xi*2 + p
+ *   yi (15 bits) = b1[7:0] + b0[7:4] + b2[7:5] → y = yi*2 + p
+ *   p (1 bit) = b2[4]                    → paridad: x e y SIEMPRE la comparten
+ *
+ * El bit de paridad es lo que separa dos posiciones distintas DENTRO de la misma
+ * celda: (446,56) y (447,57) son dos tiles diferentes con el mismo (xi,yi).
+ * Sin él, ambos caen en la misma coordenada y se les resta 1 a los impares.
+ */
 export function encodeCoord(x: number, y: number): [number, number, number] {
   const xi = Math.floor(x / 2);
   const yi = Math.floor(y / 2);
+  const p = (x & 1) | (y & 1);
   const byte0 = (((yi >> 3) & 0x0F) << 4) | ((xi >> 4) & 0x0F);
   const byte1 = yi >> 7;
-  const byte2 = ((yi & 0x07) << 5) | (xi & 0x0F);
+  const byte2 = (((yi & 0x07) << 5) | (xi & 0x0F) | (p << 4)) & 0xFF;
   return [byte0 & 0xFF, byte1 & 0xFF, byte2 & 0xFF];
 }
 
@@ -48,8 +59,9 @@ export function decodeCoordBytes(bytes: [number, number, number]): EncodedTileCo
   const yiHigh = byte1;
   const xi = (xiHigh << 4) | xiLow;
   const yi = (yiHigh << 7) | (yiMid << 3) | yiLow;
-  const x = xi * 2;
-  const y = yi * 2;
+  const p = (byte2 >> 4) & 1;
+  const x = xi * 2 + p;
+  const y = yi * 2 + p;
   const id = (byte0 << 16) | (byte1 << 8) | byte2;
   return { x, y, xi, yi, id, bytes };
 }

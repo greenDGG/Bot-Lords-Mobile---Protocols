@@ -20,6 +20,8 @@ import { SupplyAction } from './supply.action';
 import { AutoHelpAction } from './help.action';
 import { EventsAction, Relocate } from './event.action';
 import { MissionCheckAction } from './mission.action';
+import { LuckyCardAction } from './lucky-card.action';
+import { HuntAction } from './hunt.action';
 
 export interface BotAction {
   name: string;
@@ -56,5 +58,7 @@ export function createActions(): BotAction[] {
     new ColiseumGemsAction(),
     new ColiseumAutoAttackAction(),
     new SweepAction(),
+    new LuckyCardAction(),
+    new HuntAction(),
   ];
 }

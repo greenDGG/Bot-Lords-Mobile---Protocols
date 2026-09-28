@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import { TokenModel, ConfigModel } from './schemas/account.schema';
 import { MarchHistoryModel } from './schemas/march-history.schema';
 import { EventModel, EventClaimModel, EventRewardDataModel } from './schemas/event.schema';
+import { LuckyExchangeClaimModel } from './schemas/lucky-exchange.schema';
 import { GlobalCommandModel } from './schemas/global-command.schema';
 import { PlanSequenceModel } from './schemas/plan-sequence.schema';
 import { ProxyAuthModel } from './schemas/proxy-auth.schema';
@@ -70,6 +71,7 @@ export class DatabaseService {
   get EventModel() { return EventModel; }
   get EventClaimModel() { return EventClaimModel; }
   get EventRewardDataModel() { return EventRewardDataModel; }
+  get LuckyExchangeClaimModel() { return LuckyExchangeClaimModel; }
   get GlobalCommandModel() { return GlobalCommandModel; }
   get PlanSequenceModel() { return PlanSequenceModel; }
   get ProxyAuthModel() { return ProxyAuthModel; }

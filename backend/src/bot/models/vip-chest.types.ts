@@ -5,19 +5,27 @@ export interface VipChestMemory {
   nextIndex: number;
 }
 
+export const VIP_CHEST_SLOTS = 10;
+export const VIP_CHEST_COOLDOWN = 3600;
+
+function findFreeSlot(mask: number): number {
+  for (let i = 0; i < VIP_CHEST_SLOTS; i++) {
+    if (!(mask & (1 << i))) return i;
+  }
+  return -1;
+}
+
+export function isVipChestRejected(body: Buffer): boolean {
+  return body.length >= 6 && body[0] !== 0;
+}
+
 export function parseVipChest(body: Buffer): VipChestMemory | null {
   if (body.length < 6) return null;
-  const mask = body.readUInt16LE(0);
+  if (body[0] !== 0) return null;
+  const mask = body.readUInt16BE(0);
   const lastClaimTimestamp = body.readUInt32LE(2);
-  const nextClaim = lastClaimTimestamp + 3600;
-  let nextIndex = -1;
-  for (let i = 0; i < 10; i++) {
-    if (!(mask & (1 << i))) {
-      nextIndex = i;
-      break;
-    }
-  }
-  return { mask, lastClaimTimestamp, nextClaim, nextIndex };
+  const nextClaim = lastClaimTimestamp + VIP_CHEST_COOLDOWN;
+  return { mask, lastClaimTimestamp, nextClaim, nextIndex: findFreeSlot(mask) };
 }
 
 export function isVipChestClaimed(mask: number, index: number): boolean {
@@ -26,7 +34,7 @@ export function isVipChestClaimed(mask: number, index: number): boolean {
 
 export function getVipChestState(mask: number): boolean[] {
   const state: boolean[] = [];
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < VIP_CHEST_SLOTS; i++) {
     state.push((mask & (1 << i)) !== 0);
   }
   return state;

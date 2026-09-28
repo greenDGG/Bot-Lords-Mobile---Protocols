@@ -29,6 +29,8 @@ import { handleGuildApplications } from './guild-applications.handler';
 import { handleCostumes } from './costume.handler';
 import { handleEquippedCostumes } from './equipped.handler';
 import { handle3610 } from './event-rewards.handler';
+import { handle2489, handle2490, handle2491, handle2492 } from './hunt.handler';
+import { handle9861, handle9862, handle9865, handle9867, handle9868 } from './lucky-card.handler';
 
 type Handler = (bot: BotInstance, body: Buffer, mp: MessagePacket) => void;
 
@@ -56,6 +58,10 @@ const HANDLERS: Record<number, Handler> = {
   2446: handleMarchData,
   2453: handleCaravanAck,
   2455: handleCaravanComplete,
+  2489: handle2489,
+  2490: handle2490,
+  2491: handle2491,
+  2492: handle2492,
   2802: handleGuildInfo,
   3003: handleChatMessages,
   3112: handle3112,
@@ -72,6 +78,11 @@ const HANDLERS: Record<number, Handler> = {
   9652: handle9652,
   9661: handle9661,
   9663: handle9663,
+  9861: handle9861,
+  9862: handle9862,
+  9865: handle9865,
+  9867: handle9867,
+  9868: handle9868,
   3633: handleMissionRecords,
   3638: handle3638,
   2859: handleGuildNotification,

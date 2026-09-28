@@ -137,6 +137,11 @@ interface RealTile {
   entityType?: number;
 }
 
+/** HP del tile en % — puede venir en 0-100 o en 0-1 según la muestra */
+function hpPercent(hp: number): number {
+  return hp > 1.5 ? hp : hp * 100;
+}
+
 function realTileToRender(t: RealTile): MockTile {
   // Determinar tipo visual según el tipo real del tile
   let type: TileType = t.empty ? 'grass' : 'resource';
@@ -262,7 +267,31 @@ function worldToScreen(x: number, y: number, cx: number, cy: number, tw: number,
 
 // ── Component ──
 
-export default function MapViewerDemo({ tiles: realTiles = [], marches = [], onRequestRegion, home }: { tiles?: RealTile[]; marches?: MapMarch[]; onRequestRegion?: (x: number, y: number) => void; home?: { x: number; y: number } }) {
+export default function MapViewerDemo({
+  tiles: realTiles = [],
+  marches = [],
+  onRequestRegion,
+  home,
+  energy,
+  huntTarget,
+  huntMsg,
+  huntConfig,
+  squads,
+  onHunt,
+  onHuntStop,
+}: {
+  tiles?: RealTile[];
+  marches?: MapMarch[];
+  onRequestRegion?: (x: number, y: number) => void;
+  home?: { x: number; y: number };
+  energy?: number;
+  huntTarget?: { tileId: number; x: number; y: number; level: number; hp: number; hits: number; energySpent: number; status: string; lastHitAt: number; hitsLanded?: number; departedAt?: number; outboundSeconds?: number; returnAt?: number } | null;
+  huntMsg?: string | null;
+  huntConfig?: { enable?: boolean; cooldown?: number; levels?: { level: number; energyCost: number; payloadHexMagia?: string; payloadHexFisico?: string; payloadHex?: string }[] };
+  squads?: { tileId: number; x: number; y: number; level: number; hp: number; needed: number; active: number; members: number[] }[];
+  onHunt?: (tileId?: number) => void;
+  onHuntStop?: () => void;
+}) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
@@ -282,8 +311,30 @@ export default function MapViewerDemo({ tiles: realTiles = [], marches = [], onR
   const realRendered = realTiles.map(realTileToRender);
   const tiles: MockTile[] = realRendered.length > 0 ? realRendered : mockTiles;
 
-  // ── Canvas drawing ──
+  // ── Caza: monstruos del mapa (HP > 0) clasificados por nivel y cercanía ──
+  const huntLevels = huntConfig?.levels ?? [];
+  const hunting = huntTarget?.status === 'hunting';
+  const huntMonsters = realTiles
+    .filter(t => t.monster && t.monster.hp > 0)
+    .map(t => ({
+      tile: t,
+      cfg: huntLevels.find(l => l.level === t.monster!.level) || null,
+      dist: home ? Math.round(Math.sqrt((t.x - home.x) ** 2 + (t.y - home.y) ** 2)) : null,
+    }))
+    .sort((a, b) => {
+      const aok = a.cfg ? 0 : 1;
+      const bok = b.cfg ? 0 : 1;
+      if (aok !== bok) return aok - bok;
+      const byLevel = b.tile.monster!.level - a.tile.monster!.level;
+      if (byLevel !== 0) return byLevel;
+      return (a.dist ?? 0) - (b.dist ?? 0);
+    });
 
+  // ── Squad compartido entre bots (evento huntSquad) ──
+  const squadList = squads ?? [];
+  const squadByTile = new Map(squadList.map(s => [s.tileId, s]));
+
+  // ── Canvas drawing ──
   const screenToGrid = useCallback((sx: number, sy: number): { gx: number; gy: number } | null => {
     const canvas = canvasRef.current;
     if (!canvas) return null;
@@ -842,7 +893,15 @@ export default function MapViewerDemo({ tiles: realTiles = [], marches = [], onR
                     {real.monster && (
                       <>
                         <InfoRow label="Monstruo ID" value={`0x${real.monster.id}`} />
-                        <InfoRow label="HP" value={`${real.monster.hp.toFixed(1)}%`} />
+                        <InfoRow label="HP" value={`${hpPercent(real.monster.hp).toFixed(1)}%`} />
+                        <button
+                          className="mv-btn mv-btn-primary"
+                          style={{ marginTop: 6 }}
+                          disabled={hunting || !onHunt}
+                          onClick={() => onHunt?.(real.id)}
+                        >
+                          {hunting ? 'Ya hay una caza en curso' : 'Cazar este bicho'}
+                        </button>
                       </>
                     )}
                     {real.castle && (
@@ -868,6 +927,127 @@ export default function MapViewerDemo({ tiles: realTiles = [], marches = [], onR
               </div>
             </div>
           )}
+        </PanelSection>
+
+        {/* Caza */}
+        <PanelSection title="Caza" icon="⚔">
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: colors.textSecondary }}>
+            <span>Energía: <b style={{ color: colors.text }}>{energy ?? '—'}</b></span>
+            <span>{huntLevels.length > 0 ? `Niveles: ${huntLevels.map(l => l.level).join(', ')}` : 'Sin niveles configurados'}</span>
+          </div>
+
+          {squadList.length > 0 && (
+            <div style={{ marginTop: 8, display: 'flex', flexDirection: 'column', gap: 4 }}>
+              {squadList.map(sq => (
+                <div
+                  key={sq.tileId}
+                  style={{
+                    fontSize: 11, padding: '5px 7px', borderRadius: 5, color: colors.text,
+                    background: 'rgba(88,166,255,0.08)', border: '1px solid rgba(88,166,255,0.35)',
+                  }}
+                >
+                  <b>Squad</b> L{sq.level} · ({sq.x},{sq.y}) · HP {sq.hp.toFixed(0)}% ·
+                  faltan {sq.needed} golpe(s) · {sq.active} ocupado(s) de {sq.members.length} bot(s)
+                </div>
+              ))}
+            </div>
+          )}
+
+          {huntMsg && (
+            <div style={{ marginTop: 8, fontSize: 12, padding: '6px 8px', borderRadius: 4, background: 'rgba(255,255,255,0.05)', color: colors.text }}>
+              {huntMsg}
+            </div>
+          )}
+
+          {huntTarget && (
+            <div style={{
+              marginTop: 8, padding: '8px 10px', borderRadius: 6,
+              background: hunting ? 'rgba(63,185,80,0.10)' : 'rgba(255,255,255,0.04)',
+              border: `1px solid ${hunting ? 'rgba(63,185,80,0.4)' : colors.border}`,
+              display: 'flex', flexDirection: 'column', gap: 4, fontSize: 12,
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <b style={{ color: hunting ? colors.success : colors.text }}>
+                  {hunting ? 'Cazando' : `Caza ${huntTarget.status}`}
+                </b>
+                <span style={{ color: colors.textSecondary, fontFamily: 'monospace' }}>
+                  ({huntTarget.x}, {huntTarget.y})
+                </span>
+              </div>
+              <div style={{ color: colors.textSecondary }}>
+                Nivel {huntTarget.level} · HP {hpPercent(huntTarget.hp).toFixed(1)}% · golpes {huntTarget.hits} ({huntTarget.hitsLanded ?? 0} confirmados) · -{huntTarget.energySpent} energía
+              </div>
+              {hunting && huntTarget.returnAt ? (
+                <div style={{ color: colors.textSecondary }}>
+                  Regresa {new Date(huntTarget.returnAt * 1000).toLocaleTimeString()}
+                  {huntTarget.outboundSeconds ? ` · ida ${huntTarget.outboundSeconds}s` : ''}
+                </div>
+              ) : null}
+              {hunting && (
+                <button className="mv-btn" style={{ marginTop: 4 }} onClick={() => onHuntStop?.()}>
+                  Detener caza
+                </button>
+              )}
+            </div>
+          )}
+
+          <div style={{ marginTop: 10, display: 'flex', gap: 6 }}>
+            <button
+              className="mv-btn mv-btn-primary"
+              style={{ flex: 1 }}
+              disabled={hunting || !onHunt || huntMonsters.filter(m => m.cfg).length === 0}
+              onClick={() => onHunt?.()}
+            >
+              Cazar siguiente
+            </button>
+          </div>
+
+          <div style={{ marginTop: 8, display: 'flex', flexDirection: 'column', gap: 4, maxHeight: 220, overflowY: 'auto' }}>
+            {huntMonsters.length === 0 && (
+              <div style={{ fontSize: 11, color: colors.textSecondary, textAlign: 'center', padding: '10px 4px' }}>
+                Sin bichos en el mapa cargado. Pedí una región con el buscador de coordenadas.
+              </div>
+            )}
+            {huntMonsters.map(({ tile, cfg, dist }) => {
+              const isTarget = huntTarget && huntTarget.tileId === tile.id;
+              return (
+                <div
+                  key={tile.id}
+                  style={{
+                    display: 'flex', alignItems: 'center', gap: 6, fontSize: 12,
+                    padding: '5px 7px', borderRadius: 5,
+                    background: isTarget ? 'rgba(63,185,80,0.10)' : 'rgba(255,255,255,0.03)',
+                    border: `1px solid ${isTarget ? 'rgba(63,185,80,0.4)' : colors.border}`,
+                  }}
+                >
+                  <span style={{ fontWeight: 700, color: cfg ? colors.danger : colors.textSecondary, minWidth: 34 }}>
+                    L{tile.monster!.level}
+                  </span>
+                  <span style={{ fontFamily: 'monospace', color: colors.textSecondary, minWidth: 66 }}>
+                    {tile.x},{tile.y}
+                  </span>
+                  <span style={{ flex: 1, color: colors.text }}>{hpPercent(tile.monster!.hp).toFixed(0)}% HP</span>
+                  {squadByTile.has(tile.id) && (
+                    <span style={{ color: '#58a6ff', fontSize: 11 }} title="Bots en el squad">
+                      ⚔{squadByTile.get(tile.id)!.members.length}
+                    </span>
+                  )}
+                  {dist !== null && (
+                    <span style={{ color: colors.textSecondary, minWidth: 34, textAlign: 'right' }}>{dist}</span>
+                  )}
+                  <button
+                    className="mv-btn"
+                    style={{ padding: '2px 8px', fontSize: 11 }}
+                    disabled={hunting || !cfg || !onHunt}
+                    title={cfg ? `${cfg.energyCost} energía` : `Sin config para nivel ${tile.monster!.level}`}
+                    onClick={() => onHunt?.(tile.id)}
+                  >
+                    {cfg ? 'Cazar' : '—'}
+                  </button>
+                </div>
+              );
+            })}
+          </div>
         </PanelSection>
 
         {/* Legend */}
@@ -986,8 +1166,9 @@ function CoordDecoder() {
     const yiHigh = v1;
     const xi = (xiHigh << 4) | xiLow;
     const yi = (yiHigh << 7) | (yiMid << 3) | yiLow;
+    const p = (v2 >> 4) & 1;
     const id = (v0 << 16) | (v1 << 8) | v2;
-    setResult({ x: xi * 2, y: yi * 2, xi, yi, id });
+    setResult({ x: xi * 2 + p, y: yi * 2 + p, xi, yi, id });
   };
 
   const encode = () => {
@@ -996,9 +1177,10 @@ function CoordDecoder() {
     if (isNaN(x) || isNaN(y)) { setEncoded('Coordenadas inválidas'); return; }
     const xi = Math.floor(x / 2);
     const yi = Math.floor(y / 2);
+    const p = (x & 1) | (y & 1);
     const byte0 = (((yi >> 3) & 0x0F) << 4) | ((xi >> 4) & 0x0F);
     const byte1 = yi >> 7;
-    const byte2 = ((yi & 0x07) << 5) | (xi & 0x0F);
+    const byte2 = ((yi & 0x07) << 5) | (xi & 0x0F) | (p << 4);
     setEncoded(`${byte0.toString(16).padStart(2, '0')} ${byte1.toString(16).padStart(2, '0')} ${byte2.toString(16).padStart(2, '0')}`);
   };
 

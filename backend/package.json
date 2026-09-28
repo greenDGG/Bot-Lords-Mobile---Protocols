@@ -7,7 +7,11 @@
     "start": "node --openssl-legacy-provider dist/main.js",
     "dev": "node --openssl-legacy-provider -r ts-node/register -r tsconfig-paths/register src/main.ts",
     "migrate": "npx ts-node scripts/migrate-json-to-db.ts",
-    "migrate:autostart": "npx ts-node scripts/migrate-autostart.ts"
+    "migrate:autostart": "npx ts-node scripts/migrate-autostart.ts",
+      "migrate:hunt": "npx ts-node scripts/migrate-hunt-enable.ts",
+      "migrate:hunt-payload": "npx ts-node scripts/migrate-hunt-payload.ts",
+      "migrate:lucky-cards": "npx ts-node scripts/migrate-lucky-cards.ts",
+      "migrate:lucky-exchange": "npx ts-node scripts/migrate-lucky-exchange.ts"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.0",

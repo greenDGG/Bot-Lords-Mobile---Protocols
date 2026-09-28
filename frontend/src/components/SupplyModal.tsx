@@ -20,21 +20,34 @@ export default function SupplyModal({ socket, iggIds, players, resources, onClos
   const [selectedRes, setSelectedRes] = useState<Set<string>>(new Set(['trigo', 'piedra', 'madera', 'mineral', 'oro']));
   const [sending, setSending] = useState(false);
   const [results, setResults] = useState<SupplyResult[]>([]);
+  const [started, setStarted] = useState<Set<number>>(new Set());
+  const [stopping, setStopping] = useState<Set<number>>(new Set());
   const [batchResult, setBatchResult] = useState<{ total: number; sent: number; failed: number; targetPlayer: string } | null>(null);
 
   useEffect(() => {
     if (!socket) return;
     const onSupplyResult = (data: SupplyResult) => {
       setResults(prev => [...prev, data]);
+      setStopping(prev => { const n = new Set(prev); n.delete(data.iggId); return n; });
+    };
+    const onSupplyStarted = (data: { iggId: number }) => {
+      setStarted(prev => new Set(prev).add(data.iggId));
+    };
+    const onSupplyStopped = (data: { iggId: number; stopped: boolean }) => {
+      if (!data.stopped) setStopping(prev => { const n = new Set(prev); n.delete(data.iggId); return n; });
     };
     const onSupplyBatch = (data: { total: number; sent: number; failed: number; targetPlayer: string }) => {
       setSending(false);
       setBatchResult(data);
     };
     socket.on('supplyResult', onSupplyResult);
+    socket.on('supplyStarted', onSupplyStarted);
+    socket.on('supplyStopped', onSupplyStopped);
     socket.on('supplyBatchResult', onSupplyBatch);
     return () => {
       socket.off('supplyResult', onSupplyResult);
+      socket.off('supplyStarted', onSupplyStarted);
+      socket.off('supplyStopped', onSupplyStopped);
       socket.off('supplyBatchResult', onSupplyBatch);
     };
   }, [socket]);
@@ -52,12 +65,20 @@ export default function SupplyModal({ socket, iggIds, players, resources, onClos
     if (!targetPlayer.trim() || sending) return;
     setSending(true);
     setResults([]);
+    setStarted(new Set());
+    setStopping(new Set());
     setBatchResult(null);
     socket.emit('sendManualSupply', {
       iggIds,
       targetPlayer: targetPlayer.trim(),
       resources: selectedRes.size > 0 ? Array.from(selectedRes) : undefined,
     });
+  };
+
+  const stopOne = (id: number) => {
+    if (!socket || stopping.has(id)) return;
+    setStopping(prev => new Set(prev).add(id));
+    socket.emit('stopManualSupply', { iggId: id });
   };
 
   const formatRes = (v: number) => {
@@ -138,17 +159,36 @@ export default function SupplyModal({ socket, iggIds, players, resources, onClos
           </div>
         )}
 
-        {results.length > 0 && (
+        {(sending || results.length > 0) && (
           <div style={{ marginBottom: 12, maxHeight: 160, overflowY: 'auto' }}>
-            {results.map((r, i) => (
-              <div key={i} style={{
-                display: 'flex', alignItems: 'center', gap: 8, padding: '4px 10px', fontSize: 12,
-                color: r.ok ? '#4ade80' : '#f87171',
-              }}>
-                <span style={{ fontWeight: 600 }}>IGG {r.iggId}</span>
-                <span>{r.message}</span>
-              </div>
-            ))}
+            {iggIds.map(id => {
+              const done = results.filter(r => r.iggId === id).pop();
+              if (!done && !sending) return null;
+              const stoppingThis = stopping.has(id);
+              const color = done ? (done.ok ? '#4ade80' : '#f87171') : stoppingThis ? '#fbbf24' : started.has(id) ? '#fbbf24' : colors.textSecondary;
+              const msg = done ? done.message : stoppingThis ? '⏹ deteniendo…' : started.has(id) ? '⏳ orden activada, enviando…' : 'esperando turno…';
+              return (
+                <div key={id} style={{
+                  display: 'flex', alignItems: 'center', gap: 8, padding: '4px 10px', fontSize: 12, color,
+                }}>
+                  <span style={{ fontWeight: 600 }}>IGG {id}</span>
+                  <span>{msg}</span>
+                  {sending && !done && (
+                    <button
+                      onClick={() => stopOne(id)}
+                      disabled={stoppingThis}
+                      style={{
+                        marginLeft: 'auto', background: 'none', border: `1px solid ${stoppingThis ? colors.border : '#f8717166'}`,
+                        color: stoppingThis ? colors.textSecondary : '#f87171', borderRadius: 4, padding: '1px 8px',
+                        fontSize: 11, cursor: stoppingThis ? 'default' : 'pointer',
+                      }}
+                    >
+                      ⏹ Parar
+                    </button>
+                  )}
+                </div>
+              );
+            })}
           </div>
         )}
 

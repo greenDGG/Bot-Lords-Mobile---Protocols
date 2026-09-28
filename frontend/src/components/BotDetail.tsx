@@ -45,6 +45,9 @@ export default function BotDetail({ iggId, onBack }: Props) {
   const [marchHistory, setMarchHistory] = useState<any[]>([]);
   const [mapTiles, setMapTiles] = useState<any[]>([]);
   const [mapMarches, setMapMarches] = useState<any[]>([]);
+  const [huntTarget, setHuntTarget] = useState<any>(null);
+  const [huntSquads, setHuntSquads] = useState<any[]>([]);
+  const [huntMsg, setHuntMsg] = useState<string | null>(null);
   const [buildingState, setBuildingState] = useState<{ buildings: { position: number; id: number; level: number }[] }>({ buildings: [] });
   const [essenceState, setEssenceState] = useState<{ slots: { index: number; essenceLevel: number; finishTimestamp: number; baseMinutes: number; isRunning: boolean; isEmpty: boolean }[]; autoStoreLevel: number } | null>(null);
   const [coliseum, setColiseum] = useState<{ rank: number; fightsDone: number; gems: number; rivals: { name: string; guildTag: string; heroId: number }[] } | null>(null);
@@ -74,6 +77,7 @@ export default function BotDetail({ iggId, onBack }: Props) {
   const [showSupplyDialog, setShowSupplyDialog] = useState(false);
   const [supplyTarget, setSupplyTarget] = useState('');
   const [supplySending, setSupplySending] = useState(false);
+  const [supplyStopping, setSupplyStopping] = useState(false);
   const [supplyResult, setSupplyResult] = useState<{ ok: boolean; message: string } | null>(null);
   useEffect(() => { getItemsData().then(() => setItemsReady(true)); }, []);
 
@@ -104,6 +108,7 @@ export default function BotDetail({ iggId, onBack }: Props) {
       if (data.marchHistory !== undefined) setMarchHistory(data.marchHistory);
       if (data.mapTiles !== undefined) setMapTiles(data.mapTiles);
       if (data.mapMarches !== undefined) setMapMarches(data.mapMarches || []);
+      if (data.huntTarget !== undefined) setHuntTarget(data.huntTarget);
       if (data.chatMessages !== undefined) {
         setChatMessages(data.chatMessages.map((m: any) => ({ id: `in-${m.msgId}-${m.ts}`, sender: m.senderName || `Jugador ${m.senderId}`, guild: m.senderGuild || '', channel: m.channelLabel || '', text: m.message || '', self: false })));
       }
@@ -212,6 +217,24 @@ export default function BotDetail({ iggId, onBack }: Props) {
       setMapTiles(data.mapTiles || []);
       if (data.mapMarches !== undefined) setMapMarches(data.mapMarches);
     });
+    const onHuntUpdated = (data: { iggId: number; huntTarget: any; energy?: number }) => {
+      if (data.iggId !== iggId) return;
+      setHuntTarget(data.huntTarget || null);
+      if (data.energy !== undefined) {
+        setPlayerInfo(prev => (prev ? { ...prev, energy: data.energy! } : prev));
+      }
+    };
+    socket.on('huntUpdated', onHuntUpdated);
+    const onHuntSquad = (data: { squads: any[] }) => {
+      setHuntSquads(data.squads || []);
+    };
+    socket.on('huntSquad', onHuntSquad);
+    const onHuntResult = (data: { iggId: number; ok: boolean; message: string }) => {
+      if (data.iggId !== iggId) return;
+      setHuntMsg(data.message);
+      setTimeout(() => setHuntMsg(null), 5000);
+    };
+    socket.on('huntResult', onHuntResult);
     socket.on('chatMessage', (data: { iggId: number; message: any }) => {
       if (data.iggId !== iggId) return;
       const m = data.message;
@@ -255,6 +278,7 @@ export default function BotDetail({ iggId, onBack }: Props) {
     const onSupplyResult = (data: { iggId: number; ok: boolean; message: string }) => {
       if (data.iggId !== iggId) return;
       setSupplySending(false);
+      setSupplyStopping(false);
       setSupplyResult({ ok: data.ok, message: data.message });
       setTimeout(() => setSupplyResult(null), 5000);
     };
@@ -286,6 +310,9 @@ export default function BotDetail({ iggId, onBack }: Props) {
       socket.off('configUpdated');
       socket.off('configData');
       socket.off('mapDataUpdated');
+      socket.off('huntUpdated', onHuntUpdated);
+      socket.off('huntSquad', onHuntSquad);
+      socket.off('huntResult', onHuntResult);
       socket.off('chatMessage');
     };
   }, [connected, socket, iggId, activeTab]);
@@ -375,13 +402,14 @@ export default function BotDetail({ iggId, onBack }: Props) {
   const ITEM_VALUES_LOCAL: Record<number, number> = {};
   const RESOURCE_ITEM_IDS_LOCAL: Record<string, number[]> = {};
   if (itemData) {
-    for (const [k, v] of Object.entries(itemData.ITEMS_DB)) ITEMS_DB_LOCAL[Number(k)] = v as { name: string; gems: number };
-    for (const [k, v] of Object.entries(itemData.ITEM_VALUES)) ITEM_VALUES_LOCAL[Number(k)] = v as number;
-    for (const [k, v] of Object.entries(itemData.RESOURCE_ITEM_IDS)) RESOURCE_ITEM_IDS_LOCAL[k] = v as number[];
+    for (const [k, v] of Object.entries(itemData.ITEMS_DB || {})) ITEMS_DB_LOCAL[Number(k)] = v as { name: string; gems: number };
+    for (const [k, v] of Object.entries(itemData.ITEM_VALUES || {})) ITEM_VALUES_LOCAL[Number(k)] = v as number;
+    for (const [k, v] of Object.entries(itemData.RESOURCE_ITEM_IDS || {})) RESOURCE_ITEM_IDS_LOCAL[k] = v as number[];
   }
 
   const computeBagTotal = (itemIds: number[]) => {
     let total = 0;
+    if (!itemIds || itemIds.length === 0) return 0;
     for (const item of inventory) {
       const value = ITEM_VALUES_LOCAL[item.itemId];
       if (value && itemIds.includes(item.itemId)) {
@@ -529,7 +557,7 @@ export default function BotDetail({ iggId, onBack }: Props) {
                 { name: '⛏ Mineral', key: 'mineral' as const, prodKey: 'mineralProd' as const },
                 { name: '🪙 Oro', key: 'gold' as const, prodKey: 'goldProd' as const },
               ].map(r => {
-                const bagTotal = computeBagTotal(RESOURCE_ITEM_IDS_LOCAL[r.key]);
+                const bagTotal = computeBagTotal(RESOURCE_ITEM_IDS_LOCAL[r.key] || []);
                 return (
                   <tr key={r.key} style={{ borderBottom: `1px solid ${colors.border}` }}>
                     <td style={{ padding: 8 }}>{r.name}</td>
@@ -1471,6 +1499,13 @@ export default function BotDetail({ iggId, onBack }: Props) {
           marches={mapMarches}
           onRequestRegion={(x, y) => socket.emit('requestMapData', { iggId, x, y })}
           home={playerInfo?.castleX !== undefined && playerInfo?.castleY !== undefined ? { x: playerInfo.castleX, y: playerInfo.castleY } : undefined}
+          energy={playerInfo?.energy ?? 0}
+          huntTarget={huntTarget}
+          huntMsg={huntMsg}
+          huntConfig={botConfig?.hunt}
+          squads={huntSquads}
+          onHunt={(tileId) => socket.emit('huntMonster', { iggId, tileId })}
+          onHuntStop={() => socket.emit('huntStop', { iggId })}
         />
       )}
 
@@ -1514,7 +1549,20 @@ export default function BotDetail({ iggId, onBack }: Props) {
               </div>
             )}
             <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
-              <button onClick={() => { setShowSupplyDialog(false); setSupplyResult(null); }}>Cancelar</button>
+              <button onClick={() => { setShowSupplyDialog(false); setSupplyResult(null); setSupplyStopping(false); }}>Cancelar</button>
+              {supplySending && (
+                <button
+                  disabled={supplyStopping}
+                  onClick={() => { setSupplyStopping(true); socket.emit('stopManualSupply', { iggId }); }}
+                  style={{
+                    border: `1px solid ${supplyStopping ? colors.border : '#f8717166'}`,
+                    color: supplyStopping ? colors.textSecondary : '#f87171',
+                    cursor: supplyStopping ? 'default' : 'pointer',
+                  }}
+                >
+                  {supplyStopping ? 'Deteniendo…' : '⏹ Parar'}
+                </button>
+              )}
               <button
                 className="primary"
                 disabled={supplySending || !supplyTarget.trim()}
@@ -1523,6 +1571,7 @@ export default function BotDetail({ iggId, onBack }: Props) {
                   const res: string[] = [];
                   checks.forEach(c => { if ((c as HTMLInputElement).checked) res.push(c.getAttribute('data-resource')!); });
                   setSupplySending(true);
+                  setSupplyStopping(false);
                   setSupplyResult(null);
                   socket.emit('sendManualSupply', { iggId, targetPlayer: supplyTarget.trim(), resources: res.length > 0 ? res : undefined });
                 }}
@@ -1756,6 +1805,82 @@ function ConfigPanel({ config, socket, iggId, colors }: { config: any; socket: a
         <NumInput label="Umbral" {...set('supply.threshold')} />
         <NumInput label="Máx. Monto" {...set('supply.maxAmount')} />
         <NumInput label="Límite caravanas" {...set('supply.caravanLimit')} />
+      </Section>
+
+      <Section title="Caza (monstruos 2488)">
+        <Toggle label="Caza automática" {...bool('hunt.enable')} />
+        <NumInput label="Cooldown entre golpes" {...set('hunt.cooldown')} suffix="s" />
+        <NumInput label="Radio de escaneo del mapa" {...set('hunt.scanRadius')} suffix="tiles" />
+        <Toggle label="Squad compartido (varios bots al mismo bicho)" {...bool('hunt.squad.enable')} />
+        <NumInput label="Máx. bots por bicho" {...set('hunt.squad.max')} />
+        <div style={{ fontSize: 12, color: '#888' }}>
+          Los bots miden el HP restante y el daño medio: con el bicho casi muerto va 1 solo; con HP
+          alto se reparten hasta el máximo. Squad apagado = 1 bot por bicho.
+        </div>
+        <div style={{ fontSize: 12, color: '#888' }}>
+          Por nivel: costo de energía por golpe + hex del 2488 sin la coord (va 3 bytes de coord al
+          frente). Dos hex: el que se usa depende de contra qué es débil el bicho (Noceros = magia,
+          Bon Appeti = físico).
+        </div>
+        {(getDeep(draft, 'hunt.levels') || []).map((lv: any, idx: number) => {
+          const levels: any[] = getDeep(draft, 'hunt.levels') || [];
+          const setLevels = (next: any[]) => {
+            setDraft((d: any) => setDeep(d, 'hunt.levels', next));
+            setChanged(true);
+          };
+          const upd = (patch: any) => setLevels(levels.map((l, i) => (i === idx ? { ...l, ...patch } : l)));
+          const lvlInput: React.CSSProperties = { width: 60, padding: '2px 6px' };
+          return (
+            <div key={idx} style={{ display: 'flex', gap: 6, alignItems: 'center', flexWrap: 'wrap' }}>
+              <span style={{ fontSize: 13, whiteSpace: 'nowrap' }}>Nivel</span>
+              <input type="number" value={lv.level ?? 0} onChange={e => upd({ level: Number(e.target.value) })} style={lvlInput} />
+              <span style={{ fontSize: 13, whiteSpace: 'nowrap' }}>Energía</span>
+              <input type="number" value={lv.energyCost ?? 0} onChange={e => upd({ energyCost: Number(e.target.value) })} style={lvlInput} />
+              <span style={{ fontSize: 13, whiteSpace: 'nowrap' }}>Magia</span>
+              <input
+                type="text"
+                value={lv.payloadHexMagia || lv.payloadHex || ''}
+                onChange={e => upd({ payloadHexMagia: e.target.value })}
+                placeholder="hex débil contra magia"
+                style={{ flex: 1, minWidth: 150, padding: '2px 6px', fontSize: 12, fontFamily: 'monospace' }}
+              />
+              <span style={{ fontSize: 13, whiteSpace: 'nowrap' }}>Físico</span>
+              <input
+                type="text"
+                value={lv.payloadHexFisico || lv.payloadHex || ''}
+                onChange={e => upd({ payloadHexFisico: e.target.value })}
+                placeholder="hex débil contra físico"
+                style={{ flex: 1, minWidth: 150, padding: '2px 6px', fontSize: 12, fontFamily: 'monospace' }}
+              />
+              <button onClick={() => setLevels(levels.filter((_, i) => i !== idx))} style={{ padding: '2px 7px', cursor: 'pointer' }}>X</button>
+            </div>
+          );
+        })}
+        <button
+          onClick={() => {
+            const levels: any[] = getDeep(draft, 'hunt.levels') || [];
+            setDraft((d: any) => setDeep(d, 'hunt.levels', [
+              ...levels,
+              { level: (levels[levels.length - 1]?.level ?? 1) + 1, energyCost: 40, payloadHexMagia: '', payloadHexFisico: '' },
+            ]));
+            setChanged(true);
+          }}
+          style={{ padding: '4px 8px', cursor: 'pointer', alignSelf: 'flex-start' }}
+        >
+          + Agregar nivel
+        </button>
+      </Section>
+
+      <Section title="Cartas de la Suerte">
+        <Toggle label="Buscar cartas automáticamente" {...bool('luckyCards.enable')} />
+        <NumInput label="Intervalo entre ciclos" {...set('luckyCards.intervalSec')} suffix="s" />
+        <NumInput label="Cofres por ciclo" {...set('luckyCards.maxPerCycle')} />
+        <div style={{ fontSize: 12, color: '#888' }}>
+          Si hay cofres de Carta de la Suerte en el mapa, el bot consulta el cofre (2202) y si
+          todavía no lo reclamó manda la tropa a buscar la carta (9866). Una búsqueda por cuenta
+          hasta que la tropa vuelve. Con 3 nueves en mano canjea solo (9864, p.ej. 999 gems) y deja
+          de buscar cofres hasta el próximo evento.
+        </div>
       </Section>
 
       <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginTop: 4 }}>

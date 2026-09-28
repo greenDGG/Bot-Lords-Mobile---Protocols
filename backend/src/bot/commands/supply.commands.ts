@@ -5,7 +5,7 @@ export async function sendCaravan(bot: BotEngine, coordBytes: Buffer, resourceIn
   const payload = Buffer.alloc(23);
   coordBytes.copy(payload, 0);
   payload.writeUInt32LE(amount, 3 + resourceIndex * 4);
-  await waitMapProtoCooldown();
+  await waitMapProtoCooldown(bot);
   bot.sendCommandPacket(2452, payload, true);
 }
 

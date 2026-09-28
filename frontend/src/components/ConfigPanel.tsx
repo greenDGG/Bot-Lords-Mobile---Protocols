@@ -316,6 +316,79 @@ export default function ConfigPanel({ config, socket, iggId, colors, applyTo }: 
         </div>
       </Section>
 
+      <Section title="Caza (monstruos 2488)">
+        <Toggle label="Caza automática" {...bool('hunt.enable')} />
+        <NumInput label="Cooldown entre golpes" {...set('hunt.cooldown')} suffix="s" />
+        <NumInput label="Radio de escaneo del mapa" {...set('hunt.scanRadius')} suffix="tiles" />
+        <Toggle label="Squad compartido (varios bots al mismo bicho)" {...bool('hunt.squad.enable')} />
+        <NumInput label="Máx. bots por bicho" {...set('hunt.squad.max')} />
+        <div style={{ fontSize: 12, color: '#888' }}>
+          Los bots calculan cuántos golpes faltan por el HP restante y el daño medio: con el bicho
+          casi muerto va 1 solo; con HP alto se reparten. Con squad apagado, cada bicho lo caza 1 bot
+          y los demás van a otro.
+        </div>
+        <div style={{ fontSize: 13, color: '#888' }}>
+          Por nivel: costo de energía por golpe + hex del 2488 <strong>sin</strong> la coord (va 3 bytes
+          de coord al frente). Dos hex: el que se usa depende de contra qué es débil el bicho
+          (Noceros = magia, Bon Appeti = físico).
+        </div>
+        {(getDeep(draft, 'hunt.levels') || []).map((lv: any, idx: number) => {
+          const levels: any[] = getDeep(draft, 'hunt.levels') || [];
+          const upd = (patch: any) => touch('hunt.levels', levels.map((l, i) => (i === idx ? { ...l, ...patch } : l)));
+          return (
+            <div key={idx} style={{ display: 'flex', gap: 6, alignItems: 'center', flexWrap: 'wrap' }}>
+              <span style={{ fontSize: 13, whiteSpace: 'nowrap' }}>Nivel</span>
+              <input
+                type="number" value={lv.level ?? 0} onChange={e => upd({ level: Number(e.target.value) })}
+                style={{ width: 56, padding: '2px 6px', background: colors.surface, color: colors.text, border: `1px solid ${colors.border}`, borderRadius: 4 }}
+              />
+              <span style={{ fontSize: 13, whiteSpace: 'nowrap' }}>Energía</span>
+              <input
+                type="number" value={lv.energyCost ?? 0} onChange={e => upd({ energyCost: Number(e.target.value) })}
+                style={{ width: 64, padding: '2px 6px', background: colors.surface, color: colors.text, border: `1px solid ${colors.border}`, borderRadius: 4 }}
+              />
+              <span style={{ fontSize: 13, whiteSpace: 'nowrap' }}>Magia</span>
+              <input
+                type="text" value={lv.payloadHexMagia || lv.payloadHex || ''} onChange={e => upd({ payloadHexMagia: e.target.value })}
+                placeholder="hex si el bicho es débil contra magia"
+                style={{ flex: 1, minWidth: 180, padding: '2px 6px', fontSize: 12, fontFamily: 'monospace', background: colors.surface, color: colors.text, border: `1px solid ${colors.border}`, borderRadius: 4 }}
+              />
+              <span style={{ fontSize: 13, whiteSpace: 'nowrap' }}>Físico</span>
+              <input
+                type="text" value={lv.payloadHexFisico || lv.payloadHex || ''} onChange={e => upd({ payloadHexFisico: e.target.value })}
+                placeholder="hex si el bicho es débil contra físico"
+                style={{ flex: 1, minWidth: 180, padding: '2px 6px', fontSize: 12, fontFamily: 'monospace', background: colors.surface, color: colors.text, border: `1px solid ${colors.border}`, borderRadius: 4 }}
+              />
+              <button
+                onClick={() => touch('hunt.levels', levels.filter((_, i) => i !== idx))}
+                style={{ padding: '2px 7px', cursor: 'pointer' }}
+              >X</button>
+            </div>
+          );
+        })}
+        <button
+          onClick={() => {
+            const levels: any[] = getDeep(draft, 'hunt.levels') || [];
+            touch('hunt.levels', [...levels, { level: (levels[levels.length - 1]?.level ?? 1) + 1, energyCost: 40, payloadHexMagia: '', payloadHexFisico: '' }]);
+          }}
+          style={{ padding: '4px 8px', cursor: 'pointer', alignSelf: 'flex-start' }}
+        >
+          + Agregar nivel
+        </button>
+      </Section>
+
+      <Section title="Cartas de la Suerte">
+        <Toggle label="Buscar cartas automáticamente" {...bool('luckyCards.enable')} />
+        <NumInput label="Intervalo entre ciclos" {...set('luckyCards.intervalSec')} suffix="s" />
+        <NumInput label="Cofres por ciclo" {...set('luckyCards.maxPerCycle')} />
+        <div style={{ fontSize: 12, color: '#888' }}>
+          Si hay cofres de Carta de la Suerte en el mapa, cada bot consulta el cofre (2202) y si
+          todavía no lo reclamó manda la tropa a buscar la carta (9866). Una búsqueda por cuenta
+          hasta que la tropa vuelve. Con 3 nueves en mano canjea solo (9864, p.ej. 999 gems) y deja
+          de buscar cofres hasta el próximo evento.
+        </div>
+      </Section>
+
       <Section title="Misiones">
         <Toggle label="Auto-eliminar misiones no deseadas" {...bool('missions.autoEliminate')} />
         <div style={{ fontSize: 13, color: '#888', marginBottom: 4 }}>Misiones que quiero (se mantienen y notifican):</div>

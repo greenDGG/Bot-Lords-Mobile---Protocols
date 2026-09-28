@@ -1,4 +1,5 @@
 import { decodeCoordId, encodeCoordId, encodeCoord } from '../../models/map-coords';
+import { parseMapMarch } from './map-march.types';
 
 export interface ParsedMapTile {
   id: number;
@@ -47,6 +48,45 @@ const CONTINUATION_HEADER_SIZE = 3;
 const UPDATE_HEADER_SIZE = 11;
 /** Cada tile es un registro fijo de 51 bytes */
 export const MAP_TILE_SIZE = 51;
+/** Segmento de update: cabecera de 11 bytes + 1 tile de 51 */
+export const MAP_SEGMENT_SIZE = UPDATE_HEADER_SIZE + MAP_TILE_SIZE;
+/** Por encima de este tamaño un 2220 es entrega de mapa; por debajo, update o marcha */
+export const MAP_DELIVERY_MIN_BYTES = 1000;
+/** Cabeceras de eco que el bot puede recibir (count 1..4 → 5 + n×10) */
+const ECHO_HEADERS = [15, 25, 35, 45];
+
+/** Qué formato tiene el body de un 2220. */
+export type MapBodyKind = 'delivery' | 'update' | 'march';
+
+/**
+ * Clasifica el body de un 2220 antes de parsearlo.
+ *
+ * Regla principal (observada): los cuerpos grandes son el mapa entregado
+ * (cabecera + N×51 con N ≈ 10 por celda pedida → >1000 bytes); los pequeños
+ * son actualizaciones (segmentos de 62) o marchas.
+ *
+ * Sin esta clasificación, una entrega cuya longitud resulta múltiplo de 62
+ * (p.ej. 45 + 21×51 = 1116, 3 + 51×51 = 2604) la comería parse2220 y el
+ * handler ni llegaría a parseMapPacket.
+ */
+export function classifyMapBody(buf: Buffer): MapBodyKind {
+  if (buf.length > MAP_DELIVERY_MIN_BYTES) return 'delivery';
+
+  if (buf.length >= MAP_SEGMENT_SIZE && buf.length % MAP_SEGMENT_SIZE === 0) {
+    // ¿Entrega pequeña cuya cabecera de eco divide exacto? (p.ej. 15 + 7×51 = 372)
+    for (const h of ECHO_HEADERS) {
+      const tiles = buf.length - h;
+      if (tiles < MAP_TILE_SIZE || tiles % MAP_TILE_SIZE !== 0) continue;
+      const n = (h - 5) / 10;
+      // ~10 tiles por celda observados; con <5 por celda no es una entrega
+      if (tiles / MAP_TILE_SIZE >= 5 * n && echoedCellsLookValid(buf, h)) return 'delivery';
+    }
+    return 'update';
+  }
+
+  if (buf.length >= 53 && parseMapMarch(buf)) return 'march';
+  return 'delivery';
+}
 
 /**
  * Detecta el tamaño de cabecera por longitud: el body es header + N×51.

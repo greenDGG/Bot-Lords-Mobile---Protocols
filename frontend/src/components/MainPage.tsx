@@ -10,14 +10,15 @@ import GlobalCommandsModal from './GlobalCommandsModal';
 import ProxyAuthModal from './ProxyAuthModal';
 import SupplyModal from './SupplyModal';
 
-let ITEM_VALUES: Record<number, number> = {};
-let RESOURCE_ITEM_IDS: Record<string, number[]> = {};
-
-
 interface Account {
   iggId: string;
   token: any;
   config: any;
+}
+
+interface ItemsMeta {
+  values: Record<number, number>;
+  ids: Record<string, number[]>;
 }
 
 interface PlayerInfo {
@@ -44,6 +45,7 @@ export default function MainPage({ onSelectBot }: { onSelectBot: (id: number, na
   const [resources, setResources] = useState<Record<number, Resources>>({});
   const [inventory, setInventory] = useState<Record<number, { itemId: number; amount: number }[]>>({});
   const [selected, setSelected] = useState<Set<number>>(new Set());
+  const [itemsMeta, setItemsMeta] = useState<ItemsMeta>({ values: {}, ids: {} });
   const [launching, setLaunching] = useState<Set<number>>(new Set());
   const [showWarModal, setShowWarModal] = useState(false);
   const [showEventsModal, setShowEventsModal] = useState(false);
@@ -112,6 +114,12 @@ export default function MainPage({ onSelectBot }: { onSelectBot: (id: number, na
       setLogs(prev => [...prev.slice(-199), { iggId: data.iggId, msg: `[-] Error de conexión: ${data.message || 'desconocido'}` }]);
     });
     socket.on('playerInfo', onPlayerInfo);
+    socket.on('error', (data: { iggId?: number; message?: string }) => {
+      setLogs(prev => [...prev.slice(-199), { iggId: data?.iggId ?? 0, msg: `[-] ${data?.message || 'Error desconocido'}` }]);
+      if (typeof data?.iggId === 'number') {
+        setStartingBots(prev => { const next = new Set(prev); next.delete(data.iggId!); return next; });
+      }
+    });
     socket.on('shield', onShield);
     socket.on('resources', onResources);
     socket.on('inventory', onInventory);
@@ -132,10 +140,11 @@ export default function MainPage({ onSelectBot }: { onSelectBot: (id: number, na
     });
     socket.on('items', (data: any) => {
       setItemsData(data);
-      ITEM_VALUES = {};
-      for (const [k, v] of Object.entries(data.ITEM_VALUES)) ITEM_VALUES[Number(k)] = v as number;
-      RESOURCE_ITEM_IDS = {};
-      for (const [k, v] of Object.entries(data.RESOURCE_ITEM_IDS)) RESOURCE_ITEM_IDS[k] = v as number[];
+      const values: Record<number, number> = {};
+      for (const [k, v] of Object.entries(data.ITEM_VALUES || {})) values[Number(k)] = v as number;
+      const ids: Record<string, number[]> = {};
+      for (const [k, v] of Object.entries(data.RESOURCE_ITEM_IDS || {})) ids[k] = (v as number[]) || [];
+      setItemsMeta({ values, ids });
     });
     socket.emit('getItems');
   }, [socket]);
@@ -175,6 +184,7 @@ export default function MainPage({ onSelectBot }: { onSelectBot: (id: number, na
     if (!connected) return;
     socket.emit('listAccounts');
     socket.emit('getRunningBots');
+    socket.emit('getItems');
     const onAccounts = (data: Account[]) => setAccounts(data);
     socket.on('accounts', onAccounts);
     return () => { socket.off('accounts', onAccounts); };
@@ -204,25 +214,34 @@ export default function MainPage({ onSelectBot }: { onSelectBot: (id: number, na
   }, [socket]);
 
   const launchSelected = useCallback(async () => {
-    const ids = Array.from(selected);
+    const ids = Array.from(selected).filter(id => !bots[id] && !startingBots.has(id));
     if (ids.length === 0) return;
     setLaunching(new Set(ids));
-    for (const iggId of ids) {
-      await new Promise<void>((resolve) => {
-        const onDone = (data: { iggId: number }) => {
-          if (data.iggId === iggId) {
+    try {
+      for (const iggId of ids) {
+        await new Promise<void>((resolve) => {
+          let timer: ReturnType<typeof setTimeout>;
+          const cleanup = () => {
+            clearTimeout(timer);
             socket.off('botStarted', onDone);
             socket.off('connectionFailed', onDone);
+            socket.off('error', onDone);
             resolve();
-          }
-        };
-        socket.on('botStarted', onDone);
-        socket.on('connectionFailed', onDone);
-        socket.emit('startBot', { iggId });
-      });
+          };
+          const onDone = (data?: { iggId?: number }) => {
+            if (data?.iggId === iggId) cleanup();
+          };
+          timer = setTimeout(cleanup, 60000);
+          socket.on('botStarted', onDone);
+          socket.on('connectionFailed', onDone);
+          socket.on('error', onDone);
+          socket.emit('startBot', { iggId });
+        });
+      }
+    } finally {
+      setLaunching(new Set());
     }
-    setLaunching(new Set());
-  }, [selected, socket]);
+  }, [selected, socket, bots, startingBots]);
 
   return (
     <>
@@ -322,7 +341,7 @@ export default function MainPage({ onSelectBot }: { onSelectBot: (id: number, na
       </div>
 
       {selected.size > 0 && (
-        <ResourceSummary selected={selected} resources={resources} players={players} inventory={inventory} />
+        <ResourceSummary selected={selected} resources={resources} players={players} inventory={inventory} items={itemsMeta} />
       )}
 
       {showConfigModal && selected.size > 0 && (
@@ -401,8 +420,7 @@ export default function MainPage({ onSelectBot }: { onSelectBot: (id: number, na
             background: colors.surface, border: `1px solid ${colors.border}`,
             borderRadius: 8, padding: 24, maxWidth: 800, width: '90%', maxHeight: '80vh', overflowY: 'auto',
           }} onClick={e => e.stopPropagation()}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-              <h3>⚔️ Agrupaciones Global</h3>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 16 }}>
               <button onClick={() => { Array.from(selected).forEach(id => socket.emit('setWarViewing', { iggId: id, viewing: false })); setShowWarModal(false); }}>Cerrar</button>
             </div>
             <WarDashboard socket={socket} bots={Array.from(selected)} />
@@ -441,23 +459,25 @@ const formatRes = (v: number) => {
 
 // (imported from data/items.json via module-level constants)
 
-function ResourceSummary({ selected, resources, players, inventory }: {
+function ResourceSummary({ selected, resources, players, inventory, items }: {
   selected: Set<number>;
   resources: Record<number, Resources>;
   players: Record<number, PlayerInfo>;
   inventory: Record<number, { itemId: number; amount: number }[]>;
+  items: ItemsMeta;
 }) {
   const ids = Array.from(selected).filter(id => resources[id]);
 
   const sum = (key: keyof Resources) => ids.reduce((acc, id) => acc + (resources[id]?.[key] || 0), 0);
 
   const bagTotal = (resKey: string) => {
-    const itemIds = RESOURCE_ITEM_IDS[resKey] || [];
+    const itemIds = items.ids[resKey] || [];
+    if (itemIds.length === 0) return 0;
     let total = 0;
     for (const id of ids) {
       const inv = inventory[id] || [];
       for (const item of inv) {
-        const value = ITEM_VALUES[item.itemId];
+        const value = items.values[item.itemId];
         if (value && itemIds.includes(item.itemId)) {
           total += item.amount * value;
         }

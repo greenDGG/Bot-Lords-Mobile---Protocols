@@ -682,19 +682,24 @@ export class BotEngine extends EventEmitter {
 
   // ── Chat ──
 
-  sendChat(text: string): void {
+  /**
+   * 3001 _MSG_REQUEST_SENDCHAT. Layout (verificado contra la respuesta 3003 del
+   * servidor: parsea `canal`(u8) + 0 + 5 + `len`(u16) + texto justo después del seq):
+   *   [u8 canal][u8 0][u8 5][u16 len][texto]
+   * canal: 0 = mundo/global, 1 = gremio (misma numeración que el 3002 VIEWCHAT).
+   */
+  sendChat(text: string, channel = 1): void {
     if (!this.online || !this.game.connected) { this.log('[-] No conectado'); return; }
     const textBytes = Buffer.from(text, 'utf-8');
-    const remainingLen = 2 + 1 + 2 + textBytes.length + 1;
-    const body = Buffer.alloc(4 + remainingLen);
+    const body = Buffer.alloc(1 + 1 + 1 + 2 + textBytes.length);
     let off = 0;
-    body.writeUInt32LE(remainingLen, off); off += 4;
-    body.writeUInt16LE(1, off); off += 2;
+    body[off++] = channel;
+    body[off++] = 0;
     body[off++] = 5;
     body.writeUInt16LE(textBytes.length, off); off += 2;
-    textBytes.copy(body, off); off += textBytes.length;
-    body[off] = 0x0A;
+    textBytes.copy(body, off);
     this.sendCommandPacket(3001, body, true);
+    this.log(`[CHAT] canal=${channel === 1 ? 'gremio' : 'mundo'} "${text}"`);
   }
 
   // ── Disconnect ──

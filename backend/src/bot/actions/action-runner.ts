@@ -15,6 +15,8 @@ export class ActionRunner {
   private readonly idleMs = 1500;
   private readonly supplyWaitMs = 10000;
   private readonly offlineWaitMs = 5000;
+  // Loguea una sola vez la pausa/reeanudación por caza activa
+  private pausedByHunt = false;
 
   constructor(private bot: BotInstance) {
     this.actions = createActions();
@@ -75,6 +77,23 @@ export class ActionRunner {
         this.bot.bot.log('[ACTION] Supply en progreso, saltando tick...');
         await delay(this.supplyWaitMs);
         continue;
+      }
+
+      // Con una caza activa NO se ejecuta ninguna otra accion (ni eventos, ni
+      // quests, ni supply, ni escudo): los 2488/2201 salen del bucle de
+      // BotInstance.runHuntLoop(). El indice no avanza, asi que al terminar
+      // la caza sigue exactamente donde estaba.
+      if (this.bot.isHunting()) {
+        if (!this.pausedByHunt) {
+          this.pausedByHunt = true;
+          this.bot.bot.log('[ACTION] Caza activa: pausado el resto de acciones');
+        }
+        await delay(this.idleMs);
+        continue;
+      }
+      if (this.pausedByHunt) {
+        this.pausedByHunt = false;
+        this.bot.bot.log('[ACTION] Caza terminada: reanudando acciones');
       }
 
       const action = this.actions[this.index];

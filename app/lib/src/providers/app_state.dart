@@ -160,15 +160,18 @@ class AppState extends ChangeNotifier {
   void globalCommand(int proto, String body) => emit('globalCommand', {'proto': proto, 'body': body});
 
   Future<void> launchSelected() async {
-    final ids = selected.toList();
+    final ids = selected.where((id) => running[id] != true).toList();
     if (ids.isEmpty) return;
     launching.addAll(ids);
     notifyListeners();
-    for (final id in ids) {
-      await _awaitBotStart(id);
+    try {
+      for (final id in ids) {
+        await _awaitBotStart(id);
+      }
+    } finally {
+      launching.clear();
+      notifyListeners();
     }
-    launching.clear();
-    notifyListeners();
   }
 
   Future<void> _awaitBotStart(int iggId) async {
@@ -181,10 +184,12 @@ class AppState extends ChangeNotifier {
 
     socket.on('botStarted', done);
     socket.on('connectionFailed', done);
+    socket.on('error', done);
     emit('startBot', {'iggId': iggId});
     await completer.future.timeout(const Duration(seconds: 60), onTimeout: () {});
     socket.off('botStarted', done);
     socket.off('connectionFailed', done);
+    socket.off('error', done);
   }
 
   void toggleSelected(int iggId, bool checked) {

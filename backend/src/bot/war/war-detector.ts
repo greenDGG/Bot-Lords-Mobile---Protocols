@@ -10,6 +10,10 @@ export class WarDetector {
   private readonly cooldown = 5000;
   private viewing = false;
   private notifyCount = 0;
+  // 7315: llega 1 paquete por entrada (no una lista), así que al pedir datos se
+  // limpia el lote anterior y el nuevo se indexa por orden de llegada (el primero = 0)
+  private fortressResetPending = false;
+  private fortressNextIndex = 0;
 
   onWarsUpdated?: (wars: WarEvent[]) => void;
   onNotification?: (count: number) => void;
@@ -42,6 +46,7 @@ export class WarDetector {
     const now = Date.now();
     if (now - this.last2476 < this.cooldown) return;
     this.last2476 = now;
+    this.fortressResetPending = true;
     this.bot.enqueueCommand(async () => {
       this.bot.log('[AGRU] Solicitando 2476...');
       send2476(this.bot);
@@ -60,16 +65,14 @@ export class WarDetector {
     const proto = mp.protocolId;
 
     if (proto === 2477) {
-      const isStart = body.length > 0 && body[0] === 0x01;
-      if (!isStart) {
-        this.notifyCount = Math.max(0, this.notifyCount - 1);
-        this.bot.log(`[AGRU] 2477 fin (pendiente #${this.notifyCount})`);
-        this.onNotification?.(this.notifyCount);
-      } else if (!this.viewing) {
-        this.notifyCount++;
-        this.bot.log(`[AGRU] 2477 inicio (pendiente #${this.notifyCount})`);
-        this.onNotification?.(this.notifyCount);
-      }
+      // 2477 = agrupaciones RESTANTES que quedan (uint32 LE en [0-3])
+      const remaining = body.length >= 4 ? body.readUInt32LE(0) : (body.length > 0 && body[0] === 0x01 ? 1 : 0);
+      this.notifyCount = this.viewing ? 0 : remaining;
+      this.bot.log(`[AGRU] 2477 restantes: ${remaining}${this.viewing ? ' (viendo la UI)' : ''}`);
+      this.onNotification?.(this.notifyCount);
+    } else if (proto === 2479) {
+      // 2479 = terminó/canceló la agrupación en esa posición (uint32 index * 256)
+      this.handle2479(body);
     } else if (proto === 2485) {
       // 2485 = update notification, server pushes 2478 automatically when in UI
     } else if (proto === 2478 && body.length >= 12) {
@@ -83,9 +86,53 @@ export class WarDetector {
     }
   }
 
+  // Último tipo de lista recibida (2478/6611/7315): el índice del 2479 se aplica
+  // sobre esa lista
+  private lastListType: 'castle' | 'tower' | 'fortress' | null = null;
+
+  // 2479: terminó/canceló la agrupación en la posición dada.
+  // Body: uint32 LE = index * 256 (misma codificación que la selección 2480)
+  private handle2479(body: Buffer): void {
+    if (body.length < 4) return;
+    const idx = body.readUInt32LE(0) >> 8;
+    let victim = this.lastListType
+      ? this.activeWars.find(w => w.active && w.type === this.lastListType && w.index === idx)
+      : undefined;
+    if (!victim) victim = this.activeWars.find(w => w.active && w.index === idx);
+    if (!victim) {
+      this.bot.log(`[AGRU] 2479 índice ${idx} no encontrado`);
+      return;
+    }
+
+    this.activeWars = this.activeWars.filter(w => w !== victim);
+    if (victim.type === 'fortress') {
+      // las fortalezas se numeran por posición: renumerar las que quedan
+      this.activeWars
+        .filter(w => w.type === 'fortress')
+        .sort((a, b) => a.index - b.index)
+        .forEach((w, i) => { w.index = i; });
+      this.fortressNextIndex = this.activeWars.filter(w => w.type === 'fortress').length;
+    } else {
+      this.assignIndexes();
+    }
+
+    this.bot.log(`[AGRU] 2479 terminó índice ${idx} (${victim.type} "${victim.rallyLeader}") → quedan ${this.activeWars.filter(w => w.active).length}`);
+    this.onWarsUpdated?.(this.activeWars);
+  }
+
+  // Índice de selección (1144/2480): castillos/torres por menor tiempo restante.
+  // Las fortalezas conservan su índice de llegada (los asigna handle7315).
+  private assignIndexes(): void {
+    const sorted = this.activeWars
+      .filter(w => w.active && w.type !== 'fortress')
+      .sort((a, b) => a.timeRemainingSec - b.timeRemainingSec);
+    for (let i = 0; i < sorted.length; i++) sorted[i].index = i;
+  }
+
   private handle2478(payload: Buffer): void {
     let off = 6;
     if (off >= payload.length) return;
+    this.lastListType = 'castle';
 
     const parsed: WarEvent[] = [];
 
@@ -136,6 +183,7 @@ export class WarDetector {
 
     const currentIds = new Set(parsed.map(w => `${w.coordX},${w.coordY}|${w.rallyLeader}`));
     for (const prev of this.activeWars) {
+      if (prev.type !== 'castle') continue; // solo castillos: no desactivar torres/fortalezas
       const key = `${prev.coordX},${prev.coordY}|${prev.rallyLeader}`;
       if (!currentIds.has(key)) {
         prev.active = false;
@@ -145,7 +193,7 @@ export class WarDetector {
 
     this.activeWars = this.activeWars.filter(w => w.active || w.timeRemainingSec > 0);
     for (const w of parsed) {
-      const existing = this.activeWars.find(x => x.coordX === w.coordX && x.coordY === w.coordY);
+      const existing = this.activeWars.find(x => x.coordX === w.coordX && x.coordY === w.coordY && x.type === w.type);
       if (existing) {
         existing.timeRemainingSec = w.timeRemainingSec;
         existing.warTimestamp = w.warTimestamp;
@@ -156,8 +204,7 @@ export class WarDetector {
       }
     }
 
-    const sorted = this.activeWars.filter(w => w.active).sort((a, b) => a.timeRemainingSec - b.timeRemainingSec);
-    for (let i = 0; i < sorted.length; i++) sorted[i].index = i;
+    this.assignIndexes();
 
     this.bot.log(`[AGRU] 2478 parseado: ${parsed.length} grupos (${parsed.filter(w => w.rallyType === 1).length} refuerzos, ${parsed.filter(w => w.rallyType === 0).length} agrupaciones), ${this.activeWars.filter(w => w.active).length} activos`);
     this.onWarsUpdated?.(this.activeWars);
@@ -166,6 +213,7 @@ export class WarDetector {
   private handle6611(payload: Buffer): void {
     let off = 6;
     if (off >= payload.length) return;
+    this.lastListType = 'tower';
 
     const parsed: WarEvent[] = [];
     while (off + 12 <= payload.length) {
@@ -211,8 +259,7 @@ export class WarDetector {
       }
     }
 
-    const sorted = this.activeWars.filter(w => w.active).sort((a, b) => a.timeRemainingSec - b.timeRemainingSec);
-    for (let i = 0; i < sorted.length; i++) sorted[i].index = i;
+    this.assignIndexes();
 
     this.bot.log(`[AGRU] 6611 parseado: ${parsed.length} torres`);
     this.onWarsUpdated?.(this.activeWars);
@@ -222,43 +269,62 @@ export class WarDetector {
     let off = 0;
     if (off >= payload.length) return;
 
+    // El7315 llega en UN PAQUETE POR ENTRADA (53b), no como lista completa.
+    // Se acumulan en lote: el primero que llega = índice 0.
+    // El lote se limpia cuando empieza uno nuevo: sea porque pedimos datos (2476)
+    // o porque el servidor lo reenvía empezando por serverIndex = 0.
+    const serverIndex = payload.length >= 4 ? payload.readUInt32LE(0) : -1;
+    this.lastListType = 'fortress';
+    if (serverIndex === 0 || this.fortressResetPending) {      const reason = this.fortressResetPending ? 'tras pedido 2476' : 'serverIndex=0';
+      const before = this.activeWars.filter(w => w.type === 'fortress').length;
+      this.activeWars = this.activeWars.filter(w => w.type !== 'fortress');
+      this.fortressNextIndex = 0;
+      this.fortressResetPending = false;
+      if (before > 0) this.bot.log(`[AGRU] 7315 nuevo lote (${reason}): se limpiaron ${before} fortalezas viejas`);
+    }
+
     const parsed: WarEvent[] = [];
 
     while (off + 35 <= payload.length) {
-      const startOff = off;
-      const pad1 = payload.readUInt32LE(off); off += 4;
-      const sep1 = payload[off]; off += 1;
+      off += 4; // [0-3] = posición de la entrada (0,1,2...) según los paquetes reales
+      // [4] flag de estado: 00 = en espera, 01 = en marcha
+      const inMarch = payload[off] === 0x01;
+      off += 1;
       const ts = payload.readUInt32LE(off); off += 4;
-      const pad2 = payload.readUInt32LE(off); off += 4;
+      off += 4; // padding
       const timeRem = payload.readUInt16LE(off); off += 2;
-      const pad3 = payload.readUInt16LE(off); off += 2;
-      const iconType = payload.readUInt16LE(off); off += 2;
+      off += 2; // padding
+
+      // [17-19] ubicación de 3 bytes (sin determinar: no es pad ni iconType)
+      const locA0 = payload[off]; const locA1 = payload[off + 1]; const locA2 = payload[off + 2];
+      off += 3;
       const iconId = payload.readUInt16LE(off); off += 2;
 
-      // Fixed 13-byte null-padded name
+      // Nombre: 13 bytes fijos null-padded, sin separador delante de subType
       const rawName = payload.toString('ascii', off, off + 13);
       const rallyLeader = rawName.replace(/\0+$/, '');
       off += 13;
-      const sep2 = payload[off]; off += 1;
 
+      // [35-36] subType (ej: 0f03) — sin investigar
       let subType = 0;
       let troopsCurrent = 0;
       let troopsMax = 0;
       let kingdom = 0;
-      let loc0 = 0;
-      let loc1 = 0;
-      let loc2 = 0;
+      let fort0 = 0;
+      let fort1 = 0;
+      let fort2 = 0;
       let level = 0;
 
       if (off + 2 <= payload.length) { subType = payload.readUInt16LE(off); off += 2; }
       if (off + 4 <= payload.length) { troopsCurrent = payload.readUInt32LE(off); off += 4; }
       if (off + 4 <= payload.length) { troopsMax = payload.readUInt32LE(off); off += 4; }
       if (off + 2 <= payload.length) { kingdom = payload.readUInt16LE(off); off += 2; }
-      if (off < payload.length) { loc0 = payload[off]; off += 1; }
-      if (off < payload.length) { loc1 = payload[off]; off += 1; }
-      if (off < payload.length) { loc2 = payload[off]; off += 1; }
+      // [47-49] ubicación de la FORTALEZA (3 bytes)
+      if (off < payload.length) { fort0 = payload[off]; off += 1; }
+      if (off < payload.length) { fort1 = payload[off]; off += 1; }
+      if (off < payload.length) { fort2 = payload[off]; off += 1; }
       if (off < payload.length) { level = payload[off]; off += 1; }
-      off += 2;
+      off += 2; // [51-52] 0100 — sin investigar
 
       if (!rallyLeader && timeRem === 0 && ts === 0) break;
 
@@ -268,32 +334,44 @@ export class WarDetector {
         detectedAt: new Date(),
         warTimestamp: new Date(ts * 1000),
         timeRemainingSec: timeRem,
-        coordX: loc0 | (loc1 << 8),
-        coordY: loc2,
+        coordX: fort0 | (fort1 << 8),
+        coordY: fort2,
         rallyLeader,
         enemyName: '',
         rallyType: 0,
         index: 0,
         type: 'fortress',
+        inMarch,
+        level,
+        troopsCurrent,
+        troopsMax,
       });
     }
 
-    this.activeWars = this.activeWars.filter(w => w.type !== 'fortress');
+    // Acumular (no reemplazar): cada paquete es una agrupación más del mismo lote
     for (const w of parsed) {
-      const existing = this.activeWars.find(x => x.coordX === w.coordX && x.coordY === w.coordY && x.type === w.type);
+      const existing = this.activeWars.find(x => x.type === 'fortress' && x.coordX === w.coordX && x.coordY === w.coordY && x.rallyLeader === w.rallyLeader);
       if (existing) {
         existing.timeRemainingSec = w.timeRemainingSec;
         existing.warTimestamp = w.warTimestamp;
-        existing.rallyLeader = w.rallyLeader;
+        existing.inMarch = w.inMarch;
+        existing.level = w.level;
+        existing.troopsCurrent = w.troopsCurrent;
+        existing.troopsMax = w.troopsMax;
+        existing.active = true;
       } else {
+        w.index = this.fortressNextIndex++;
+        if (serverIndex >= 0 && serverIndex !== w.index) {
+          this.bot.log(`[AGRU] 7315 aviso: serverIndex=${serverIndex} pero por llegada toca ${w.index}`);
+        }
         this.activeWars.push(w);
       }
     }
 
-    const sorted = this.activeWars.filter(w => w.active).sort((a, b) => a.timeRemainingSec - b.timeRemainingSec);
-    for (let i = 0; i < sorted.length; i++) sorted[i].index = i;
+    this.assignIndexes();
 
-    this.bot.log(`[AGRU] 7315 parseado: ${parsed.length} fortalezas`);
+    const forts = this.activeWars.filter(w => w.type === 'fortress').length;
+    this.bot.log(`[AGRU] 7315 parseado: ${parsed.length} fortaleza(s) (lote acumulado: ${forts}, índices 0..${this.fortressNextIndex - 1})`);
     this.onWarsUpdated?.(this.activeWars);
   }
 }

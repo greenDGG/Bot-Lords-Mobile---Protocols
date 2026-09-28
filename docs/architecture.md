@@ -99,7 +99,7 @@ Parsers de paquetes del servidor. Los más relevantes:
 | `march-packet.ts` | 2446 | Datos de tropas de marcha |
 | `guild-info.ts` | 2802 | Información del gremio |
 | `quest-memory.ts` | 3112 | Misiones admin/guild |
-| `vip-chest-memory.ts` | 3125 | Cofre VIP |
+| `vip-chest.types.ts` | 3125 | Cofre VIP |
 | `lord-captive.ts` | 4401/4407/4408 | Líder capturado/ejecutado |
 | `essence-transmutation.ts` | 7317 | Transmutación de esencia |
 | `map-packet.ts` | 2220 | Tiles del mapa |

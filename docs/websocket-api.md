@@ -10,7 +10,7 @@ El frontend se comunica con el backend vía Socket.IO en `http://localhost:3000`
 | `getItems` | — | Pide `data/items.json`. Respuesta: `items` |
 | `getRunningBots` | — | Estado de los bots corriendo. Respuesta: `runningBots` |
 | `createAccount` | `{ iggId, accessToken, proxy? }` | Crea cuenta en MongoDB (requiere DB). Respuesta: `accountCreated` |
-| `startBot` | `{ iggId }` | Inicia el bot de una cuenta. Respuesta: `botStarted` / `connectionFailed` |
+| `startBot` | `{ iggId }` | Inicia el bot de una cuenta. Respuesta: `botStarted` / `connectionFailed` / `error` (con `iggId` si la cuenta ya está iniciada o iniciando) |
 | `stopBot` | `{ iggId }` | Detiene el bot. Respuesta: `botStopped` |
 | `getBotData` | `{ iggId }` | Snapshot completo de una cuenta. Respuesta: `botData` |
 | `sendCommand` | `{ iggId, command }` | Comando de texto: `help`/`ayuda`, `chat <texto>`, `disconnect`/`desconectar`, `shield`/`escudo` |
@@ -45,7 +45,7 @@ El frontend se comunica con el backend vía Socket.IO en `http://localhost:3000`
 | `warStatus` | `{ iggId, status }` | Progreso del envío de tropas |
 | `accountCaptured` | `{ iggId }` | Captura importada correctamente |
 | `captureError` | `{ message }` | Error importando captura |
-| `error` | `{ message }` | Error genérico |
+| `error` | `{ iggId?, message }` | Error genérico (`iggId` cuando es relativo a una cuenta) |
 | `configUpdated` | `{ iggId, config }` | Config guardada |
 | `globalCommandResult` | `{ sent, proto }` | Resultado del comando global |
 

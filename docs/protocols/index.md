@@ -31,7 +31,7 @@
 - [`2038`](2037.md#vínculo-con-2038-refinar) — Refinar maná (comando cliente → servidor, ver `2037`)
 - [`2402`](2402.md) — Entrenamiento de tropas (respuesta del servidor)
 - [`3112`](3112.md) — Respuesta de datos (barco / misiones) — identificar por tamaño y questType
-- [`3125`](3125.md) — Cofre VIP — estado (máscara de bits + timestamp) (servidor → cliente)
+- [`3125`](3125.md) — Cofre VIP — estado (máscara + timestamp) o rechazo de reclamo (servidor → cliente)
 - [`3126`](3126.md) — Cofre VIP — reclamar ranura (cliente → servidor)
 - [`3201`](3201.md) — Investigaciones / research (respuesta del servidor)
 - [`4044`](4044.md) — Cofre del Tesoro Eterno (Everlasting Treasure) — lista de items para reclamar
@@ -56,10 +56,34 @@
 ## Mapa
 
 - [`2201`](2201.md) — Solicitar datos del mapa (C→S, 45 bytes: count + celdas u16 LE)
-- [`2202`](2202.md) — Consultar información de tile (C→S, 3 bytes coord — necesario antes de cada 2452)
+- [`2202`](2202.md) — Consultar información de tile (C→S, 3 bytes coord — necesario antes de cada 2452; responde `2220` de 60 B con `NOT`/`YES`)
 - [`2204`](2204.md) — Buscar jugador por nombre (C→S, 13 bytes: nombre null-padded)
 - [`2205`](2205.md) — Respuesta ubicación de jugador (S→C, 4 bytes: status + coord)
-- [`2220`](2220.md) — Datos del mapa (S→C, header 25B + tiles de 51B cada uno)
+- [`2220`](2220.md) — Datos del mapa (S→C, header 25B + tiles de 51B cada uno) o variante march de 73B (marcha en curso)
+
+## Carta de la Suerte (cofres especie 217)
+
+Flujo: `2202` (¿reclamado?) → `9866` (mandar tropa) → `9867` (ack) → `9862`
+(carta recibida). Con tres nueves en mano se canjea con `9864` → `9865` y el bot
+deja de buscar en ese evento: el estado se guarda en la DB
+(`LuckyExchangeClaim`, una fila por cuenta y por evento). El evento arranca en
+`eventTs` y dura `duration` segundos (172740 ≈ 2 días); al pasar esa fecha el
+bot no vuelve a buscar.
+
+| Proto | Wire | Dir | Resumen |
+|-------|------|-----|---------|
+| [`9861`](9861.md) | `0x2685` | S→C | Estado del evento (41 B): cartas en mano, inicio y duración del evento, especie 217 — login y cambios de estado |
+| [`9862`](9862.md) | `0x2686` | S→C | Carta recibida (2 B: dígito + flag — `01` = entró al top 10, `00` = no entró) |
+| `9863` | `0x2687` | S→C | `LUCKYCARD_UNLOCK` — no observado |
+| [`9864`](9864.md) | `0x2688` | C→S | Canjear dígitos (4 B: u32 LE con los 3 dígitos más altos) |
+| [`9865`](9865.md) | `0x2689` | S→C | Respuesta del canje (10 B: status + eco + saldo de gems); **cualquier status cierra el evento en la DB** |
+| [`9866`](9866.md) | `0x268A` | C→S | Mandar tropa a buscar la carta (3 B coord) |
+| [`9867`](9867.md) | `0x268B` | S→C | Ack de la búsqueda (17 B: status + coord + duración) |
+| [`9868`](9868.md) | `0x268C` | S→C | Estado de la marcha (15 B: `01` yendo / `02` terminada) |
+
+Nota: el aviso de carta con la cola `88 01 00 00 00 <dígito>` llega por
+**`3439` (`_MSG_RESP_NOTICEINFO`)**, no por el 9868 — ver
+[9868 § dónde está el dígito](9868.md#dónde-está-realmente-el-dígito-3439-noticeinfo).
 
 ## Supply / Caravanas
 
@@ -96,19 +120,27 @@
 ## Ataque / Batalla
 
 - [`3418`](3418.md) — Paquete de ataque/batalla (S→C, 377 bytes: stats de batalla, tropas, niveles)
+- [`2488`](2488.md) — Cazar monstruo del mapa (C→S, 17 bytes: coord 3B + payload de config; un golpe = una energía)
+- `2489`/`2490`/`2491`/`2492` — Respuestas de caza (S→C, cuerpos sin decodificar, se loguean en `hunt.handler.ts`)
+
+## Chat
+
+- [`3001`](3001.md) — Enviar mensaje de chat (C→S, canal 1B + `00` + `05` + len u16 + texto)
+- [`3002`](3002.md) — Abrir la vista de chat (init #5, plano)
+- [`3003`](3003.md) — Chat entrante (S→C, lista de mensajes)
 
 ## Gremio
 
 - [`2802`](2802.md) — Información del gremio propio (S→C, tag 3B + nombre + título/descripción)
 - [`2825`](2825.md) — Solicitar solicitudes de unión al gremio (C→S, 4 bytes, solo header)
 - [`2813`](2813.md) — Aceptar/rechazar solicitud de unión al gremio (C→S, 13 bytes: `01`=aceptar, `02`=rechazar)
-- [`2826`](2826.md) — Respuesta: lista de solicitudes de unión al gremio (S→C, 43 bytes por usuario)
+- `2826` — Respuesta: lista de solicitudes de unión al gremio (S→C, 43 bytes por usuario)
 - [`2859`](2859.md) — Notificación de solicitud de unión al gremio (S→C, 6 bytes: `0a00`=aceptada, `0a01`=llegada/pendiente, `0a02`=rechazada/cancelada)
 
 ## Atalaya / Marchas entrantes
 
-- [`2440`](../investigacion/marchas.md) — Marcha entrante: detección inicial (S→C)
+- `2440` — Marcha entrante: detección inicial (S→C, sin doc propia)
 - [`2442`](2442.md) — Marcha entrante: actualización de tiempo restante (S→C)
-- [`2441`](../investigacion/marchas.md) — Batalla inminente (S→C)
-- [`2445`](../investigacion/marchas.md) — Solicitud de datos de marcha (C→S)
-- [`2446`](../investigacion/marchas.md) — Datos de marcha: tropas, héroes (S→C)
+- `2441` — Batalla inminente (S→C, sin doc propia)
+- `2445` — Solicitud de datos de marcha (C→S, sin doc propia)
+- `2446` — Datos de marcha: tropas, héroes (S→C, sin doc propia)
