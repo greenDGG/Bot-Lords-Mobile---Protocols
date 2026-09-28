@@ -256,6 +256,8 @@ interface MapMarch {
   startTime: number;
   duration: number;
   progress: number;
+  /** Llegada real tras una aceleración (0x12); si existe manda sobre startTime + duration */
+  eta?: number;
 }
 
 function worldToScreen(x: number, y: number, cx: number, cy: number, tw: number, th: number): { sx: number; sy: number } {
@@ -487,9 +489,12 @@ export default function MapViewerDemo({
     // ── Marchas: línea origen→destino + marcador animado ──
     const nowSec = Math.floor(Date.now() / 1000);
     for (const m of marches) {
+      // Si la marcha fue acelerada (record 0x12), la llegada real es m.eta
+      const end = m.eta ?? m.startTime + m.duration;
       const elapsed = nowSec - m.startTime;
-      if (elapsed < 0 || elapsed > m.duration) continue;
-      const p = m.duration > 0 ? elapsed / m.duration : 0;
+      if (elapsed < 0 || nowSec > end) continue;
+      const total = end - m.startTime;
+      const p = total > 0 ? elapsed / total : 0;
 
       const a = worldToScreen(m.origin.x, m.origin.y, cx, cy, tw, th);
       const b = worldToScreen(m.destination.x, m.destination.y, cx, cy, tw, th);

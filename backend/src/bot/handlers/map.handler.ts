@@ -4,6 +4,7 @@ import { parseMapMarches } from '../models/map-march.types';
 import { parseMonsterHit } from '../models/monster-hit.types';
 import { parseTileInfo } from '../models/lucky-card.types';
 import { parseTileOccupants, occupantTailOffset } from '../models/map-occupant.types';
+import { parseMapAccels, accelHeadOffset, accelTailOffset } from '../models/map-accel.types';
 
 export function handleMapData(bot: BotInstance, body: Buffer): void {
   if (body.length < 10) return;
@@ -14,6 +15,22 @@ export function handleMapData(bot: BotInstance, body: Buffer): void {
     const tileInfo = parseTileInfo(body);
     if (tileInfo) {
       bot.onTileInfo(tileInfo);
+      return;
+    }
+
+    // Aceleración de marcha (record 0x12, 31 B): nueva llegada = RECV + f1.
+    // Va ANTES de classifyMapBody y de los occupants: un body de 31 B caería
+    // en 'delivery' (se pierde), y si viniera apilado con un 0x03 el escáner
+    // de occupants (que barre byte a byte) encontraría primero el 0x03 y el
+    // resto de la recursión se perdería.
+    const accels = parseMapAccels(body);
+    if (accels.length > 0) {
+      const head = accelHeadOffset(accels);
+      const tail = accelTailOffset(accels);
+      if (head > 0) handleMapData(bot, body.subarray(0, head)); // lo que venga antes (p.ej. una marcha)
+      for (const hit of accels) bot.onMapAccel(hit.accel);
+      const rest = body.subarray(tail);
+      if (rest.length >= 10 && rest.length < body.length) handleMapData(bot, rest);
       return;
     }
 

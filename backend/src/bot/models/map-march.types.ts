@@ -15,12 +15,24 @@ export interface MapMarch {
   duration: number;
   /** Progreso 0-1 al momento del parse */
   progress: number;
+  /** Hex 12 chars del bloque de 6 bytes [11..17] del record: clave foránea
+   *  que usa el record 0x12 (aceleramiento) para apuntar a esta marcha */
+  block?: string;
+  /** Llegada real (unix) tras una aceleración: si existe, manda sobre
+   *  startTime + duration (ver map-accel.types.ts) */
+  eta?: number;
+  /** Unix de cuando se aplicó la aceleración */
+  acceleratedAt?: number;
 }
 
 /**
  * Parser dedicado para la variante "march" de proto 2220.
  * Layout (muestra confirmada, 73 bytes):
- *   [0..16]   header 17B (SIN DESCIFRAR)
+ *   [0..8]    header 9B: kind 0x0E · serial u32 LE · 4B ceros
+ *   [9..10]   u16 LE = 62 (tamaño del payload)
+ *   [11..16]  BLOQUE 6 B = coordA 3B + coordB 3B — misma clave que arranca el
+ *             payload de todos los records; el 0x12 (aceleramiento) lo repite
+ *             para apuntar a esta marcha (ver map-accel.types.ts)
  *   [17..29]  nombre 13B null-terminated
  *   [30..32]  guild 3B
  *   [33..34]  reino 2B u16 LE (ej cf04 = 1231)
@@ -121,6 +133,7 @@ function parseMarchAt(buf: Buffer, nameOffset: number): MapMarch | null {
   const progress = duration > 0 ? Math.min(1, Math.max(0, elapsed / duration)) : 0;
 
   const id = `${originId.toString(16)}_${destId.toString(16)}_${startTime}`;
+  const block = readBlockHex(buf, nameOffset);
   return {
     id,
     name,
@@ -131,7 +144,35 @@ function parseMarchAt(buf: Buffer, nameOffset: number): MapMarch | null {
     startTime,
     duration,
     progress,
+    ...(block ? { block } : {}),
   };
+}
+
+/**
+ * Hex del bloque de 6 bytes [11..17] del record que contiene al nombre.
+ * El record se localiza caminando el framing 2220 (id 9B + u16 tamaño), no
+ * por aritmética con nameOffset: un body puede venir con un 0x0f de 15 B
+ * adelante (88 B = 0x0f + marcha de 73), y ahí el bloque NO está en [11..17]
+ * del body sino en 15 + 11. Devuelve null si el framing se rompe.
+ */
+function readBlockHex(buf: Buffer, nameOffset: number): string | null {
+  let off = 0;
+  while (off + 11 <= buf.length) {
+    const kind = buf[off]!;
+    let len: number;
+    if (kind === 0x0f) len = 15;
+    else if (kind === 0x12) len = 31;
+    else len = 11 + buf.readUInt16LE(off + 9);
+    if (len < 11 || off + len > buf.length) return null;
+    if (nameOffset < off + len) {
+      // Este record contiene al nombre: el bloque arranca en su payload (+11)
+      if (kind === 0x0f || kind === 0x12 || off + 17 > buf.length) return null;
+      if (buf.readUInt16LE(off + 9) < 6) return null;
+      return buf.toString('hex', off + 11, off + 17);
+    }
+    off += len;
+  }
+  return null;
 }
 
 /** Heurística barata: ¿este 2220 parece una marcha (no tile)? */

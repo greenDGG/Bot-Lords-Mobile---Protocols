@@ -11,6 +11,7 @@ import { TroopState } from '../../models/troop-state';
 import { HospitalState } from '../models/hospital.types';
 import { ParsedMapTile } from '../models/map.types';
 import { MapMarch } from '../models/map-march.types';
+import { MapAccel, applyAccel } from '../models/map-accel.types';
 import { TileOccupant } from '../models/map-occupant.types';
 import { ResearchData } from '../models/research.types';
 import { TroopTraining } from '../models/troops.types';
@@ -775,6 +776,41 @@ export class BotInstance extends EventEmitter {
     } else {
       this.bot.log(`[MAPA] (${o.x},${o.y}) sin ocupante · rec=${o.resourceAmount}`);
     }
+  }
+
+  /**
+   * 2220 variante "aceleramiento" (record 0x12): una marcha fue acelerada.
+   * El bloque de 6 bytes del record es la misma clave que arranca el record
+   * de la marcha, así que con él se la identifica; la nueva llegada es
+   * hora de RECV + f1 (la hora que muestra el juego tras acelerar — regla
+   * confirmada con el experimento del usuario: 03:46:09 + f1=5 → 03:46:14).
+   * Sólo se acepta si adelanta la llegada conocida (una acel nunca retrasa),
+   * ver `applyAccel()`.
+   */
+  onMapAccel(a: MapAccel): void {
+    let march: MapMarch | undefined;
+    for (const m of this.mapMarches.values()) {
+      if (m.block === a.block) { march = m; break; }
+    }
+    const now = Math.floor(Date.now() / 1000);
+    const res = applyAccel(march, a, now);
+    if (res.outcome === 'no-march') {
+      this.bot.log(`[MAPA] Aceleración sin marcha en vista (bloque ${a.block} f1=${a.f1}s f2=${a.f2}s)`);
+      return;
+    }
+    if (!march || res.outcome === 'stale') return;
+    if (res.outcome === 'no-gain') {
+      this.bot.log(
+        `[MAPA] Aceleración de ${march.name} sin efecto (llegada ${new Date(res.previous! * 1000).toLocaleTimeString()} no mejora, f1=${a.f1}s)`,
+      );
+      return;
+    }
+    const eta = res.eta!;
+    this.bot.log(
+      `[MAPA] Aceleración: ${march.name} (${march.origin.x},${march.origin.y})→(${march.destination.x},${march.destination.y}) ` +
+      `llegada ${new Date(eta * 1000).toLocaleTimeString()} (antes ${new Date(res.previous! * 1000).toLocaleTimeString()}, -${res.previous! - eta}s)`,
+    );
+    this.emit('mapDataUpdated');
   }
 
   /** Espera (máx timeoutMs) a que llegue el 2220 con el HP del golpe. */
