@@ -1,5 +1,6 @@
 import type { BotInstance } from '../core/bot-instance';
 import { parseEquippedCostumes } from '../parsers/equipped.parser';
+import { computePlayerStats } from '../features/player-stats';
 
 export function handleEquippedCostumes(bot: BotInstance, body: Buffer): void {
   if (!body || body.length === 0) return;
@@ -12,6 +13,7 @@ export function handleEquippedCostumes(bot: BotInstance, body: Buffer): void {
   }
 
   bot.equippedCostumes = items;
+  bot.playerStats = computePlayerStats(bot);
 
   const summary = items.map(i => `${i.id.toString(16)}G${i.grade}`).join(', ');
   bot.bot.log(`[EQUIP] 3804: ${items.length} trajes equipados [${summary}]`);

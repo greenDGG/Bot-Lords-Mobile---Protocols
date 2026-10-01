@@ -1,5 +1,3 @@
-export const RESISTENCIA_MAX = 120;
-
 export interface PlayerInfo {
   header: number;
   playerId: number;

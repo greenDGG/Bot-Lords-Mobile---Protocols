@@ -50,7 +50,20 @@ const DATA_START = 31;
 // Line types from EWATCHTOWER_LINE_TYPE
 const LINE_TYPE_ATTACK = 5;
 const LINE_TYPE_SCOUT = 8;
+const LINE_TYPE_REINFORCE = 10;
 const LINE_TYPE_RALLY = 12;
+
+const LINE_TYPE_LABELS: Record<number, string> = {
+  [LINE_TYPE_ATTACK]: 'ataque',
+  [LINE_TYPE_SCOUT]: 'exploración',
+  [LINE_TYPE_REINFORCE]: 'refuerzo',
+  [LINE_TYPE_RALLY]: 'rally',
+};
+
+/** Etiqueta legible del lineType del 2446 (null si no se conoce). */
+export function lineTypeLabel(lineType: number): string | null {
+  return LINE_TYPE_LABELS[lineType] ?? null;
+}
 
 function readCString(body: Buffer, offset: number, len: number): string {
   let end = offset;
@@ -63,12 +76,14 @@ function parseScoutOrShort(body: Buffer, debugLog?: (msg: string) => void): Marc
   const lineType = body[0];
   const attackerName = readCString(body, HEADER_SEP, HEADER_NAME);
   const guildTag = readCString(body, HEADER_SEP + HEADER_NAME, HEADER_TAG);
+  const label = lineTypeLabel(lineType) ?? `tipo=${lineType}`;
 
-  debugLog?.(`[PARSE] short packet lineType=${lineType} name="${attackerName}" tag="${guildTag}" len=${body.length}`);
+  debugLog?.(`[PARSE] short packet lineType=${lineType} (${label}) name="${attackerName}" tag="${guildTag}" len=${body.length}`);
 
   const rawHeader = body.subarray(0, Math.min(body.length, DATA_START));
 
   return {
+    lineType,
     rawHeader, attackerName, guildTag,
     totalTroops: 0, totalGroups: 0,
     heroCount: 0, tierMask: 0, tiersPresent: [],
@@ -163,9 +178,10 @@ export function parseMarch(body: Buffer, debugLog?: (msg: string) => void): Marc
   for (const [mask, tier] of Object.entries(TIER_MASK_VALUES)) {
     if (tierMask & Number(mask)) tiersPresent.push(tier);
   }
-
   return {
-    rawHeader, attackerName, guildTag, totalTroops, totalGroups,
+    lineType,
+    rawHeader, attackerName, guildTag,
+    totalTroops, totalGroups,
     heroCount, tierMask, tiersPresent, unknownFlag, leaderFlag,
     troops, heroes, rawBuffs, rawT5Flags, t5Troops, rawFooter,
   };

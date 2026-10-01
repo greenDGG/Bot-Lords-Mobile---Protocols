@@ -271,8 +271,11 @@ export default function ConfigPanel({ config, socket, iggId, colors, applyTo }: 
           />
         </div>
         <NumInput label="Umbral" {...set('supply.threshold')} />
-        <NumInput label="Máx. Monto" {...set('supply.maxAmount')} />
         <NumInput label="Límite caravanas" {...set('supply.caravanLimit')} />
+        <div style={{ fontSize: 12, color: '#888' }}>
+          La capacidad por caravana no es configurable: sale del stat "Capacidad de suministro +" de
+          cada cuenta (Puesto Comercial + Bolsas más grandes).
+        </div>
       </Section>
 
       <Section title="Coliseo">
@@ -328,9 +331,10 @@ export default function ConfigPanel({ config, socket, iggId, colors, applyTo }: 
           y los demás van a otro.
         </div>
         <div style={{ fontSize: 13, color: '#888' }}>
-          Por nivel: costo de energía por golpe + hex del 2488 <strong>sin</strong> la coord (va 3 bytes
-          de coord al frente). Dos hex: el que se usa depende de contra qué es débil el bicho
-          (Noceros = magia, Bon Appeti = físico).
+          Por nivel: hex del 2488 <strong>sin</strong> la coord (va 3 bytes de coord al frente). Dos
+          hex: el que se usa depende de contra qué es débil el bicho (Noceros = magia, Buen Apetito =
+          físico). El costo de energía por golpe se calcula solo (base del nivel − ahorro de
+          investigación).
         </div>
         {(getDeep(draft, 'hunt.levels') || []).map((lv: any, idx: number) => {
           const levels: any[] = getDeep(draft, 'hunt.levels') || [];
@@ -341,11 +345,6 @@ export default function ConfigPanel({ config, socket, iggId, colors, applyTo }: 
               <input
                 type="number" value={lv.level ?? 0} onChange={e => upd({ level: Number(e.target.value) })}
                 style={{ width: 56, padding: '2px 6px', background: colors.surface, color: colors.text, border: `1px solid ${colors.border}`, borderRadius: 4 }}
-              />
-              <span style={{ fontSize: 13, whiteSpace: 'nowrap' }}>Energía</span>
-              <input
-                type="number" value={lv.energyCost ?? 0} onChange={e => upd({ energyCost: Number(e.target.value) })}
-                style={{ width: 64, padding: '2px 6px', background: colors.surface, color: colors.text, border: `1px solid ${colors.border}`, borderRadius: 4 }}
               />
               <span style={{ fontSize: 13, whiteSpace: 'nowrap' }}>Magia</span>
               <input
@@ -369,7 +368,7 @@ export default function ConfigPanel({ config, socket, iggId, colors, applyTo }: 
         <button
           onClick={() => {
             const levels: any[] = getDeep(draft, 'hunt.levels') || [];
-            touch('hunt.levels', [...levels, { level: (levels[levels.length - 1]?.level ?? 1) + 1, energyCost: 40, payloadHexMagia: '', payloadHexFisico: '' }]);
+            touch('hunt.levels', [...levels, { level: (levels[levels.length - 1]?.level ?? 1) + 1, payloadHexMagia: '', payloadHexFisico: '' }]);
           }}
           style={{ padding: '4px 8px', cursor: 'pointer', alignSelf: 'flex-start' }}
         >

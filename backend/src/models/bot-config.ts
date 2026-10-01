@@ -111,8 +111,23 @@ export interface SupplyConfig {
   enable: boolean;
   targetPlayer: string;
   threshold: number;
-  maxAmount: number;
+  /** Capacidad por caravana: NO es config, sale del stat "Capacidad de suministro +" (ver getSupplyCapacity). */
   caravanLimit: number;
+}
+
+/**
+ * Config de supply leída de Mongo/JSON: defaults + lo guardado, descartando
+ * claves viejas (`maxAmount`, que era el intento de adivinar la capacidad por
+ * caravana antes de tener el stat "Capacidad de suministro +").
+ */
+export function pickSupply(raw: any): SupplyConfig {
+  const { maxAmount: _legacyMaxAmount, ...rest } = raw && typeof raw === 'object' ? raw : {};
+  return { enable: false, targetPlayer: '', threshold: 7000000, caravanLimit: 4, ...rest };
+}
+
+/** Borra de un config (in-place) las claves que ya no existen. */
+export function stripLegacyConfig(config: any): void {
+  if (config?.supply && typeof config.supply === 'object') delete config.supply.maxAmount;
 }
 
 export interface EventsConfig {
@@ -146,20 +161,25 @@ export interface MissionConfig {
 /**
  * Caza de monstruos (proto 2488 _MSG_REQUEST_SENDMONSTER).
  *
- * Cada nivel define su costo de energía y DOS hex de payload SIN la coord:
+ * Cada nivel define DOS hex de payload SIN la coord:
  *   2488 body = [coord 3B (encodeCoord)][payloadHex]
  * El que se usa depende de contra qué es débil el bicho (monsters.ts):
  *   débil contra magia  → payloadHexMagia
  *   débil contra físico  → payloadHexFisico
  * El payload incluye los 5 héroes (u16 LE) y el trailer tal cual se capturó.
+ *
+ * El costo de energía NO se configura: se calcula con la base del nivel
+ * (3000/5000/8000/14000/18000, ver energy.ts) menos el ahorro de las
+ * investigaciones (efecto 318 "Ahorro de energía").
  */
 export interface HuntLevelConfig {
   level: number;
-  energyCost: number;
   payloadHexMagia: string;
   payloadHexFisico: string;
   /** legacy: configs guardadas antes de tener los dos campos */
   payloadHex?: string;
+  /** legacy: configs guardadas antes de que el costo se calculara solo */
+  energyCost?: number;
 }
 
 export interface HuntSquadConfig {
@@ -282,7 +302,7 @@ export function defaultBotConfig(proxy?: string): BotConfig {
     adminQuest: { enable: true },
     guildQuest: { enable: true },
     resourceLimit: { wheat: 1_000_000_000, wood: 1_000_000_000, stone: 1_000_000_000, ore: 1_000_000_000, gold: 1_000_000_000 },
-    supply: { enable: false, targetPlayer: '', threshold: 7000000, maxAmount: 6000000, caravanLimit: 4 },
+    supply: { enable: false, targetPlayer: '', threshold: 7000000, caravanLimit: 4 },
     events: { enable: true },
     coliseum: { reclaimGems: false, autoAttack: false, hero0: 1, hero1: 3, hero2: 6, hero3: 5, hero4: 23 },
     sweep: { enable: false, payload: '0202010001' },
@@ -292,7 +312,7 @@ export function defaultBotConfig(proxy?: string): BotConfig {
       cooldown: 8,
       scanRadius: 50,
       squad: { enable: true, max: 5 },
-      levels: [{ level: 2, energyCost: 40, payloadHexMagia: '0110001400060004000500022700', payloadHexFisico: '0110001400060004000500022700' }],
+      levels: [{ level: 2, payloadHexMagia: '0110001400060004000500022700', payloadHexFisico: '0110001400060004000500022700' }],
     },
     luckyCards: { enable: true, intervalSec: 30, maxPerCycle: 3, exchangedTs: 0 },
   };

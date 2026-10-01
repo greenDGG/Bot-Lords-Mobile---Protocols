@@ -5,6 +5,7 @@ import AccountCard from './AccountCard';
 import WarDashboard from './WarDashboard';
 import EventsManager from './EventsManager';
 import { setItemsData } from '../data/items';
+import { setTechsData } from '../data/techs';
 import GlobalConfigModal from './GlobalConfigModal';
 import GlobalCommandsModal from './GlobalCommandsModal';
 import ProxyAuthModal from './ProxyAuthModal';
@@ -27,6 +28,9 @@ interface PlayerInfo {
   power: number;
   gems: number;
   kills: number;
+  energy?: number;
+  /** Recuperación de energía: 1800/h × (1 + bonus de investigación). */
+  energyRegen?: { perHour: number; perSec: number; bonusPct: number; basePerHour: number };
 }
 
 interface Resources {
@@ -147,6 +151,8 @@ export default function MainPage({ onSelectBot }: { onSelectBot: (id: number, na
       setItemsMeta({ values, ids });
     });
     socket.emit('getItems');
+    socket.on('techs', (data: any) => setTechsData(data));
+    socket.emit('getTechs');
   }, [socket]);
 
   // Decrement shield timers every second
@@ -185,6 +191,7 @@ export default function MainPage({ onSelectBot }: { onSelectBot: (id: number, na
     socket.emit('listAccounts');
     socket.emit('getRunningBots');
     socket.emit('getItems');
+    socket.emit('getTechs');
     const onAccounts = (data: Account[]) => setAccounts(data);
     socket.on('accounts', onAccounts);
     return () => { socket.off('accounts', onAccounts); };
@@ -365,6 +372,8 @@ export default function MainPage({ onSelectBot }: { onSelectBot: (id: number, na
           iggIds={Array.from(selected)}
           players={players}
           resources={resources}
+          inventory={inventory}
+          items={itemsMeta}
           onClose={() => setShowSupplyModal(false)}
         />
       )}
@@ -494,6 +503,9 @@ function ResourceSummary({ selected, resources, players, inventory, items }: {
     { name: '🪙 Oro', key: 'gold' as const, prodKey: 'goldProd' as const },
   ];
 
+  const energyTotal = ids.reduce((acc, id) => acc + (players[id]?.energy || 0), 0);
+  const energyRegenTotal = ids.reduce((acc, id) => acc + (players[id]?.energyRegen?.perHour || 0), 0);
+
   return (
     <div style={{
       position: 'fixed', bottom: 0, left: 0, right: 0,
@@ -518,6 +530,14 @@ function ResourceSummary({ selected, resources, players, inventory, items }: {
           </span>
         );
       })}
+      {energyTotal > 0 && (
+        <span style={{ whiteSpace: 'nowrap' }}>
+          ⚡ Energía <strong>{formatRes(energyTotal)}</strong>
+          <span style={{ color: colors.textSecondary, marginLeft: 4 }}>
+            (+{formatRes(Math.max(0, energyRegenTotal))}/h)
+          </span>
+        </span>
+      )}
       <span style={{ flex: 1 }} />
     </div>
   );

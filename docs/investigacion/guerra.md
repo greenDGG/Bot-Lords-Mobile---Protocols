@@ -7,7 +7,7 @@ Flujo para detectar guerras (castillos, torres, fortalezas) y enviar tropas. Imp
 | Proto | Dirección | Descripción |
 |-------|-----------|-------------|
 | 2476 | C → S | Abrir apartado de guerra (payload vacío) |
-| 2477 | S → C | Agrupaciones **restantes** que quedan (uint32 LE) |
+| 2477 | S → C | Contadores de agrupación: u32[0] = propias del gremio (0..7), u32[1] = en contra del gremio (0\|1) |
 | 2478 | S → C | Respuesta: guerras activas a **castillos** |
 | 2479 | S → C | Terminó/canceló la agrupación en esa **posición** (uint32 = index * 256) |
 | 6611 | S → C | Respuesta: guerras activas a **torres** |

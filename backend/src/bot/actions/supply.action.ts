@@ -14,6 +14,11 @@ export class SupplyAction implements BotAction {
     }
 
     const res = bot.resources;
+    const cap = bot.getSupplyCapacity();
+    if (cap <= 0) {
+      bot.bot.log('[SUPPLY] Sin capacidad de suministro conocida (faltan datos de investigación/construcciones), saltando');
+      return false;
+    }
     const entries: { name: string; amount: number }[] = [];
     let anyAbove = false;
 
@@ -24,8 +29,7 @@ export class SupplyAction implements BotAction {
                      { name: 'oro', amount: res.gold }]) {
       if (r.amount <= cfg.threshold) continue;
       anyAbove = true;
-      const totalCaravans = Math.ceil(r.amount / cfg.maxAmount);
-      entries.push({ name: r.name, amount: totalCaravans * cfg.maxAmount });
+      entries.push({ name: r.name, amount: r.amount });
     }
 
     if (!anyAbove) return false;

@@ -1,61 +1,13 @@
+import './costumes.json'; // hace que tsc copie costumes.json a dist
+import * as fs from 'fs';
+import * as path from 'path';
+import { EFFECT_DEFS } from './effect-db';
+
 export interface CostumeBuff {
   id: number;
   name: string;
-  unit: '%' | 'flat' | 'sec' | 'min';
+  unit: string;
 }
-
-export const BUFF_DEFS: Record<number, CostumeBuff> = {
-  // Army stats
-  1: { id: 1, name: 'ATK ejército', unit: '%' },
-  2: { id: 2, name: 'DEF ejército', unit: '%' },
-  3: { id: 3, name: 'HP ejército', unit: '%' },
-
-  // Unit ATK
-  10: { id: 10, name: 'ATK Infantería', unit: '%' },
-  11: { id: 11, name: 'ATK Artillería', unit: '%' },
-  12: { id: 12, name: 'ATK Caballería', unit: '%' },
-
-  // Unit DEF
-  20: { id: 20, name: 'DEF Infantería', unit: '%' },
-  21: { id: 21, name: 'DEF Artillería', unit: '%' },
-  22: { id: 22, name: 'DEF Caballería', unit: '%' },
-
-  // Unit HP
-  30: { id: 30, name: 'HP Infantería', unit: '%' },
-  31: { id: 31, name: 'HP Artillería', unit: '%' },
-  32: { id: 32, name: 'HP Caballería', unit: '%' },
-
-  // Hero stats
-  40: { id: 40, name: 'ATK Héroe', unit: '%' },
-  41: { id: 41, name: 'DEF Héroe', unit: '%' },
-  42: { id: 42, name: 'HP Héroe', unit: '%' },
-
-  // Speed
-  50: { id: 50, name: 'Vel. marcha', unit: '%' },
-  51: { id: 51, name: 'Vel. recolección', unit: '%' },
-
-  // Construction / Research / Training
-  60: { id: 60, name: 'Vel. construcción', unit: '%' },
-  61: { id: 61, name: 'Vel. investigación', unit: '%' },
-  62: { id: 62, name: 'Vel. entrenamiento', unit: '%' },
-
-  // Army capacity
-  70: { id: 70, name: 'Cap. ejército', unit: 'flat' },
-
-  // Resources
-  80: { id: 80, name: 'Prod. trigo', unit: '%' },
-  81: { id: 81, name: 'Prod. madera', unit: '%' },
-  82: { id: 82, name: 'Prod. piedra', unit: '%' },
-  83: { id: 83, name: 'Prod. mineral', unit: '%' },
-  84: { id: 84, name: 'Prod. oro', unit: '%' },
-
-  // Energy
-  90: { id: 90, name: 'Ahorro energía caza', unit: '%' },
-  91: { id: 91, name: 'Energía máx.', unit: 'flat' },
-
-  // Monster damage
-  100: { id: 100, name: 'Daño monstruos', unit: '%' },
-};
 
 export interface CostumeGradeBuffs {
   [grade: number]: { buffId: number; value: number }[];
@@ -64,5 +16,48 @@ export interface CostumeGradeBuffs {
 export interface CostumeDef {
   id: number;
   name: string;
+  nameEn?: string;
   buffs: CostumeGradeBuffs;
 }
+
+interface CostumesDoc {
+  source?: string;
+  grade6Multiplier?: number;
+  costumes?: Record<string, CostumeDef>;
+}
+
+/** costumes.json generado por scripts/gen-costumes.py desde Table.unity3d. */
+const DOC: CostumesDoc = (() => {
+  try {
+    const raw = JSON.parse(fs.readFileSync(path.join(__dirname, 'costumes.json'), 'utf-8'));
+    return raw && typeof raw === 'object' ? raw : {};
+  } catch {
+    return {};
+  }
+})();
+
+/** Multíplicador de grade 6 (Mítico) sobre el valor de grade 5. */
+export const GRADE6_MULTIPLIER: number = DOC.grade6Multiplier || 1.4;
+
+/**
+ * effectId de traje -> { id, name, unit } (nombres reales del cliente).
+ * El catálogo es único (effects.json, 550 ids); BUFF_DEFS lo expone con el
+ * fallback de nombre para los ids sin texto en la tabla.
+ */
+export const BUFF_DEFS: Record<number, CostumeBuff> = (() => {
+  const out: Record<number, CostumeBuff> = {};
+  for (const [id, value] of Object.entries(EFFECT_DEFS)) {
+    out[Number(id)] = { id: value.id, name: value.name || `Efecto ${id}`, unit: value.unit };
+  }
+  return out;
+})();
+
+/** Trajes por id, con los buffs de cada grade (1..6). */
+export const COSTUME_DEFS: Record<number, CostumeDef> = (() => {
+  const out: Record<number, CostumeDef> = {};
+  for (const [key, value] of Object.entries(DOC.costumes || {})) {
+    const id = Number(key);
+    out[id] = { ...value, id };
+  }
+  return out;
+})();

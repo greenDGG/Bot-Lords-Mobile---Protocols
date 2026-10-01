@@ -65,10 +65,20 @@ export class WarDetector {
     const proto = mp.protocolId;
 
     if (proto === 2477) {
-      // 2477 = agrupaciones RESTANTES que quedan (uint32 LE en [0-3])
-      const remaining = body.length >= 4 ? body.readUInt32LE(0) : (body.length > 0 && body[0] === 0x01 ? 1 : 0);
-      this.notifyCount = this.viewing ? 0 : remaining;
-      this.bot.log(`[AGRU] 2477 restantes: ${remaining}${this.viewing ? ' (viendo la UI)' : ''}`);
+      // 2477 (8B): dos contadores independientes.
+      //   u32[0] = agrupaciones propias del gremio en curso (0..7)
+      //   u32[1] = agrupación en contra del gremio (0|1) — agruparon a
+      //            ALGUIEN del gremio, no necesariamente a este bot
+      // (hipótesis verificada contra ~4400 muestras de logs: u32[1] siempre es
+      //  0/1 y sube cuando agrupan a un miembro; ver teories/agrupaciones.md)
+      const own = body.length >= 4 ? body.readUInt32LE(0) : 0;
+      const against = body.length >= 8 ? body.readUInt32LE(4) : 0;
+      // El badge sólo se enciende cuando hay agrupación en contra DEL GREMIO
+      // (agruparon a alguien del gremio); las propias son informativas.
+      this.notifyCount = this.viewing ? 0 : against;
+      this.bot.log(
+        `[AGRU] 2477 propias=${own} enContra=${against}${this.viewing ? ' (viendo la UI)' : ''}`,
+      );
       this.onNotification?.(this.notifyCount);
     } else if (proto === 2479) {
       // 2479 = terminó/canceló la agrupación en esa posición (uint32 index * 256)

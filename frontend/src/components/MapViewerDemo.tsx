@@ -101,6 +101,9 @@ const LABEL_MIN_ZOOM = 0.75;
 const LABEL_PAD_X = 6;
 const LABEL_PAD_Y = 2;
 const LABEL_BG = 'rgba(10,10,20,0.75)';
+
+/** Costo base de energía por golpe de caza según nivel (el real = base − ahorro). */
+const HUNT_ENERGY_BASE: Record<number, number> = { 1: 3000, 2: 5000, 3: 8000, 4: 14000, 5: 18000 };
 const LABEL_RADIUS = 4;
 
 interface Rect { x0: number; y0: number; x1: number; y1: number }
@@ -289,7 +292,7 @@ export default function MapViewerDemo({
   energy?: number;
   huntTarget?: { tileId: number; x: number; y: number; level: number; hp: number; hits: number; energySpent: number; status: string; lastHitAt: number; hitsLanded?: number; departedAt?: number; outboundSeconds?: number; returnAt?: number } | null;
   huntMsg?: string | null;
-  huntConfig?: { enable?: boolean; cooldown?: number; levels?: { level: number; energyCost: number; payloadHexMagia?: string; payloadHexFisico?: string; payloadHex?: string }[] };
+  huntConfig?: { enable?: boolean; cooldown?: number; levels?: { level: number; payloadHexMagia?: string; payloadHexFisico?: string; payloadHex?: string }[] };
   squads?: { tileId: number; x: number; y: number; level: number; hp: number; needed: number; active: number; members: number[] }[];
   onHunt?: (tileId?: number) => void;
   onHuntStop?: () => void;
@@ -1044,7 +1047,7 @@ export default function MapViewerDemo({
                     className="mv-btn"
                     style={{ padding: '2px 8px', fontSize: 11 }}
                     disabled={hunting || !cfg || !onHunt}
-                    title={cfg ? `${cfg.energyCost} energía` : `Sin config para nivel ${tile.monster!.level}`}
+                    title={cfg ? `${HUNT_ENERGY_BASE[tile.monster!.level] ?? '?'} energía base (−ahorro)` : `Sin config para nivel ${tile.monster!.level}`}
                     onClick={() => onHunt?.(tile.id)}
                   >
                     {cfg ? 'Cazar' : '—'}

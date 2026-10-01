@@ -1,11 +1,13 @@
 import type { BotInstance } from '../core/bot-instance';
 import { BuildingId } from '../models/buildings.types';
 import { parse2001, parse2002 } from '../parsers/buildings.parser';
+import { computePlayerStats } from '../features/player-stats';
 
 export function handleBuildingState(bot: BotInstance, body: Buffer): void {
   if (body.length < 1) return;
   try {
     bot.buildingState = parse2001(body);
+    bot.playerStats = computePlayerStats(bot);
     bot.bot.log(`[BUILDINGS] ${bot.buildingState.buildings.length} construcciones cargadas`);
     bot.emit('buildingStateUpdated');
   } catch {}

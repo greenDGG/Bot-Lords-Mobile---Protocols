@@ -74,3 +74,18 @@ Tabla de items conocidos con su valor en gemas (usado por el bot para decidir co
 
 - `shield.ts` compra escudo 24h (item 1052) con proto 1408 y lo activa con proto 1406.
 - Los recursos en bolsa (`BAG_ITEMS` en `data/items.json`) se usan para cubrir déficits (barco, entrenamiento, supply).
+
+## Regeneración del catálogo
+
+`backend/src/bot/data/items.json` se regenera desde el cliente con:
+
+```
+python backend/scripts/gen-items.py --alltables <alltables> --tables <tables> --prev <items.json> --out backend/src/bot/data/items.json
+```
+
+- **Fuente**: `item.bytes` (cabecera `u16 kind=1`, 3819 filas de 88 B; `u16@0` = id, `u16@2` = nameKey → `stringtable_spa.bytes`, `u16@18` = minutos del acelerador) + el `items.json` previo (fuente de `gems` y `drops`, manuales).
+- **ITEMS_DB**: todos los ids con nombre del cliente (3725; 94 ids sin nameKey se descartan). `name` = stringtable ES, `type` = reglas sobre el nombre (`cofre`/`caja` → `cofre`; `^acel…` → `acelerar`; números + comida/piedra/madera/mineral/oro/gemas/ánima → `recurso`; escudos/antiexplorar/reubicador/botas/corazón → `combate`; medalla/observador → `hero`; resto → `unico`; `TYPE_OVERRIDE` = 3701/3702 → `recurso`). `effect = [1, minutos*60]` para aceleradores con `@18 > 0`.
+- `gems`/`drops` sólo se conservan si el id tenía el mismo `type` antes (evita heredar el valor de un id reutilizado).
+- **Recursos**: `RESOURCE_ITEM_IDS` / `BAG_ITEMS` / `ITEM_VALUES` se rehacen buscando en el cliente cada cantidad del previo. Correcciones de la versión wiki (esos ids eran otra cosa o no existían): `1029/1034/1039` → `1093/1098/1103` (comida 6M/20M/60M), `1030/1035/1040` → `1094/1099/1104` (piedra), `1031/1036/1041` → `1095/1100/1105` (madera), `1032/1037/1042` → `1096/1101/1106` (mineral), `1033/1038/1043` → `1097/1102/1107` (oro). `1035/1036/1038` no existen en el cliente y ya no aparecen.
+- Nombres: los 128 previos pasan a los del cliente (p. ej. `12` "10 amuletos" → "Emblema sacro", `13` "100 amuletos" → "Hacha gigante").
+- El frontend recibe el JSON por socket (`items` → `setItemsData`); `frontend/src/data/items.json` era un placeholder vacío y se eliminó (riesgo de resolución frente a `items.ts`).

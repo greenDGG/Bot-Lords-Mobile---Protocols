@@ -3,8 +3,10 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { BotEngine } from '../engine/bot-engine';
 import { configService, normalizeKeys } from '../../config/config.service';
-import { BotConfig, defaultBotConfig, getLuckyCardsConfig } from '../../models/bot-config';
-import { PlayerInfo, RESISTENCIA_MAX } from '../models/player.types';
+import { BotConfig, defaultBotConfig, getLuckyCardsConfig, stripLegacyConfig } from '../../models/bot-config';
+import { PlayerInfo } from '../models/player.types';
+import { RESISTENCIA_BASE, computeResistenciaMax } from '../resistencia';
+import { computeEnergyRegen, computeHuntEnergyCost, EnergyRegen } from '../energy';
 import { ResourcesData } from '../models/resources.types';
 import { ConstructionData } from '../models/buildings.types';
 import { TroopState } from '../../models/troop-state';
@@ -14,6 +16,8 @@ import { MapMarch } from '../models/map-march.types';
 import { MapAccel, applyAccel } from '../models/map-accel.types';
 import { TileOccupant } from '../models/map-occupant.types';
 import { ResearchData } from '../models/research.types';
+import type { PlayerStat } from '../features/player-stats';
+import { getSupplyCapacity } from '../features/player-stats';
 import { TroopTraining } from '../models/troops.types';
 import { GuildInfo } from '../models/guild.types';
 import { BuffManager } from '../features/buff-manager';
@@ -36,8 +40,9 @@ import { VipChestMemory } from '../models/vip-chest.types';
 import { ColiseumState } from '../models/coliseum.types';
 import { HeroEntry } from '../models/heroes.types';
 import { BuildingState } from '../models/buildings.types';
-import { MarchInfo } from '../models/march.types';
+import { MarchInfo, OwnMarchesData } from '../models/march.types';
 import { CostumeItem } from '../parsers/costume.parser';
+import { TalentInfo } from '../parsers/talent.parser';
 import { LordCaptivePacket } from '../models/leader.types';
 import { ChatMessage } from '../models/chat.types';
 import { GuildApplicationsData } from '../models/guild-applications.types';
@@ -58,8 +63,11 @@ import { getPlayerLocation as getPlayerLocationCmd } from '../commands/player.co
 import { selectAction11, selectWarIndex, sendTroops, send2476 } from '../commands/war.commands';
 import { requestRivals, attackRival, claimColiseumGems } from '../commands/coliseum.commands';
 import { huntMonster } from '../commands/hunt.commands';
+import { useItemsForResource } from '../actions/action-helpers';
 import { getHuntLevel, getHuntPayloadHex, getHuntSquad } from '../../models/bot-config';
 import { getMonster, getMonsterDebilidad, isMonsterChest, monsterName } from '../data/monsters';
+import { pickHuntSquad, buildHuntPayload } from '../data/hunt-squad';
+import { heroName } from '../data/heros-db';
 import { huntCoordinator, SquadPolicy } from '../models/hunt-coordinator';
 import { HuntTarget, HuntStatus } from '../models/hunt.types';
 import { matchHpScale, toHpPercent, MonsterHitUpdate } from '../models/monster-hit.types';
@@ -79,11 +87,14 @@ const MAX_CONSECUTIVE_SEND_FAILS = 3;
  */
 export const SUPPLY_CARAVAN_LIMIT = 1_000_000;
 
+/** Nombre de recurso del supply → clave de BAG_ITEMS (tabla de items de bolsa) */
+const BAG_KEY_BY_NAME: Record<string, string> = { trigo: 'wheat', piedra: 'stone', madera: 'wood', mineral: 'mineral', oro: 'gold' };
+
 /** ms entre ventanas (2201) del escaneo del mapa para Caza */
 const MAP_SCAN_INTERVAL_MS = 3500;
   /** ms mínimos entre escaneos consecutivos del mapa */
   const MAP_SCAN_REPEAT_MS = 60_000;
-  /** ms mínimos entre avisos "sin energía" al chat de gremio */
+  /** ms mínimos entre avisos "sin energía" al chat de gremio (compartido por tile entre bots) */
   const NO_ENERGY_CHAT_COOLDOWN_MS = 5 * 60_000;
 
   /**
@@ -122,10 +133,17 @@ export class BotInstance extends EventEmitter {
   playerInfo?: PlayerInfo;
   lastRes: number = 0;
   resTimer?: ReturnType<typeof setInterval>;
+  /** Tope real de resistencia (120 + bonificación de investigación). */
+  private resistenciaMaxValue: number = computeResistenciaMax();
+  /** Recuperación de energía (1800/h + bonificación de investigación). */
+  private energyRegenValue: EnergyRegen = computeEnergyRegen();
   resources?: ResourcesData;
   guildInfo?: GuildInfo;
   constructions?: ConstructionData;
   research?: ResearchData;
+  /** 3801: niveles de los 47 talentos + puntos sin asignar */
+  talents?: TalentInfo;
+  playerStats?: PlayerStat[];
   troopTraining?: TroopTraining;
   troopState = new TroopState();
   hospitalState?: HospitalState;
@@ -143,6 +161,8 @@ export class BotInstance extends EventEmitter {
   vipChestMem?: VipChestMemory;
   refineManaCount = 0;
   coliseumState?: ColiseumState;
+  /** 1201: héroes del jugador (nivel/rango/grado) */
+  heroes: HeroEntry[] = [];
   missions?: MissionData;
   missionRecords?: MissionRecordData;
   fdgExtension?: FdgMissionExtensionData;
@@ -151,6 +171,8 @@ export class BotInstance extends EventEmitter {
   eternalTreasureItems: { id: number; amount: number }[] = [];
   buildingState = new BuildingState();
   incomingMarches: MarchInfo[] = [];
+  /** 2414: lista de marchas propias del castillo (slots en vuelo/llegadas). */
+  ownMarches?: OwnMarchesData;
   marchHistory: any[] = [];
   isLeaderCaptured = false;
   isLeaderExecuted = false;
@@ -165,8 +187,6 @@ export class BotInstance extends EventEmitter {
   private huntRunning = false;
   /** Último reino (K) observado en un push 2220 (monster hit) */
   private lastKingdom = 0;
-  /** Date.now() del último aviso "sin energía" al gremio */
-  private lastNoEnergyChatAt = 0;
   /** escaneo del mapa (2201 ventana por ventana) para hallar bichos */
   private mapScanRunning = false;
   private mapScanStartAt = 0;
@@ -344,6 +364,19 @@ export class BotInstance extends EventEmitter {
     this.war.onNotification = (count) => this.emit('warNotification', count);
 
     this.loadGuildApplications();
+
+    // Sonda viva para HuntCoordinator: energía/online consultados al momento
+    // (para el cálculo de "¿puede otro bot rematar este bicho?" y el cupo extra)
+    huntCoordinator.registerBot(this.iggId, {
+      canHunt: () => this.bot.isOnline && this.config.hunt.enable,
+      hitCapacity: (level: number) => {
+        const lvl = getHuntLevel(this.config.hunt, level);
+        if (!lvl) return 0;
+        const cost = this.huntEnergyCost(level);
+        if (cost <= 0) return 0;
+        return Math.floor(this.getCurrentEnergy() / cost);
+      },
+    });
   }
 
   private clearCoreTimers(): void {
@@ -437,6 +470,7 @@ export class BotInstance extends EventEmitter {
     this.connecting = false;
     this.launched = true;
     this.coliseumState = undefined;
+    this.heroes = [];
     this.resTracker.start();
     this.resTracker.onUpdate = () => {
       if (!this.resourcesUpdatePending) {
@@ -598,25 +632,45 @@ export class BotInstance extends EventEmitter {
     return this.lastRes;
   }
 
+  /** Tope máximo de resistencia: 120 + bonus de "Máxima RES +". */
+  getResistenciaMax(): number {
+    return this.resistenciaMaxValue;
+  }
+
+  /**
+   * Recalcula el tope de resistencia a partir de las investigaciones (tech 153
+   * "Límite de Resistencia"). Si cambia, avisa y rearmará el regenerador si
+   * estaba llena al tope anterior.
+   */
+  refreshResistenciaMax(): void {
+    const prev = this.resistenciaMaxValue;
+    const next = computeResistenciaMax(this.research?.techLevels);
+    if (next === prev) return;
+    this.resistenciaMaxValue = next;
+    this.bot.log(`[RES] máx. resistencia → ${next} (base ${RESISTENCIA_BASE} + ${next - RESISTENCIA_BASE})`);
+    if (this.lastRes >= prev && this.lastRes < next) this.startResistenciaRegen();
+    this.emit('playerInfoUpdated');
+  }
+
   consumeResistencia(amount: number): void {
     this.lastRes = Math.max(0, this.lastRes - amount);
-    this.bot.log(`[RES] -${amount} resistencia → ${this.lastRes}/${RESISTENCIA_MAX}`);
+    this.bot.log(`[RES] -${amount} resistencia → ${this.lastRes}/${this.resistenciaMaxValue}`);
     this.emit('playerInfoUpdated');
     this.startResistenciaRegen();
   }
 
   private startResistenciaRegen(): void {
     if (this.resTimer) return;
-    if (this.lastRes >= RESISTENCIA_MAX) return;
+    if (this.lastRes >= this.resistenciaMaxValue) return;
     this.resTimer = setInterval(() => {
-      if (this.lastRes >= RESISTENCIA_MAX) {
+      if (this.lastRes >= this.resistenciaMaxValue) {
         clearInterval(this.resTimer);
         this.resTimer = undefined;
-        this.bot.log(`[RES] resistencia llena → ${RESISTENCIA_MAX}/${RESISTENCIA_MAX}`);
+        this.bot.log(`[RES] resistencia llena → ${this.resistenciaMaxValue}/${this.resistenciaMaxValue}`);
         return;
       }
       this.lastRes++;
-      this.bot.log(`[RES] +1 resistencia → ${this.lastRes}/${RESISTENCIA_MAX}`);
+      this.bot.log(`[RES] +1 resistencia → ${this.lastRes}/${this.resistenciaMaxValue}`);
       this.emit('playerInfoUpdated');
     }, 6 * 60 * 1000);
   }
@@ -630,6 +684,35 @@ export class BotInstance extends EventEmitter {
 
   getCurrentEnergy(): number {
     return this.playerInfo?.energy ?? 0;
+  }
+
+  /** Recuperación de energía por hora con la investigación aplicada. */
+  getEnergyRegen(): EnergyRegen {
+    return this.energyRegenValue;
+  }
+
+  /**
+   * Costo real de UN golpe de caza en el nivel dado: base del nivel
+   * (3000/5000/8000/14000/18000) menos el ahorro de energía de las
+   * investigaciones (efecto 318). 0 = nivel fuera de la tabla (no cazar).
+   */
+  huntEnergyCost(level: number): number {
+    return computeHuntEnergyCost(level, this.research?.techLevels);
+  }
+
+  /**
+   * Recalcula la recuperación de energía a partir de las investigaciones
+   * (efecto 317 "Recuper. energía I/II"). Si cambia, avisa con el nuevo ritmo.
+   */
+  refreshEnergyRegen(): void {
+    const prev = this.energyRegenValue;
+    const next = computeEnergyRegen(this.research?.techLevels);
+    if (next.bonusPct === prev.bonusPct) return;
+    this.energyRegenValue = next;
+    this.bot.log(
+      `[ENERG] recuperación → ${next.perHour}/h (base ${next.basePerHour}/h, +${(next.bonusPct / 100).toFixed(1)}%)`,
+    );
+    this.emit('playerInfoUpdated');
   }
 
   consumeEnergy(amount: number): void {
@@ -892,13 +975,20 @@ export class BotInstance extends EventEmitter {
       if (!tile || !tile.monster) return { ok: false, message: 'Tile sin monstruo' };
       if (tile.monster.hp <= 0) return { ok: false, message: 'El monstruo ya está muerto' };
       if (isMonsterChest(tile.monster.id)) return { ok: false, message: 'Ese tile es un cofre, no un monstruo' };
-      if (!getHuntLevel(this.config.hunt, tile.monster.level)) {
-        return { ok: false, message: `Nivel ${tile.monster.level} no configurado en Caza` };
-      }
     } else {
       const cands = this.listHuntCandidates();
       if (cands.length === 0) return { ok: false, message: 'Sin bichos cazables en el mapa' };
       tile = cands[0];
+    }
+
+    // Sin energía ni para UN golpe no se reclama el slot (tampoco desde la UI:
+    // entrar sólo para morir en la 1ª vuelta del bucle y avisar un bicho intacto)
+    const lvlCfg = getHuntLevel(this.config.hunt, tile.monster!.level);
+    if (!lvlCfg) return { ok: false, message: `Nivel ${tile.monster!.level} no configurado en Caza` };
+    const cost = this.huntEnergyCost(tile.monster!.level);
+    if (cost <= 0) return { ok: false, message: `Costo de energía desconocido para nivel ${tile.monster!.level}` };
+    if (this.getCurrentEnergy() < cost) {
+      return { ok: false, message: `Energía insuficiente (${this.getCurrentEnergy()}/${cost})` };
     }
 
     const claim = huntCoordinator.claim(
@@ -970,29 +1060,44 @@ export class BotInstance extends EventEmitter {
   }
 
   /**
-   * Se acabó la energía a mitad de caza: avisa en el chat de gremio con el bicho
-   * que queda a medias para que otro lo remate:
-   *   `Nv.2 Buen Apetito K: 1231 X:218 Y:582 87%`
+   * Se acabó la energía a mitad de caza. **Sólo se avisa si el bicho quedó
+   * con daño a retomar**: uno intacto (100%) no es "quedó a medias", es que
+   * nadie lo empezó, así que no se molesta al gremio. Y sólo si **ningún bot
+   * conectado puede rematarlo** (todos sin energía); si alguien puede, no se
+   * publica nada — el slot se libera al salir y ese bot entra solo.
+   * HP acotado a 0-100 (el tile a veces trae 114% por la escala del float).
+   * Formato del aviso:
+   *   `Nv.2 Buen Apetito K:1231 X:218 Y:582 87%`
    */
   private announceNoEnergy(): void {
     const t = this.huntTarget;
     if (!t || t.hp <= 0) return;
-    const now = Date.now();
-    if (now - this.lastNoEnergyChatAt < NO_ENERGY_CHAT_COOLDOWN_MS) {
-      this.bot.log('[CHAT] Aviso "sin energía" omitido (ya se avisó hace poco)');
+    // Lo más fresco entre el tile local y el HP compartido del squad
+    const hp = Math.max(0, Math.min(100, Math.min(toHpPercent(t.hp), huntCoordinator.peek(t.tileId)?.hp ?? 100)));
+    if (hp >= 100) {
+      this.bot.log(`[CHAT] Aviso "sin energía" omitido: (${t.x},${t.y}) intacto al 100% — nadie lo empezó`);
+      return;
+    }
+    const other = huntCoordinator.someoneElseCanKill(t.tileId, this.iggId, { level: t.level, hp });
+    if (other.ok) {
+      this.bot.log(
+        `[CHAT] Aviso "sin energía" omitido: el bot ${other.iggId} tiene energía para los ${other.hits} golpe(s) que faltan`,
+      );
+      return;
+    }
+    if (!huntCoordinator.claimAnnounce(t.tileId, NO_ENERGY_CHAT_COOLDOWN_MS)) {
+      this.bot.log('[CHAT] Aviso "sin energía" omitido (ya se avisó este bicho hace poco)');
       return;
     }
     const monster = this.mapTiles.get(t.tileId)?.monster;
     const name = monster ? monsterName(monster.id) : `monstruo ${t.level}`;
     const kingdom = this.currentKingdom();
-    const hp = toHpPercent(t.hp).toFixed(0);
     const text =
       `Nv.${t.level} ${name}` +
       (kingdom ? ` K:${kingdom}` : '') +
-      ` X:${t.x} Y:${t.y} ${hp}%`;
-    this.lastNoEnergyChatAt = now;
+      ` X:${t.x} Y:${t.y} ${hp.toFixed(0)}%`;
     this.bot.sendChat(text);
-    this.bot.log(`[CHAT] Aviso gremio: ${text}`);
+    this.bot.log(`[CHAT] Aviso gremio (nadie puede rematarlo): ${text}`);
   }
 
   /**
@@ -1024,9 +1129,14 @@ export class BotInstance extends EventEmitter {
           this.finishHunt('no-target', `Sin config de caza para nivel ${t.level}`);
           break;
         }
+        const hitCost = this.huntEnergyCost(t.level);
+        if (hitCost <= 0) {
+          this.finishHunt('no-target', `Costo de energía desconocido para nivel ${t.level}`);
+          break;
+        }
         const energy = this.getCurrentEnergy();
-        if (energy < cfg.energyCost) {
-          this.finishHunt('no-energy', `Energía insuficiente (${energy}/${cfg.energyCost})`);
+        if (energy < hitCost) {
+          this.finishHunt('no-energy', `Energía insuficiente (${energy}/${hitCost})`);
           break;
         }
 
@@ -1072,18 +1182,28 @@ export class BotInstance extends EventEmitter {
         // Ocupado: golpe en vuelta + espera (los demás no se suben mientras tanto)
         huntCoordinator.markBusy(this.iggId, t.tileId, Date.now() + hitTimeoutMs + cooldownMs);
 
-        const payload = getHuntPayloadHex(cfg, getMonsterDebilidad(tile.monster.id));
-        if (!payload) {
+        const basePayload = getHuntPayloadHex(cfg, getMonsterDebilidad(tile.monster.id));
+        if (!basePayload) {
           this.finishHunt('no-target', `Sin hex de ataque para nivel ${t.level} (magia/físico)`);
           break;
+        }
+        // Escuadra recomendada (huntData): si el bot tiene los 5 héroes, ataca
+        // con ellos; si no, el payload de debilidad de la config.
+        const escuadra = pickHuntSquad(this.heroes.map((h) => h.heroId), tile.monster.id, t.level);
+        const payload = (escuadra && buildHuntPayload(basePayload, escuadra.heroIds)) || basePayload;
+        if (escuadra && payload !== basePayload && t.hits === 0) {
+          this.bot.log(
+            `[CAZA] Escuadra ${escuadra.fuente} (nivel ${escuadra.nivel}): ` +
+              escuadra.heroIds.map((hid) => heroName(hid)).join(', '),
+          );
         }
         if (!huntMonster(this.bot, t.x, t.y, payload)) {
           this.finishHunt('stopped', 'Fallo al enviar el 2488');
           break;
         }
-        this.consumeEnergy(cfg.energyCost);
+        this.consumeEnergy(hitCost);
         t.hits++;
-        t.energySpent += cfg.energyCost;
+        t.energySpent += hitCost;
         t.lastHitAt = Date.now();
         this.emitHuntUpdate();
         this.bot.log(
@@ -1829,8 +1949,24 @@ export class BotInstance extends EventEmitter {
    * y ejecuta sendCaravanBatch() con skipEnableCheck para ignorar el toggle
    * de supply.enable (que es solo para el automático).
    * Pausa el ActionRunner para que no ejecute otras acciones mientras envía.
+   *
+   * Dos modos:
+   *  - `amounts` (batch): montos EXACTOS por recurso; el reparto entre cuentas
+   *    lo calculó quien disparó la orden (distributeTotal). Si `useBag`, abre
+   *    items del inventario (proto 1406) para completar lo que falte en el
+   *    almacén; el exceso no se pide (se acota a lo disponible).
+   *  - sin `amounts` (legacy): manda todo lo disponible (> 0), filtrando por
+   *    `specificResources` si viene.
+   *
+   * La capacidad por caravana NO es config: sale del stat "Capacidad de
+   * suministro +" (`getSupplyCapacity()`).
    */
-  async manualSupply(targetPlayer: string, specificResources?: string[]): Promise<{ ok: boolean; message: string }> {
+  async manualSupply(
+    targetPlayer: string,
+    specificResources?: string[],
+    amounts?: Record<string, number>,
+    useBag = false,
+  ): Promise<{ ok: boolean; message: string }> {
     if (!this.bot.isOnline) return { ok: false, message: 'Bot no conectado' };
     if (this.supplyBusy) return { ok: false, message: 'Supply ya en progreso' };
     if (!targetPlayer) return { ok: false, message: 'Sin jugador objetivo' };
@@ -1857,23 +1993,41 @@ export class BotInstance extends EventEmitter {
       return { ok: false, message: 'Sin recursos disponibles' };
     }
 
-    const allEntries: { name: string; amount: number }[] = [
-      { name: 'trigo', amount: res.wheat },
-      { name: 'piedra', amount: res.stone },
-      { name: 'madera', amount: res.wood },
-      { name: 'mineral', amount: res.mineral },
-      { name: 'oro', amount: res.gold },
-    ];
-
-    const cfg = this.config.supply;
+    const cap = this.getSupplyCapacity();
+    if (cap <= 0) {
+      this.supplyManualActive = false;
+      return { ok: false, message: 'Sin capacidad de suministro (faltan datos de investigación/construcciones)' };
+    }
     const entries: { name: string; amount: number }[] = [];
 
-    for (const r of allEntries) {
-      if (specificResources && specificResources.length > 0 && !specificResources.includes(r.name)) continue;
-      if (r.amount <= 0) continue;
-      if (!cfg.maxAmount || cfg.maxAmount <= 0) continue;
-      const totalCaravans = Math.ceil(r.amount / cfg.maxAmount);
-      entries.push({ name: r.name, amount: totalCaravans * cfg.maxAmount });
+    if (amounts) {
+      // Modo batch: montos exactos por recurso (enteros, acotados al almacén
+      // tras abrir la bolsa si se pidió).
+      for (const name of ['trigo', 'piedra', 'madera', 'mineral', 'oro']) {
+        const want = Math.floor(amounts[name] || 0);
+        if (want <= 0) continue;
+        if (useBag && want > this.storeOf(name)) {
+          await useItemsForResource(this, BAG_KEY_BY_NAME[name], want - this.storeOf(name));
+          this.syncResourcesFromTracker();
+        }
+        const take = Math.min(want, this.storeOf(name));
+        if (take > 0) entries.push({ name, amount: take });
+        else this.bot.log(`[SUPPLY-MANUAL] ${name}: pedido ${want} pero sin recursos (almacén + bolsa), se omite`);
+      }
+    } else {
+      const allEntries: { name: string; amount: number }[] = [
+        { name: 'trigo', amount: res.wheat },
+        { name: 'piedra', amount: res.stone },
+        { name: 'madera', amount: res.wood },
+        { name: 'mineral', amount: res.mineral },
+        { name: 'oro', amount: res.gold },
+      ];
+
+      for (const r of allEntries) {
+        if (specificResources && specificResources.length > 0 && !specificResources.includes(r.name)) continue;
+        if (r.amount <= 0) continue;
+        entries.push({ name: r.name, amount: r.amount });
+      }
     }
 
     if (entries.length === 0) {
@@ -1901,12 +2055,36 @@ export class BotInstance extends EventEmitter {
     return { ok: true, message: `Supply enviado a "${targetPlayer}": ${summary}` };
   }
 
+  /** Capacidad de suministro por caravana (stat "Capacidad de suministro +"). */
+  getSupplyCapacity(): number {
+    return getSupplyCapacity(this.playerStats);
+  }
+
+  /** Almacén actual (proto 2014) de un recurso del supply, por nombre. */
+  private storeOf(name: string): number {
+    const r = this.resources;
+    if (!r) return 0;
+    return name === 'trigo' ? r.wheat : name === 'piedra' ? r.stone : name === 'madera' ? r.wood : name === 'mineral' ? r.mineral : r.gold;
+  }
+
+  /**
+   * Copia el ResourceTracker (que ya sumó lo abierto de la bolsa con
+   * resTrackerAdd) al objeto resources para no esperar al tick de 1 s.
+   */
+  private syncResourcesFromTracker(): void {
+    if (!this.resources) return;
+    this.resources.wheat = Math.floor(this.resTracker.wheat);
+    this.resources.stone = Math.floor(this.resTracker.stone);
+    this.resources.wood = Math.floor(this.resTracker.wood);
+    this.resources.mineral = Math.floor(this.resTracker.ore);
+    this.resources.gold = Math.floor(this.resTracker.gold);
+  }
+
   /**
    * Botón "Parar": corta el lote de supply de ESTA cuenta.
    * Limpia la cola, corta la espera del ack 2453 y el bucle de caravanas
    * termina en la siguiente vuelta (waitForSupplySlot ve la cola vacía).
-   */
-  stopSupply(): { stopped: boolean; message: string } {
+   */  stopSupply(): { stopped: boolean; message: string } {
     const active = this.supplyBusy || this.supplyManualActive || this.supplyPending.length > 0;
     if (!active) return { stopped: false, message: 'No hay supply en curso en esta cuenta' };
 
@@ -2410,15 +2588,24 @@ export class BotInstance extends EventEmitter {
     }
 
     const entry = this.supplyPending[0];
+    const cap = this.getSupplyCapacity();
+    if (cap <= 0) {
+      this.bot.log(`[SUPPLY] Sin capacidad de suministro conocida, abortando cola`);
+      this.supplyPending = [];
+      return;
+    }
+    // En modo montos exactos (batch) el último pedazo puede ser menor que la
+    // capacidad: se manda min(capacidad, restante) para respetar el total.
+    const chunk = Math.min(cap, entry.amount);
     const rIdx = ['trigo', 'piedra', 'madera', 'mineral', 'oro'].indexOf(entry.name);
-    const wheat = rIdx === 0 ? cfg.maxAmount : 0;
-    const stone = rIdx === 1 ? cfg.maxAmount : 0;
-    const wood = rIdx === 2 ? cfg.maxAmount : 0;
-    const ore = rIdx === 3 ? cfg.maxAmount : 0;
-    const gold = rIdx === 4 ? cfg.maxAmount : 0;
+    const wheat = rIdx === 0 ? chunk : 0;
+    const stone = rIdx === 1 ? chunk : 0;
+    const wood = rIdx === 2 ? chunk : 0;
+    const ore = rIdx === 3 ? chunk : 0;
+    const gold = rIdx === 4 ? chunk : 0;
 
     const { sendCaravan } = require('../commands/supply.commands');
-    await sendCaravan(this.bot, this.supplyTargetCoord, rIdx, cfg.maxAmount);
+    await sendCaravan(this.bot, this.supplyTargetCoord, rIdx, chunk);
     this.resTracker.deduct(wheat, wood, stone, ore, gold);
     if (this.resources) {
       this.resources.wheat = Math.max(0, this.resources.wheat - wheat);
@@ -2430,12 +2617,12 @@ export class BotInstance extends EventEmitter {
     this.activeCaravans++;
     this.supplyBatchSent = true;
     this.supplyInFlight.push({ sentAt: this.nowSec(), freeAt: null });
-    this.supplyLastSend = { entry, amount: cfg.maxAmount, wheat, wood, stone, ore, gold };
+    this.supplyLastSend = { entry, amount: chunk, wheat, wood, stone, ore, gold };
 
-    entry.amount -= cfg.maxAmount;
+    entry.amount -= chunk;
     if (entry.amount <= 0) this.supplyPending.shift();
 
-    const restan = this.supplyPending.length > 0 ? Math.ceil(this.supplyPending[0].amount / cfg.maxAmount) : 0;
+    const restan = this.supplyPending.length > 0 ? Math.ceil(this.supplyPending[0].amount / cap) : 0;
     this.bot.log(`[SUPPLY] ${entry.name}: enviada 1 caravana, restan ${restan}, activas: ${this.activeCaravans}`);
   }
 
@@ -2558,6 +2745,7 @@ function mergeConfig(config: Partial<BotConfig>, defaults: BotConfig): BotConfig
       merged[key] = val;
     }
   }
+  stripLegacyConfig(merged);
   return merged as BotConfig;
 }
 

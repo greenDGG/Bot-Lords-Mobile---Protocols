@@ -1,0 +1,3904 @@
+{
+"source": "heros.bytes + skills.bytes + heroplaylist.bytes + stringtables (cliente Lords Mobile)",
+"count": 95,
+"heroes": {
+"1": {
+"id": 1,
+"name": "Guardián",
+"nameEn": "Oath Keeper",
+"altName": "Wesley",
+"skills": [
+{
+"id": 12,
+"name": "Onda de choque",
+"nameEn": "Shockwave",
+"desc": "Crea un temblor de alcance medio que causa daño a todos los enemigos en un área cónica y provoca Aturdimiento durante 1 s."
+},
+{
+"id": 13,
+"name": "Escudo divino",
+"nameEn": "Divine Shield",
+"desc": "Invoca un escudo de luz que absorbe el daño recibido. El escudo dura 4 s o se rompe al sufrir demasiados daños."
+},
+{
+"id": 14,
+"name": "Golpe de escudo",
+"nameEn": "Shield Bash",
+"desc": "Golpea a un enemigo con el escudo, causa daño y provoca Aturdimiento durante 3 s."
+},
+{
+"id": 15,
+"name": "Apasionado",
+"nameEn": "Hot Blooded",
+"desc": "La voluntad de vivir del Guardián hace que siga luchando. Compruébalo con tus propios ojos."
+}
+],
+"battleSkills": [
+{
+"id": 211,
+"name": "Golpe fatal",
+"nameEn": "Fatal Strike",
+"desc": ""
+},
+{
+"id": 212,
+"name": "Potenciador PS infantería",
+"nameEn": "Infantry HP Boost",
+"desc": ""
+},
+{
+"id": 213,
+"name": "Gestión suministro de comida",
+"nameEn": "Food Supply Management",
+"desc": ""
+},
+{
+"id": 214,
+"name": "Potenciador ATQ infantería",
+"nameEn": "Infantry ATK Boost",
+"desc": ""
+}
+]
+},
+"2": {
+"id": 2,
+"name": "Cuervo Negro",
+"nameEn": "Black Crow",
+"altName": "Chadra",
+"skills": [
+{
+"id": 17,
+"name": "Lluvia de flechas",
+"nameEn": "Arrow Rain",
+"desc": "Lanza una lluvia de flechas que cubre un área mediana. Impacta contra los enemigos dentro de su radio de alcance 3 veces."
+},
+{
+"id": 18,
+"name": "Talón de Aquiles",
+"nameEn": "Achilles' Shot",
+"desc": "Dispara una flecha al punto débil de un enemigo, causa daño y provoca Desangramiento durante 3 s."
+},
+{
+"id": 19,
+"name": "Flecha perforadora",
+"nameEn": "Piercing Arrow",
+"desc": "Dispara una flecha que perfora la armadura de un enemigo, le causa daño y le provoca Vulnerabilidad durante 5 s."
+},
+{
+"id": 20,
+"name": "Venganza",
+"nameEn": "Vengeance",
+"desc": "La sed de venganza del Cuervo Negro da fuerzas a los aliados cercanos."
+}
+],
+"battleSkills": [
+{
+"id": 215,
+"name": "Muerte silenciosa",
+"nameEn": "Silent Kill",
+"desc": ""
+},
+{
+"id": 216,
+"name": "Potenciador PS artillería",
+"nameEn": "Ranged HP Boost",
+"desc": ""
+},
+{
+"id": 217,
+"name": "Potenciador DEF artillería",
+"nameEn": "Ranged DEF Boost",
+"desc": ""
+},
+{
+"id": 218,
+"name": "Potenciador ATQ trampa",
+"nameEn": "Trap ATK Boost",
+"desc": ""
+}
+]
+},
+"3": {
+"id": 3,
+"name": "Sabio de Viento",
+"nameEn": "Sage of Storms",
+"altName": "Anderson",
+"skills": [
+{
+"id": 22,
+"name": "Tornado",
+"nameEn": "Twister",
+"desc": "Lanza un tornado sobre una zona objetivo durante 5 s y daña a los enemigos en un área mediana."
+},
+{
+"id": 23,
+"name": "Relámpago",
+"nameEn": "Lightning Bolt",
+"desc": "Invoca un relámpago que impacta contra un objetivo y causa daño a todos los enemigos en un área mediana cercana al mismo."
+},
+{
+"id": 24,
+"name": "Pies ligeros",
+"nameEn": "Fleet-Footed",
+"desc": "Invoca una brisa en un área mediana alrededor de Anderson que aumenta los reflejos de los aliados durante 8 s."
+},
+{
+"id": 25,
+"name": "Campo estático",
+"nameEn": "Static Field",
+"desc": "El Sabio de Viento convierte el campo de batalla en un campo estático que reduce la DEF del enemigo."
+}
+],
+"battleSkills": [
+{
+"id": 219,
+"name": "Ducha eléctrica",
+"nameEn": "Electric Shower",
+"desc": ""
+},
+{
+"id": 220,
+"name": "Potenciador construcción",
+"nameEn": "Construction Boost",
+"desc": ""
+},
+{
+"id": 221,
+"name": "Potenciador ATQ trampa",
+"nameEn": "Trap ATK Boost",
+"desc": ""
+},
+{
+"id": 222,
+"name": "Potenciador DEF caballería",
+"nameEn": "Cavalry DEF Boost",
+"desc": ""
+}
+]
+},
+"4": {
+"id": 4,
+"name": "Reina de la Nieve",
+"nameEn": "Snow Queen",
+"altName": "Alice",
+"skills": [
+{
+"id": 27,
+"name": "Frente frío",
+"nameEn": "Cold Snap",
+"desc": "Invoca una ráfaga de viento desde lejos que daña a todos los enemigos en una línea y provoca Congelación durante 5 s."
+},
+{
+"id": 28,
+"name": "Escarcha",
+"nameEn": "Frostbite",
+"desc": "Genera una explosión de escarcha sobre un objetivo y causa daño a todos los enemigos en un área pequeña cercana al mismo."
+},
+{
+"id": 29,
+"name": "Armadura ártica",
+"nameEn": "Arctic Armor",
+"desc": "Recubre al aliado más débil con una armadura de hielo que aumenta su DEF durante 8 s."
+},
+{
+"id": 30,
+"name": "Vigor",
+"nameEn": "Invigorate",
+"desc": "La Reina de la Nieve blande un cristal encantado que aumenta la recarga/segundo de todos los aliados."
+}
+],
+"battleSkills": [
+{
+"id": 223,
+"name": "Huracán",
+"nameEn": "Hurricane",
+"desc": ""
+},
+{
+"id": 224,
+"name": "Potenciador DEF trampa",
+"nameEn": "Trap DEF Boost",
+"desc": ""
+},
+{
+"id": 225,
+"name": "Potenciador PS artillería",
+"nameEn": "Ranged HP Boost",
+"desc": ""
+},
+{
+"id": 226,
+"name": "Potenciador ATQ artillería",
+"nameEn": "Ranged ATK Boost",
+"desc": ""
+}
+]
+},
+"5": {
+"id": 5,
+"name": "Prima Donna",
+"nameEn": "Prima Donna",
+"altName": "Felicia",
+"skills": [
+{
+"id": 32,
+"name": "Himno Atenea",
+"nameEn": "Athena's Anthem",
+"desc": "Canta el Himno de Atenea, curando todos los aliados."
+},
+{
+"id": 33,
+"name": "Aullido sónico",
+"nameEn": "Sonic Howl",
+"desc": "Emite un aullido ensordecedor que daña a un objetivo."
+},
+{
+"id": 34,
+"name": "Aria arcana",
+"nameEn": "Arcane Aria",
+"desc": "Entona un canto especial que aumenta el ATQM de los aliados cercanos en un área mediana durante 8 s."
+},
+{
+"id": 35,
+"name": "Poder floral",
+"nameEn": "Flower Power",
+"desc": "Felicia se cubre con polen mágico que aumenta su curación mejorada."
+}
+],
+"battleSkills": [
+{
+"id": 227,
+"name": "Melodía de la muerte",
+"nameEn": "Death's Melody",
+"desc": ""
+},
+{
+"id": 228,
+"name": "Potenciador PS máquina de asedio",
+"nameEn": "Siege Engine HP Boost",
+"desc": ""
+},
+{
+"id": 229,
+"name": "Potenciador DEF máquina de asedio",
+"nameEn": "Siege Engine DEF Boost",
+"desc": ""
+},
+{
+"id": 230,
+"name": "Potenciador ATQ máquina de asedio",
+"nameEn": "Siege Engine ATK Boost",
+"desc": ""
+}
+]
+},
+"6": {
+"id": 6,
+"name": "Incineradora",
+"nameEn": "Incinerator",
+"altName": "Mónica",
+"skills": [
+{
+"id": 37,
+"name": "Armagedón",
+"nameEn": "Armageddon",
+"desc": "Invoca una lluvia de fuego sobre una zona objetivo que inflige daño y provoca Aturdimiento a todos los enemigos en un área mediana durante 1 s."
+},
+{
+"id": 38,
+"name": "Llamarada",
+"nameEn": "Blaze",
+"desc": "Libera una llamarada de alcance medio que daña a todos los enemigos en una línea y provoca Aturdimiento durante 1 s."
+},
+{
+"id": 39,
+"name": "Ignición",
+"nameEn": "Ignite",
+"desc": "Envuelve a un enemigo en llamas, le inflige daño y le provoca el estado Quemadura durante 4 s."
+},
+{
+"id": 40,
+"name": "Llama interior",
+"nameEn": "Inner Spark",
+"desc": "Mónica libera su potencial latente y aumenta su ATQM."
+}
+],
+"battleSkills": [
+{
+"id": 231,
+"name": "Explosión de fuego",
+"nameEn": "Fire Blast",
+"desc": ""
+},
+{
+"id": 232,
+"name": "Gestión suministro de madera",
+"nameEn": "Timber Supply Management",
+"desc": ""
+},
+{
+"id": 233,
+"name": "Potenciador PS máquina de asedio",
+"nameEn": "Siege Engine HP Boost",
+"desc": ""
+},
+{
+"id": 234,
+"name": "Potenciador ATQ máquina de asedio",
+"nameEn": "Siege Engine ATK Boost",
+"desc": ""
+}
+]
+},
+"7": {
+"id": 7,
+"name": "Caballero Letal",
+"nameEn": "Death Knight",
+"altName": "Shane",
+"skills": [
+{
+"id": 42,
+"name": "Desolación",
+"nameEn": "Desolation",
+"desc": "Libera un aire frío que causa daño e inflige Derribo y Congelación a los enemigos cercanos en un área grande durante 3 s."
+},
+{
+"id": 43,
+"name": "Empalamiento",
+"nameEn": "Impale",
+"desc": "Empala a un enemigo e inflige daño a todos los enemigos en una línea."
+},
+{
+"id": 44,
+"name": "Resurrección",
+"nameEn": "Resurrect",
+"desc": "Revive al morir en combate y aumenta su ATQ durante 10 s tras revivir."
+},
+{
+"id": 45,
+"name": "Corazón de hielo",
+"nameEn": "Heart of Ice",
+"desc": "Shane imbuye su cuerpo de un hielo mágico que aumenta su FUE."
+}
+],
+"battleSkills": [
+{
+"id": 235,
+"name": "Vórtice al alma",
+"nameEn": "Soul Vortex",
+"desc": ""
+},
+{
+"id": 236,
+"name": "Gestión suministro de piedra",
+"nameEn": "Stone Supply Management",
+"desc": ""
+},
+{
+"id": 237,
+"name": "Potenciador DEF caballería",
+"nameEn": "Cavalry DEF Boost",
+"desc": ""
+},
+{
+"id": 238,
+"name": "Potenciador PS caballería",
+"nameEn": "Cavalry HP Boost",
+"desc": ""
+}
+]
+},
+"8": {
+"id": 8,
+"name": "Sombra",
+"nameEn": "Shade",
+"altName": "Blink",
+"skills": [
+{
+"id": 47,
+"name": "Emboscada",
+"nameEn": "Ambush",
+"desc": "Se sitúa rápidamente en el costado de un enemigo para atacar, dañando a todos los enemigos en un área pequeña y golpeando 3 veces a cada uno."
+},
+{
+"id": 48,
+"name": "Elusión",
+"nameEn": "Elusion",
+"desc": "Adopta una postura evasiva que aumenta los reflejos durante 8 s."
+},
+{
+"id": 49,
+"name": "Misil silenciador",
+"nameEn": "Muting Missile",
+"desc": "Lanza una daga a un enemigo, le causa daño y le provoca Silencio durante 5 s."
+},
+{
+"id": 50,
+"name": "Leyenda asesina",
+"nameEn": "Assassin's Lore",
+"desc": "El entrenamiento de la Sombra le permite atacar el punto débil de un enemigo de forma constante."
+}
+],
+"battleSkills": [
+{
+"id": 239,
+"name": "Ataque supersónico",
+"nameEn": "Supersonic Attack",
+"desc": ""
+},
+{
+"id": 240,
+"name": "Guardia del castillo",
+"nameEn": "Castle Guard",
+"desc": ""
+},
+{
+"id": 241,
+"name": "Potenciador construc. trampa",
+"nameEn": "Trap Construction Boost",
+"desc": ""
+},
+{
+"id": 242,
+"name": "Potenciador DEF infantería",
+"nameEn": "Infantry DEF Boost",
+"desc": ""
+}
+]
+},
+"9": {
+"id": 9,
+"name": "Arquera Letal",
+"nameEn": "Death Archer",
+"altName": "Cathiss",
+"skills": [
+{
+"id": 52,
+"name": "Disparo venenoso",
+"nameEn": "Venom Shot",
+"desc": "Lanza una flecha venenosa al enemigo, le causa daño y le provoca Veneno durante 4 s."
+},
+{
+"id": 53,
+"name": "Ráfaga tóxica",
+"nameEn": "Toxic Blast",
+"desc": "Arroja una granada, causa daño a todos los enemigos en un área mediana alrededor del objetivo y provoca Veneno durante 3 s."
+},
+{
+"id": 54,
+"name": "Instinto cazador",
+"nameEn": "Hunter's Instinct",
+"desc": "Nada entusiasma más a Cathiss que ver sufrir a sus víctimas. Se activa cuando alguien muere en combate. Dura 5 s."
+},
+{
+"id": 55,
+"name": "Rostro letal",
+"nameEn": "Sleek Facade",
+"desc": "Su hermoso rostro esconde un peligro mortal."
+}
+],
+"battleSkills": [
+{
+"id": 243,
+"name": "Golpe crítico",
+"nameEn": "Critical Strike",
+"desc": ""
+},
+{
+"id": 244,
+"name": "Gestión suministro de mineral",
+"nameEn": "Ore Supply Management",
+"desc": ""
+},
+{
+"id": 245,
+"name": "Potenciador ATQ trampa",
+"nameEn": "Trap ATK Boost",
+"desc": ""
+},
+{
+"id": 246,
+"name": "Potenciador ATQ artillería",
+"nameEn": "Ranged ATK Boost",
+"desc": ""
+}
+]
+},
+"10": {
+"id": 10,
+"name": "Hijo de la Luz",
+"nameEn": "Child of Light",
+"altName": "Sparky",
+"skills": [
+{
+"id": 57,
+"name": "Marca de Apolo",
+"nameEn": "Apollo's Brand",
+"desc": "Ataca al objetivo con el poder del sol, daña a los enemigos cercanos en un área mediana y provoca Aturdimiento durante 5 s."
+},
+{
+"id": 58,
+"name": "Protección de Apolo",
+"nameEn": "Apollo's Ward",
+"desc": "Crea una barrera mágica que protege al aliado más débil y absorbe todo el daño recibido durante 4 s."
+},
+{
+"id": 59,
+"name": "Juicio sagrado",
+"nameEn": "Holy Judgment",
+"desc": "Golpea la tierra para liberar el poder de la luz, causa daño de alcance medio a todos los enemigos en un área cónica y reduce la DEFM durante 3 s."
+},
+{
+"id": 60,
+"name": "Instinto salvaje",
+"nameEn": "Wild Instincts",
+"desc": "El fuerte instinto del Hijo de la Luz es la prueba de toda una vida sometido al peligro constante."
+}
+],
+"battleSkills": [
+{
+"id": 247,
+"name": "Castigo divino",
+"nameEn": "Divine Punishment",
+"desc": ""
+},
+{
+"id": 248,
+"name": "Potenc. duración trampa",
+"nameEn": "Trap Durability Boost",
+"desc": ""
+},
+{
+"id": 249,
+"name": "Potenciador PS caballería",
+"nameEn": "Cavalry HP Boost",
+"desc": ""
+},
+{
+"id": 250,
+"name": "Potenciador ATQ caballería",
+"nameEn": "Cavalry ATK Boost",
+"desc": ""
+}
+]
+},
+"11": {
+"id": 11,
+"name": "Bárbaro",
+"nameEn": "Barbarian",
+"altName": "Gothrak",
+"skills": [
+{
+"id": 62,
+"name": "Provocación",
+"nameEn": "Taunt",
+"desc": "Provoca al objetivo e inflige daño a todos los enemigos en un área mediana. Los enemigos dañados solo atacan a Gothrak durante 5 s."
+},
+{
+"id": 63,
+"name": "Golpe pagano",
+"nameEn": "Heathen Smash",
+"desc": "Hiende la tierra con el hacha, causa daño de alcance medio a todos los enemigos en un área cónica y provoca Aturdimiento durante 1 s."
+},
+{
+"id": 64,
+"name": "Pose energúmeno",
+"nameEn": "Berserker Stance",
+"desc": "Gothrak se llena de adrenalina y aumenta su ATQ durante 5 s a intervalos."
+},
+{
+"id": 65,
+"name": "Belicoso",
+"nameEn": "Man of War",
+"desc": "La estatura y la fuerza de Gothrak no tienen parangón."
+}
+],
+"battleSkills": [
+{
+"id": 251,
+"name": "Grito de guerra",
+"nameEn": "War Cry",
+"desc": ""
+},
+{
+"id": 252,
+"name": "Potenciador PS caballería",
+"nameEn": "Cavalry HP Boost",
+"desc": ""
+},
+{
+"id": 253,
+"name": "Defensa inquebrantable",
+"nameEn": "Impenetrable Defense",
+"desc": ""
+},
+{
+"id": 254,
+"name": "Potenciador ATQ caballería",
+"nameEn": "Cavalry ATK Boost",
+"desc": ""
+}
+]
+},
+"12": {
+"id": 12,
+"name": "El Grandulón",
+"nameEn": "The Big Guy",
+"altName": "Un Ojo",
+"skills": [
+{
+"id": 67,
+"name": "Devastación",
+"nameEn": "Rampage",
+"desc": "Hace girar su enorme cuerpo y corre hacia los enemigos, dañándolos 5 veces en un área pequeña. Provoca Aturdimiento durante 1 s."
+},
+{
+"id": 68,
+"name": "Impacto brutal",
+"nameEn": "Brutal Impact",
+"desc": "Lanza una bola de acero desde media distancia que causa daño a todos los enemigos en un cono y provoca Aturdimiento durante 1 s."
+},
+{
+"id": 69,
+"name": "Terremoto",
+"nameEn": "Quake",
+"desc": "Golpea el suelo con el cuerpo, daña a todos los enemigos en un área mediana y provoca Aturdimiento durante 1 s."
+},
+{
+"id": 70,
+"name": "Piel gruesa",
+"nameEn": "Thick Skin",
+"desc": "La gran barriga de El Grandulón le permite bloquear todo el daño de los enemigos."
+}
+],
+"battleSkills": [
+{
+"id": 255,
+"name": "Grieta tectónica",
+"nameEn": "Tectonic Crack",
+"desc": ""
+},
+{
+"id": 257,
+"name": "Potenciador DEF infantería",
+"nameEn": "Infantry DEF Boost",
+"desc": ""
+},
+{
+"id": 258,
+"name": "Potenciador ATQ infantería",
+"nameEn": "Infantry ATK Boost",
+"desc": ""
+}
+]
+},
+"13": {
+"id": 13,
+"name": "Rayo Escarlata",
+"nameEn": "Scarlet Bolt",
+"altName": "Greta",
+"skills": [
+{
+"id": 72,
+"name": "Puñalada trapera",
+"nameEn": "Backstab",
+"desc": "Como un rayo, ataca al enemigo por detrás, le inflige daño y provoca vulnerabilidad durante 5 s a enemigos en un área pequeña."
+},
+{
+"id": 73,
+"name": "Despojado",
+"nameEn": "Disarm",
+"desc": "Ataca las muñecas de un enemigo, le causa daño y le provoca Desarme durante 3 s."
+},
+{
+"id": 74,
+"name": "Exterminio",
+"nameEn": "Exterminate",
+"desc": "Ataca el punto débil de un enemigo y le inflige daño directo."
+},
+{
+"id": 75,
+"name": "Aura funesta",
+"nameEn": "Dismal Aura",
+"desc": "La mera presencia de Rayo Escarlata aterroriza a todos los enemigos."
+}
+],
+"battleSkills": [
+{
+"id": 259,
+"name": "Masacre",
+"nameEn": "Massacre",
+"desc": ""
+},
+{
+"id": 260,
+"name": "Potenciador construcción",
+"nameEn": "Construction Boost",
+"desc": ""
+},
+{
+"id": 261,
+"name": "Potenciador DEF infantería",
+"nameEn": "Infantry DEF Boost",
+"desc": ""
+},
+{
+"id": 262,
+"name": "Potenc. energía máx.",
+"nameEn": "Max Energy Boost",
+"desc": ""
+}
+]
+},
+"14": {
+"id": 14,
+"name": "Seguidor Oscuro",
+"nameEn": "Dark Follower",
+"altName": "Jonás",
+"skills": [
+{
+"id": 77,
+"name": "Velo misterioso",
+"nameEn": "Eerie Veil",
+"desc": "Invoca energía oscura sobre el enemigo desde una larga distancia, daña a todos los enemigos en un área cónica y reduce el ATQM durante 8 s."
+},
+{
+"id": 78,
+"name": "Bendición sagrada",
+"nameEn": "Holy Blessing",
+"desc": "Genera una luz rejuvenecedora que restablece los PS de los aliados cercanos en un área mediana alrededor del objetivo y aumenta el ATQ durante 5 s."
+},
+{
+"id": 79,
+"name": "Malestar oscuro",
+"nameEn": "Dark Unrest",
+"desc": "Lanza magia oscura desde larga distancia que envuelve al enemigo, daña a todos los enemigos en una línea y deshabilita la magia enemiga durante 3 s."
+},
+{
+"id": 80,
+"name": "Barrera sacra",
+"nameEn": "Holy Barrier",
+"desc": "La pureza del interior de Jonás genera un muro de luz que aumenta la DEFM de los aliados."
+}
+],
+"battleSkills": [
+{
+"id": 263,
+"name": "Tormenta de sombras",
+"nameEn": "Shadow Storm",
+"desc": ""
+},
+{
+"id": 264,
+"name": "Gestión suministro de oro",
+"nameEn": "Gold Supply Management",
+"desc": ""
+},
+{
+"id": 265,
+"name": "Potenciador investigación",
+"nameEn": "Research Boost",
+"desc": ""
+},
+{
+"id": 266,
+"name": "Muñeco de entrenamiento",
+"nameEn": "Training Dummy",
+"desc": ""
+}
+]
+},
+"15": {
+"id": 15,
+"name": "Estafador",
+"nameEn": "Trickster",
+"altName": "Chismoso",
+"skills": [
+{
+"id": 82,
+"name": "Sarta de mentiras",
+"nameEn": "Liar's Sermon",
+"desc": "Apabulla a la gente con batallitas desde larga distancia, daña a todos los enemigos en un área cónica y provoca Confusión durante 5 s."
+},
+{
+"id": 83,
+"name": "Flecha manipulada",
+"nameEn": "Tampered Arrow",
+"desc": "Recubre una flecha con una sustancia secreta antes de lanzarla, causa daño y provoca Desarme durante 5 s."
+},
+{
+"id": 84,
+"name": "Bola de barro",
+"nameEn": "Mud Ball",
+"desc": "Lanza barro al enemigo, causa daño y provoca Ceguera durante 8 s."
+},
+{
+"id": 85,
+"name": "Fuga",
+"nameEn": "Getaway",
+"desc": "El estafador se mueve como una sombra. Antes de que te des cuenta, se ha ido."
+}
+],
+"battleSkills": [
+{
+"id": 267,
+"name": "Explosión psicópata",
+"nameEn": "Psycho Blast",
+"desc": ""
+},
+{
+"id": 268,
+"name": "Potenciador investigación",
+"nameEn": "Research Boost",
+"desc": ""
+},
+{
+"id": 269,
+"name": "Potenc. energía máx.",
+"nameEn": "Max Energy Boost",
+"desc": ""
+},
+{
+"id": 270,
+"name": "Regeneración energía",
+"nameEn": "Energy Regeneration",
+"desc": ""
+}
+]
+},
+"16": {
+"id": 16,
+"name": "Trasgo Dinamita",
+"nameEn": "Bombin' Goblin",
+"altName": "Tinkus",
+"skills": [
+{
+"id": 87,
+"name": "Reacción cadena",
+"nameEn": "Chain Reaction",
+"desc": "Lanza varias bombas al objetivo, causa daño 5 veces a todos los enemigos en un área mediana."
+},
+{
+"id": 88,
+"name": "Bombazo",
+"nameEn": "Big Ol' Bomb",
+"desc": "Lanza una bomba al objetivo y causa daño a todos los enemigos en un área pequeña."
+},
+{
+"id": 89,
+"name": "Regalo explosivo",
+"nameEn": "Explosive Gift",
+"desc": "Arroja al enemigo una caja de regalo que contiene una bomba, le causa daño y le provoca Aturdimiento durante 3 s."
+},
+{
+"id": 90,
+"name": "Explosión final",
+"nameEn": "Last Burst",
+"desc": "Los explosivos estallan al morir Tinkus y dañan a todos los enemigos."
+}
+],
+"battleSkills": [
+{
+"id": 271,
+"name": "Meteorito",
+"nameEn": "Meteor",
+"desc": ""
+},
+{
+"id": 272,
+"name": "Potenc. duración trampa",
+"nameEn": "Trap Durability Boost",
+"desc": ""
+},
+{
+"id": 273,
+"name": "Potenciador ATQ trampa",
+"nameEn": "Trap ATK Boost",
+"desc": ""
+},
+{
+"id": 274,
+"name": "Potenc. ATQ ejército",
+"nameEn": "Army ATK Boost",
+"desc": ""
+}
+]
+},
+"17": {
+"id": 17,
+"name": "Cuervo Nocturno",
+"nameEn": "Night Raven",
+"altName": "Ícaro",
+"skills": [
+{
+"id": 92,
+"name": "Estrellas fugaces",
+"nameEn": "Shooting Stars",
+"desc": "Invoca estrellas que caen sobre el campo de batalla y dañan a todos los enemigos."
+},
+{
+"id": 93,
+"name": "Plumas cortantes",
+"nameEn": "Wing Blades",
+"desc": "Lanza plumas cortantes al enemigo en un área grande, causando daño 3 veces."
+},
+{
+"id": 94,
+"name": "Ataque de búho",
+"nameEn": "Owl's Charge",
+"desc": "Invoca a un búho para que ataque al enemigo, causa daño y provoca Aturdimiento durante 3 s."
+},
+{
+"id": 95,
+"name": "Impulso eólico",
+"nameEn": "Wind Groove",
+"desc": "El veloz Cuervo Nocturno se pone al frente y aumenta la DES de todos los héroes."
+}
+],
+"battleSkills": [
+{
+"id": 275,
+"name": "Empujón plateado",
+"nameEn": "Silver Thrust",
+"desc": ""
+},
+{
+"id": 276,
+"name": "Guardia del castillo",
+"nameEn": "Castle Guard",
+"desc": ""
+},
+{
+"id": 277,
+"name": "Potenciador DEF caballería",
+"nameEn": "Cavalry DEF Boost",
+"desc": ""
+},
+{
+"id": 278,
+"name": "Potenciador ATQ caballería",
+"nameEn": "Cavalry ATK Boost",
+"desc": ""
+}
+]
+},
+"18": {
+"id": 18,
+"name": "Matademonios",
+"nameEn": "Demon Slayer",
+"altName": "Shroud",
+"skills": [
+{
+"id": 97,
+"name": "Espiral marchita",
+"nameEn": "Wilting Spiral",
+"desc": "Hace girar y lacera a los enemigos en un área grande, causa daño 2 veces y reduce CRÍTM durante 6 s."
+},
+{
+"id": 98,
+"name": "Emboscada silenciosa",
+"nameEn": "Silent Ambush",
+"desc": "Se mueve a espaldas del objetivo para atacarlo por sorpresa y causarle daño."
+},
+{
+"id": 99,
+"name": "Sello místico",
+"nameEn": "Mystic Seal",
+"desc": "Lanza un poderoso hechizo que encierra a los enemigos cercanos en un área pequeña, les causa daño y provoca Silencio durante 3 s."
+},
+{
+"id": 100,
+"name": "Marca oscura",
+"nameEn": "Dark Imprint",
+"desc": "La marca del Matademonios genera una poderosa magia que aumenta la DEFM."
+}
+],
+"battleSkills": [
+{
+"id": 279,
+"name": "Golpe sombrío",
+"nameEn": "Shadow Strike",
+"desc": ""
+},
+{
+"id": 280,
+"name": "Potenciador PS infantería",
+"nameEn": "Infantry HP Boost",
+"desc": ""
+},
+{
+"id": 281,
+"name": "Potenciador ATQ trampa",
+"nameEn": "Trap ATK Boost",
+"desc": ""
+},
+{
+"id": 282,
+"name": "Potenciador ATQ infantería",
+"nameEn": "Infantry ATK Boost",
+"desc": ""
+}
+]
+},
+"19": {
+"id": 19,
+"name": "Elementalista",
+"nameEn": "Elementalist",
+"altName": "Rasmus",
+"skills": [
+{
+"id": 102,
+"name": "Sismología",
+"nameEn": "Seismism",
+"desc": "Provoca temblores de largo alcance que sacuden la tierra y dañan a todos los enemigos en una línea."
+},
+{
+"id": 103,
+"name": "Disparo elemental",
+"nameEn": "Elemental Shot",
+"desc": "Lanza una flecha mágica imbuida del poder del fuego y el hielo que daña a todos los enemigos en un área pequeña cercana al objetivo."
+},
+{
+"id": 104,
+"name": "Arte eólico",
+"nameEn": "Art of Wind",
+"desc": "Envía una fuerte ráfaga de viento que atraviesa la tierra y reduce la DEFM de todos los enemigos durante 8 s."
+},
+{
+"id": 105,
+"name": "Sabiduría mística",
+"nameEn": "Mystic Wisdom",
+"desc": "La luz de la sabiduría ilimitada impregna al Elementalista y aumenta el nivel de CRÍTM."
+}
+],
+"battleSkills": [
+{
+"id": 283,
+"name": "Ira de la naturaleza",
+"nameEn": "Nature's Wrath",
+"desc": ""
+},
+{
+"id": 284,
+"name": "Gestión suministro de comida",
+"nameEn": "Food Supply Management",
+"desc": ""
+},
+{
+"id": 285,
+"name": "Potenciador DEF máquina de asedio",
+"nameEn": "Siege Engine DEF Boost",
+"desc": ""
+},
+{
+"id": 286,
+"name": "Potenciador ATQ máquina de asedio",
+"nameEn": "Siege Engine ATK Boost",
+"desc": ""
+}
+]
+},
+"20": {
+"id": 20,
+"name": "Escudero del Mar",
+"nameEn": "Sea Squire",
+"altName": "Lochfin",
+"skills": [
+{
+"id": 107,
+"name": "Maremoto",
+"nameEn": "Tidal Wave",
+"desc": "Lanza una furiosa ola sobre el objetivo en un área media y causa daño durante 5 s."
+},
+{
+"id": 108,
+"name": "Vórtice salvaje",
+"nameEn": "Wild Vortex",
+"desc": "Genera un vórtice que rebota alrededor de los enemigos y causa daño hasta 6 veces."
+},
+{
+"id": 109,
+"name": "Curación acuática",
+"nameEn": "Aqua Heal",
+"desc": "Forma un campo mágico alrededor del aliado con menos PS y aplica una curación a todos los aliados en un área grande durante 5 s."
+},
+{
+"id": 110,
+"name": "Himno de marea",
+"nameEn": "Tidal Hymn",
+"desc": "El relajante sonido de la marea calma a Lochfin y aumentan su INT."
+}
+],
+"battleSkills": [
+{
+"id": 287,
+"name": "Géiser",
+"nameEn": "Geyser",
+"desc": ""
+},
+{
+"id": 288,
+"name": "Gestión suministro de piedra",
+"nameEn": "Stone Supply Management",
+"desc": ""
+},
+{
+"id": 289,
+"name": "Potenciador construc. trampa",
+"nameEn": "Trap Construction Boost",
+"desc": ""
+},
+{
+"id": 290,
+"name": "Potenciador ATQ infantería",
+"nameEn": "Infantry ATK Boost",
+"desc": ""
+}
+]
+},
+"21": {
+"id": 21,
+"name": "Forjador de Almas",
+"nameEn": "Soul Forger",
+"altName": "Drumyr",
+"skills": [
+{
+"id": 112,
+"name": "Golpe de remolino",
+"nameEn": "Whirl Smash",
+"desc": "Describe círculos con el martillo, daña a todos los enemigos en un área grande, y provoca 3 s de Vulnerabilidad. Dura 5 s."
+},
+{
+"id": 113,
+"name": "Impacto profundo",
+"nameEn": "Deep Impact",
+"desc": "Golpea el objetivo con un potente aleteo, daña a todos los enemigos en un área mediana y reduce el CRÍT durante 5 s."
+},
+{
+"id": 114,
+"name": "Añicos",
+"nameEn": "Shatter",
+"desc": "Salta sobre un objetivo desde una larga distancia y le asesta un golpe devastador que daña a todos los enemigos en línea y reduce el ATQ durante 5 s."
+},
+{
+"id": 115,
+"name": "Cuerpo férreo",
+"nameEn": "Iron Body",
+"desc": "Una excepcional armadura enana que protege a Drumyr incluso de los golpes más potentes."
+}
+],
+"battleSkills": [
+{
+"id": 291,
+"name": "Explosión tectónica",
+"nameEn": "Tectonic Burst",
+"desc": ""
+},
+{
+"id": 292,
+"name": "Gestión suministro de oro",
+"nameEn": "Gold Supply Management",
+"desc": ""
+},
+{
+"id": 293,
+"name": "Potenciador DEF trampa",
+"nameEn": "Trap DEF Boost",
+"desc": ""
+},
+{
+"id": 294,
+"name": "Potenciador ATQ infantería",
+"nameEn": "Infantry ATK Boost",
+"desc": ""
+}
+]
+},
+"22": {
+"id": 22,
+"name": "Guía Etérea",
+"nameEn": "Ethereal Guide",
+"altName": "Anaya Bonn",
+"skills": [
+{
+"id": 117,
+"name": "Llamada letal",
+"nameEn": "Soul Wave",
+"desc": "Libera una poderosa ola que barre al objetivo desde una larga distancia, daña a todos los enemigos en una línea y reduce el CRÍTM durante 5 s."
+},
+{
+"id": 118,
+"name": "Tratado de alma",
+"nameEn": "Soul Treaty",
+"desc": "Arroja un aura mortal que causa daño a todos los enemigos y otorga un escudo que absorbe daño mágico de los enemigos durante 4 s."
+},
+{
+"id": 119,
+"name": "Ola de alma",
+"nameEn": "Death's Call",
+"desc": "Ordena a los espíritus no muertos que ataquen desde una larga distancia, daña a todos los enemigos en una línea y reduce el CRÍTM durante 5 s."
+},
+{
+"id": 120,
+"name": "Ruptura mental",
+"nameEn": "Mental Break",
+"desc": "La Guía Etérea crea una alteración mental que debilita el ATQM de todos los enemigos."
+}
+],
+"battleSkills": [
+{
+"id": 295,
+"name": "Festín abominable",
+"nameEn": "Ghastly Feast",
+"desc": ""
+},
+{
+"id": 296,
+"name": "Canción de batalla",
+"nameEn": "Battle Song",
+"desc": ""
+},
+{
+"id": 297,
+"name": "Potenciador DEF artillería",
+"nameEn": "Ranged DEF Boost",
+"desc": ""
+},
+{
+"id": 298,
+"name": "Potenciador ATQ artillería",
+"nameEn": "Ranged ATK Boost",
+"desc": ""
+}
+]
+},
+"23": {
+"id": 23,
+"name": "Rastreadora",
+"nameEn": "Tracker",
+"altName": "Boom-Hilda",
+"skills": [
+{
+"id": 122,
+"name": "Disparo letal",
+"nameEn": "Fatal Shot",
+"desc": "Lanza una flecha ardiente al objetivo que inflige un daño mortal."
+},
+{
+"id": 123,
+"name": "Tormenta de flechas",
+"nameEn": "Arrow Storm",
+"desc": "Lanza una lluvia de flechas sobre el objetivo desde una distancia larga y daña a enemigos en un área cónica."
+},
+{
+"id": 124,
+"name": "Disparo curvo",
+"nameEn": "Curved Shot",
+"desc": "Dispara una flecha que curva su trayectoria y alcanza al objetivo más lejano, causando daño y provocando Aturdimiento durante 3 s."
+},
+{
+"id": 125,
+"name": "Escándalo",
+"nameEn": "Outrage",
+"desc": "El carácter inigualable de Boom-Hilda irradia una masculinidad muy apreciada por los enanos."
+}
+],
+"battleSkills": [
+{
+"id": 299,
+"name": "Lluvia embravecida",
+"nameEn": "Raging Rain",
+"desc": ""
+},
+{
+"id": 300,
+"name": "Gestión suministro de mineral",
+"nameEn": "Ore Supply Management",
+"desc": ""
+},
+{
+"id": 301,
+"name": "Potenciador DEF artillería",
+"nameEn": "Ranged DEF Boost",
+"desc": ""
+},
+{
+"id": 302,
+"name": "Potenciador ATQ artillería",
+"nameEn": "Ranged ATK Boost",
+"desc": ""
+}
+]
+},
+"24": {
+"id": 24,
+"name": "Cantante Marina",
+"nameEn": "Songstress of the Sea",
+"altName": "Coral",
+"skills": [
+{
+"id": 127,
+"name": "Mar gruesa",
+"nameEn": "Grand Waves",
+"desc": "Genera potentes olas desde una larga distancia que causan daño 4 veces a los enemigos en una línea."
+},
+{
+"id": 128,
+"name": "Sordera",
+"nameEn": "Deafen",
+"desc": "Emite un grito ensordecedor desde una larga distancia que daña a todos los enemigos en una línea y reduce los reflejos durante 5 s."
+},
+{
+"id": 129,
+"name": "Baño lunar",
+"nameEn": "Moonbath",
+"desc": "Se deja bañar por la suave luz de la luna, que restablece los PS y aumenta el ATQM durante 8 s."
+},
+{
+"id": 130,
+"name": "Ultrasonido",
+"nameEn": "Ultrasound",
+"desc": "Coral emite un ultrasonido para localizar a todos los enemigos y potenciar así su precisión."
+}
+],
+"battleSkills": [
+{
+"id": 303,
+"name": "Marea colosal",
+"nameEn": "Colossal Tide",
+"desc": ""
+},
+{
+"id": 304,
+"name": "Canción de batalla",
+"nameEn": "Battle Song",
+"desc": ""
+},
+{
+"id": 305,
+"name": "Defensa inquebrantable",
+"nameEn": "Impenetrable Defense",
+"desc": ""
+},
+{
+"id": 306,
+"name": "Potenc. ATQ ejército",
+"nameEn": "Army ATK Boost",
+"desc": ""
+}
+]
+},
+"25": {
+"id": 25,
+"name": "Centauro Vengativo",
+"nameEn": "Vengeful Centaur",
+"altName": "Tarkus",
+"skills": [
+{
+"id": 132,
+"name": "Viento letal",
+"nameEn": "Death Wind",
+"desc": "Dispara un viento letal que envuelve a los enemigos desde una larga distancia, daña a todos los enemigos en una línea y absorbe daño físico durante 4 s."
+},
+{
+"id": 133,
+"name": "Muro espectral",
+"nameEn": "Spectral Wall",
+"desc": "Invoca los espíritus de los muertos, que derriban a todos los enemigos en un área pequeña y absorben el daño físico recibido durante 4 s."
+},
+{
+"id": 134,
+"name": "Furia",
+"nameEn": "Wrath",
+"desc": "Martillea el suelo con furia, causa daño al enemigo más lejano y provoca Aturdimiento durante 3 s."
+},
+{
+"id": 135,
+"name": "Belicista",
+"nameEn": "Warmonger",
+"desc": "Tarkus contagia a sus aliados el deseo de matar."
+}
+],
+"battleSkills": [
+{
+"id": 307,
+"name": "Purga álmica",
+"nameEn": "Soul Purge",
+"desc": ""
+},
+{
+"id": 308,
+"name": "Potenciador investigación",
+"nameEn": "Research Boost",
+"desc": ""
+},
+{
+"id": 309,
+"name": "Defensa inquebrantable",
+"nameEn": "Impenetrable Defense",
+"desc": ""
+},
+{
+"id": 310,
+"name": "Potenciador ATQ caballería",
+"nameEn": "Cavalry ATK Boost",
+"desc": ""
+}
+]
+},
+"26": {
+"id": 26,
+"name": "Bruja Onírica",
+"nameEn": "Dream Witch",
+"altName": "Eloise",
+"skills": [
+{
+"id": 137,
+"name": "Explosión mental",
+"nameEn": "Mind Blast",
+"desc": "Ataca al objetivo con poderes psíquicos, daña a todos los enemigos en un área mediana y provoca Aturdimiento durante 1 s."
+},
+{
+"id": 138,
+"name": "Ensoñación",
+"nameEn": "Reverie",
+"desc": "Cubre a los aliados con un núcleo de energía espiritual que restablece sus PS en un área grande."
+},
+{
+"id": 139,
+"name": "Pesadilla",
+"nameEn": "Nightmare",
+"desc": "Exacerba los miedos más arraigados del objetivo, causa daño a todos los enemigos e inflige daño mágico durante 4 s."
+},
+{
+"id": 140,
+"name": "Susurro mental",
+"nameEn": "Mind Whisper",
+"desc": "La voluntad de la Bruja Onírica se propaga y potencia la INT de los aliados."
+}
+],
+"battleSkills": [
+{
+"id": 311,
+"name": "Lustre sagrado",
+"nameEn": "Sacred Luster",
+"desc": ""
+},
+{
+"id": 312,
+"name": "Muñeco de entrenamiento",
+"nameEn": "Training Dummy",
+"desc": ""
+},
+{
+"id": 313,
+"name": "Canción de batalla",
+"nameEn": "Battle Song",
+"desc": ""
+},
+{
+"id": 314,
+"name": "Potenc. ATQ ejército",
+"nameEn": "Army ATK Boost",
+"desc": ""
+}
+]
+},
+"27": {
+"id": 27,
+"name": "Mujer Fatal",
+"nameEn": "Femme Fatale",
+"altName": "Thorn",
+"skills": [
+{
+"id": 142,
+"name": "Latigazo",
+"nameEn": "Whip Dance",
+"desc": "Azota al objetivo con un látigo y causa daño 3 veces a todos los enemigos en un área grande."
+},
+{
+"id": 143,
+"name": "Maniobra veloz",
+"nameEn": "Swift Maneuver",
+"desc": "Se desliza detrás del objetivo sin ser vista, causa daño a todos los enemigos en un área mediana y provoca Vulnerabilidad durante 5 s."
+},
+{
+"id": 144,
+"name": "Festín frenético",
+"nameEn": "Feeding Frenzy",
+"desc": "Sucumbe a su sed de sangre, lo que aumenta el robo de vida durante 8 s."
+},
+{
+"id": 145,
+"name": "Aguijón",
+"nameEn": "Bloodshot",
+"desc": "La Mujer Fatal apunta al punto débil de la armadura del objetivo y la perfora con su látigo."
+}
+],
+"battleSkills": [
+{
+"id": 315,
+"name": "Rosa vampiresca",
+"nameEn": "Vampiric Rose",
+"desc": ""
+},
+{
+"id": 316,
+"name": "Potenciador investigación",
+"nameEn": "Research Boost",
+"desc": ""
+},
+{
+"id": 317,
+"name": "Defensa inquebrantable",
+"nameEn": "Impenetrable Defense",
+"desc": ""
+},
+{
+"id": 318,
+"name": "Potenciador ATQ infantería",
+"nameEn": "Infantry ATK Boost",
+"desc": ""
+}
+]
+},
+"28": {
+"id": 28,
+"name": "Diablilla",
+"nameEn": "Petite Devil",
+"altName": "Beatrix",
+"skills": [
+{
+"id": 147,
+"name": "Arrullo del diablo",
+"nameEn": "Devil's Lullaby",
+"desc": "Canta una canción de cuna diabólica que daña a todos los enemigos y provoca Aturdimiento durante 5 s."
+},
+{
+"id": 148,
+"name": "Destello cegador",
+"nameEn": "Annoying Flash",
+"desc": "Lanza un rayo cegador de alcance medio contra un objetivo, daña a todos los enemigos en una línea y restablece sus propios PS."
+},
+{
+"id": 149,
+"name": "Travesura",
+"nameEn": "Prank",
+"desc": "Tira una bomba al objetivo, causa daños e inflige daño mágico durante 6 s."
+},
+{
+"id": 150,
+"name": "Linaje del diablo",
+"nameEn": "Devil's Lineage",
+"desc": "El ansia de poder oscuro de Beatrix define al diablo que mora en su interior."
+}
+],
+"battleSkills": [
+{
+"id": 319,
+"name": "Tentación del diablo",
+"nameEn": "Devil's Temptation",
+"desc": ""
+},
+{
+"id": 320,
+"name": "Potenciador investigación",
+"nameEn": "Research Boost",
+"desc": ""
+},
+{
+"id": 321,
+"name": "Potenciador PS artillería",
+"nameEn": "Ranged HP Boost",
+"desc": ""
+},
+{
+"id": 322,
+"name": "Potenciador ATQ artillería",
+"nameEn": "Ranged ATK Boost",
+"desc": ""
+}
+]
+},
+"29": {
+"id": 29,
+"name": "Caballera de la Rosa",
+"nameEn": "Rose Knight",
+"altName": "Joan",
+"skills": [
+{
+"id": 152,
+"name": "Escudos fuera",
+"nameEn": "Shield Throw",
+"desc": "Lanza un escudo contra el objetivo, causa daño y provoca Aturdimiento durante 1 s. El escudo rebota 6 veces entre los enemigos."
+},
+{
+"id": 153,
+"name": "Plegaria",
+"nameEn": "Prayer",
+"desc": "Lanza magia para curar al aliado con menos PS y reduce el daño recibido durante 5 s."
+},
+{
+"id": 154,
+"name": "Justicia",
+"nameEn": "Justice Call",
+"desc": "Lanza un hechizo de protección sobre todos los aliados que absorbe el daño durante 8 s.\nSolo se puede usar al comienzo del combate."
+},
+{
+"id": 155,
+"name": "Corazón rosado",
+"nameEn": "Roseheart",
+"desc": "La bendición de la reina de los duendecillos mejora la DEFM de la Caballera de la Rosa."
+}
+],
+"battleSkills": [
+{
+"id": 323,
+"name": "Gloria del paladín",
+"nameEn": "Paladin's Glory",
+"desc": ""
+},
+{
+"id": 324,
+"name": "Gestión suministro de madera",
+"nameEn": "Timber Supply Management",
+"desc": ""
+},
+{
+"id": 325,
+"name": "Potenciador PS caballería",
+"nameEn": "Cavalry HP Boost",
+"desc": ""
+},
+{
+"id": 326,
+"name": "Potenc. ATQ ejército",
+"nameEn": "Army ATK Boost",
+"desc": ""
+}
+]
+},
+"30": {
+"id": 30,
+"name": "Observador",
+"nameEn": "Watcher",
+"altName": "Deeproot",
+"skills": [
+{
+"id": 157,
+"name": "Descarga salvaje",
+"nameEn": "Wild Unleash",
+"desc": "Martillea la tierra con la energía de la naturaleza, daña a los enemigos cercanos en un área grande y provoca Inmovilidad durante 5 s."
+},
+{
+"id": 158,
+"name": "Bramido atroz",
+"nameEn": "Raw Bellow",
+"desc": "Emite un atronador bramido que recorre la tierra, causa daño a los enemigos en un área grande y daño directo durante 5 s."
+},
+{
+"id": 159,
+"name": "Peste micótica",
+"nameEn": "Fungal Blight",
+"desc": "El Observador genera esporas de hongos tóxicos de alcance medio que dañan a los enemigos en un área cónica y provocan Vulnerabilidad durante 5 s."
+},
+{
+"id": 160,
+"name": "Vigor natural",
+"nameEn": "Nature's Vigor",
+"desc": "El bosque antiguo imbuye al Observador de la esencia vital de la naturaleza y aumenta sus PS."
+}
+],
+"battleSkills": [
+{
+"id": 327,
+"name": "Viento del bosque",
+"nameEn": "Forest's Wind",
+"desc": ""
+},
+{
+"id": 328,
+"name": "Muñeco de entrenamiento",
+"nameEn": "Training Dummy",
+"desc": ""
+},
+{
+"id": 329,
+"name": "Canción de batalla",
+"nameEn": "Battle Song",
+"desc": ""
+},
+{
+"id": 330,
+"name": "Potenc. ATQ ejército",
+"nameEn": "Army ATK Boost",
+"desc": ""
+}
+]
+},
+"31": {
+"id": 31,
+"name": "Vapobot",
+"nameEn": "Steambot",
+"altName": "M.A.V",
+"skills": [
+{
+"id": 162,
+"name": "Sobrecargar",
+"nameEn": "Overcharge",
+"desc": "El héoe canaliza su poder en un potente disparo, dañando enemigos a largo alcance,  inflige aturdimiento por  1  seg."
+},
+{
+"id": 163,
+"name": "Zona de deformación",
+"nameEn": "Crumple Zone",
+"desc": "Libera una nube protectora de vapor, los aliados cercanos en un  área mediana  están protegidos contra daños por  5  seg."
+},
+{
+"id": 164,
+"name": "Acelera & Rev",
+"nameEn": "Throttle & Rev",
+"desc": "Enciende pistones y gira, dañando a los enemigos cercanos en un  área mediana e infligiendo vulnerabilidad por  5  seg."
+},
+{
+"id": 165,
+"name": "Todo vapor",
+"nameEn": "Full Steam",
+"desc": "El Vapobot libera todas sus válvulas para aumentar en gran medida su ATQ."
+}
+],
+"battleSkills": [
+{
+"id": 331,
+"name": "Explosión",
+"nameEn": "Steel Blast",
+"desc": ""
+},
+{
+"id": 332,
+"name": "Potenciador PS caballería",
+"nameEn": "Cavalry HP Boost",
+"desc": ""
+},
+{
+"id": 333,
+"name": "Potenciador DEF caballería",
+"nameEn": "Cavalry DEF Boost",
+"desc": ""
+},
+{
+"id": 334,
+"name": "Potenciador ATQ caballería",
+"nameEn": "Cavalry ATK Boost",
+"desc": ""
+}
+]
+},
+"32": {
+"id": 32,
+"name": "Sacerdotisa de Crepúsculo",
+"nameEn": "Twilight Priestess",
+"altName": "Kauket",
+"skills": [
+{
+"id": 167,
+"name": "Detención Oscura",
+"nameEn": "Grim Tidings",
+"desc": "Trae mala suerte a un objetivo, causando daño 5 veces e infligiendo Coma por 2s."
+},
+{
+"id": 168,
+"name": "Persecución Deformada",
+"nameEn": "Warped Pursuit",
+"desc": "Teletransporta detrás de un objetivo, causando daño e infligiendo Desarmado por 5s."
+},
+{
+"id": 169,
+"name": "Nunca más",
+"nameEn": "Nevermore",
+"desc": "Invoca una crueldad de cuervos para atacar a los enemigos en una área media. Este hechizo dura por 5 s."
+},
+{
+"id": 170,
+"name": "Maldición de Nox",
+"nameEn": "Curse of Nox",
+"desc": "La Sacerdotisa de Crepúsculo maldice a todos los enemigos sobre su muerte, quienes recibirán daño después de  5 s."
+}
+],
+"battleSkills": [
+{
+"id": 335,
+"name": "Marca Oscura",
+"nameEn": "Dark Mark",
+"desc": ""
+},
+{
+"id": 336,
+"name": "Potenciador PS infantería",
+"nameEn": "Infantry HP Boost",
+"desc": ""
+},
+{
+"id": 337,
+"name": "Potenciador DEF infantería",
+"nameEn": "Infantry DEF Boost",
+"desc": ""
+},
+{
+"id": 338,
+"name": "Potenciador ATQ infantería",
+"nameEn": "Infantry ATK Boost",
+"desc": ""
+}
+]
+},
+"33": {
+"id": 33,
+"name": "Muñeca Mecánica",
+"nameEn": "Witch Doll",
+"altName": "Astre",
+"skills": [
+{
+"id": 172,
+"name": "Estallido de Estrella",
+"nameEn": "Starburst",
+"desc": "Invoca una estrella celeste, dañando a los enemigos cercanos en una área mediana otorgando petrificado por 5s."
+},
+{
+"id": 173,
+"name": "Caída Estelar",
+"nameEn": "Starfall",
+"desc": "Le da pánico y agita su varita alrededor, dañando a los enemigos cercanos en una pequeña área 3 veces."
+},
+{
+"id": 174,
+"name": "Polvo de Estrella",
+"nameEn": "Stardust",
+"desc": "Cubre un aliado aleatorio en el polvo de estrella, curando y otorgándoles las Bendeciones de Estrella por 3s."
+},
+{
+"id": 175,
+"name": "Luz de Estrella",
+"nameEn": "Starlight",
+"desc": "La Muñeca Mecánica baña a todos sus aliados en la luz de las estrellas, haciéndolos más resistentes a los ataques físicos."
+}
+],
+"battleSkills": [
+{
+"id": 339,
+"name": "Susurro de Estrella",
+"nameEn": "Star Pals",
+"desc": ""
+},
+{
+"id": 340,
+"name": "Potenciador construcción",
+"nameEn": "Construction Boost",
+"desc": ""
+},
+{
+"id": 341,
+"name": "Potenciador investigación",
+"nameEn": "Research Boost",
+"desc": ""
+},
+{
+"id": 342,
+"name": "Muñeco de entrenamiento",
+"nameEn": "Training Dummy",
+"desc": ""
+}
+]
+},
+"34": {
+"id": 34,
+"name": "Príncipe de ladrones",
+"nameEn": "Prince of Thieves",
+"altName": "Kassim",
+"skills": [
+{
+"id": 177,
+"name": "Tira Cuchillas",
+"nameEn": "Blade Toss",
+"desc": "Lanza sus cuchillas a rango medio, otorgando DAÑO 2 veces a cada uno de los enemigos en una línea. Además inflige Desarmado por 5s"
+},
+{
+"id": 178,
+"name": "Cuchilla Remolino",
+"nameEn": "Swirling Scimitar",
+"desc": "Lanza una cuchilla a un objetivo, otorgando DAÑO y reduciendo el CRIT por 5seg. La espada rebota 6 veces entre los enemigos."
+},
+{
+"id": 179,
+"name": "Golpe Desgarrador",
+"nameEn": "Rending Strike",
+"desc": "Rebana enemigos con sus cuchillas dobles, disipando sus barreras con cada golpe."
+},
+{
+"id": 180,
+"name": "Trucos de ladrón",
+"nameEn": "Thief's Tricks",
+"desc": "El Príncipe de los Ladrones acecha entre las sombras esperando el momento oportuno para atacar."
+}
+],
+"battleSkills": [
+{
+"id": 343,
+"name": "Caballero Árabe",
+"nameEn": "Arabian Knight",
+"desc": ""
+},
+{
+"id": 344,
+"name": "Potenciador investigación",
+"nameEn": "Research Boost",
+"desc": ""
+},
+{
+"id": 345,
+"name": "Defensa inquebrantable",
+"nameEn": "Impenetrable Defense",
+"desc": ""
+},
+{
+"id": 346,
+"name": "Potenc. ATQ ejército",
+"nameEn": "Army ATK Boost",
+"desc": ""
+}
+]
+},
+"35": {
+"id": 35,
+"name": "Guardián del Bosque",
+"nameEn": "Grove Guardian",
+"altName": "Forrest",
+"skills": [
+{
+"id": 182,
+"name": "Llamada de Bosque",
+"nameEn": "Jam Factory",
+"desc": "Pelea a enemigos cercanos en una área media con fruta, causando daño 3 veces. También inflige Silencio por 3s."
+},
+{
+"id": 183,
+"name": "Disparo Nuez",
+"nameEn": "Nut Shot",
+"desc": "Dispara una gran nuez a un objetivo, causando daño e infligiendo aturdimiento por 3s."
+},
+{
+"id": 184,
+"name": "Paraíso del Veneno",
+"nameEn": "Poison Paradise",
+"desc": "Lanza un hongo venenoso en un blanco, causando daño e infligiendo Veneno por 3s."
+},
+{
+"id": 185,
+"name": "Siente la quemadura",
+"nameEn": "Feel the Burn",
+"desc": "De vez en cuando, Forrest arroja una semilla ardiente a su objetivo, causando daño a los enemigos cercanos en un área média."
+}
+],
+"battleSkills": [
+{
+"id": 347,
+"name": "Fiesta del Bosque",
+"nameEn": "Forest Fiesta",
+"desc": ""
+},
+{
+"id": 348,
+"name": "Potenciador PS artillería",
+"nameEn": "Ranged HP Boost",
+"desc": ""
+},
+{
+"id": 349,
+"name": "Potenciador DEF artillería",
+"nameEn": "Ranged DEF Boost",
+"desc": ""
+},
+{
+"id": 350,
+"name": "Potenciador ATQ artillería",
+"nameEn": "Ranged ATK Boost",
+"desc": ""
+}
+]
+},
+"36": {
+"id": 36,
+"name": "Magíster Oscuro",
+"nameEn": "Dark Magister",
+"altName": "Har'Kon",
+"skills": [
+{
+"id": 187,
+"name": "Orbe del Caos",
+"nameEn": "Chaos Orb",
+"desc": "Har'Kon canaliza el poder del Ojo, disparando una bola de energía concentrada al enemigo, causándole un daño mortal e inflingiéndole Debilidad Elemental durante 8 segundos."
+},
+{
+"id": 188,
+"name": "Misiles Arcanos",
+"nameEn": "Arcane Missiles",
+"desc": "Har'kon y el Ojo desatan su magia, golpeando al objetivo con 3 voltios de energía"
+},
+{
+"id": 189,
+"name": "Agonía oscura",
+"nameEn": "Dark Agony",
+"desc": "Canaliza su energia a través de su equipo, causando daño de largo alcance a todos los enemigos en un área cónica"
+},
+{
+"id": 190,
+"name": "Ojo Eterno",
+"nameEn": "Eternal Eye",
+"desc": "Con el ojo como guía, el Magíster Oscuro es capaz de percibir y explotar las debilidades de sus enemigos."
+}
+],
+"battleSkills": [
+{
+"id": 351,
+"name": "Mirada Penetrante",
+"nameEn": "Penetrating Gaze",
+"desc": ""
+},
+{
+"id": 352,
+"name": "Canción de batalla",
+"nameEn": "Battle Song",
+"desc": ""
+},
+{
+"id": 353,
+"name": "Potenciador ATQ caballería",
+"nameEn": "Cavalry ATK Boost",
+"desc": ""
+},
+{
+"id": 354,
+"name": "Potenciador ATQ artillería",
+"nameEn": "Ranged ATK Boost",
+"desc": ""
+}
+]
+},
+"37": {
+"id": 37,
+"name": "Maestro Cocinero",
+"nameEn": "Mastercook",
+"altName": "Ramos",
+"skills": [
+{
+"id": 192,
+"name": "Pollo Asado",
+"nameEn": "Barbecue Chicken",
+"desc": "Ducha su objeto en carbones ardientes, otorgando daño en un área media y dañando a los enemigos cercanos 3 veces. Inflige aturdimiento por 1s."
+},
+{
+"id": 193,
+"name": "Filete Asado",
+"nameEn": "Fillet Flambé",
+"desc": "Quema de su objetivo con un chorro de gas sobrecalentado, dañando a los enemigos en una línea 5 veces desde un rango medio."
+},
+{
+"id": 194,
+"name": "Deflagración",
+"nameEn": "Crack 'n' Pop",
+"desc": "Inciende chispas calientes en un objetivo, dañando a los enemigos cercanos en una área pequeña e infligiendo Ciego por 8s."
+},
+{
+"id": 195,
+"name": "Combustión",
+"nameEn": "Grill 'n' Roast",
+"desc": "Maestro Cocinero sin piedad bombardea y asada todos los imbéciles arrogantes ."
+}
+],
+"battleSkills": [
+{
+"id": 355,
+"name": "Proyectil Caliente",
+"nameEn": "Yes Chef!",
+"desc": ""
+},
+{
+"id": 356,
+"name": "Potenciador PS artillería",
+"nameEn": "Ranged HP Boost",
+"desc": ""
+},
+{
+"id": 357,
+"name": "Defensa inquebrantable",
+"nameEn": "Impenetrable Defense",
+"desc": ""
+},
+{
+"id": 358,
+"name": "Potenciador ATQ artillería",
+"nameEn": "Ranged ATK Boost",
+"desc": ""
+}
+]
+},
+"38": {
+"id": 38,
+"name": "Mente Tejedora",
+"nameEn": "Lore Weaver",
+"altName": "Thalia",
+"skills": [
+{
+"id": 197,
+"name": "Castillo Fantasma",
+"nameEn": "Phantom Castle",
+"desc": "Invoca un castillo mágico del libro de cuentos para proteger los aliados. El castillo cura a los aliados cercanos en un área grande y los bendice por 6s."
+},
+{
+"id": 198,
+"name": "Martillo de Espíritu",
+"nameEn": "Spirit Hammer",
+"desc": "Invoca un martillo que golpea a un enemigo aleatorio, otorgando daño e infligiendo Aturdimiento por 3s."
+},
+{
+"id": 199,
+"name": "Réquiem de Renacimiento",
+"nameEn": "Requiem of Rebirth",
+"desc": "Conjura mariposas encantadas del libro de cuentos. Las mariposas revolotean entre aliados y pueden curarlos hasta 6 veces."
+},
+{
+"id": 200,
+"name": "Regalo Final",
+"nameEn": "Final Gift",
+"desc": "La Mente Tejedora libera la magia del libro después de su muerte, curando a todos los aliados que le quedan."
+}
+],
+"battleSkills": [
+{
+"id": 359,
+"name": "Florecimiento de Libertad",
+"nameEn": "Freedom's Flourish",
+"desc": ""
+},
+{
+"id": 360,
+"name": "Canción de batalla",
+"nameEn": "Battle Song",
+"desc": ""
+},
+{
+"id": 361,
+"name": "Defensa inquebrantable",
+"nameEn": "Impenetrable Defense",
+"desc": ""
+},
+{
+"id": 362,
+"name": "Potenc. ATQ ejército",
+"nameEn": "Army ATK Boost",
+"desc": ""
+}
+]
+},
+"39": {
+"id": 39,
+"name": "Furiosa",
+"nameEn": "Berserker",
+"altName": "Ursula",
+"skills": [
+{
+"id": 202,
+"name": "Glacial Géiser",
+"nameEn": "Glacial Geyser",
+"desc": "Rompe el suelo, causando carámbanos estallar. Inflige daño de medio alcance a todos los enemigos en una línea. También inflige Congelar por 2s."
+},
+{
+"id": 203,
+"name": "Estruendo Violento",
+"nameEn": "Grizzly Smash",
+"desc": "Lanza un golpe de gran alcance, haciendo daño a todos los enemigos en una área media y los derriba."
+},
+{
+"id": 204,
+"name": "Ira de Ursina",
+"nameEn": "Ursine Wrath",
+"desc": "Lanza su escudo a un blanco, dañando a los enemigos cercanos en una área pequeña. Aumenta MDEF de Ursula por 8s."
+},
+{
+"id": 205,
+"name": "Rugido del Ártico",
+"nameEn": "Arctic Roar",
+"desc": "Furiosa deja escapar un grito de guerra, motivando a todos sus aliados."
+}
+],
+"battleSkills": [
+{
+"id": 363,
+"name": "Grito Primal",
+"nameEn": "Primal Cry",
+"desc": ""
+},
+{
+"id": 364,
+"name": "Canción de batalla",
+"nameEn": "Battle Song",
+"desc": ""
+},
+{
+"id": 365,
+"name": "Defensa inquebrantable",
+"nameEn": "Impenetrable Defense",
+"desc": ""
+},
+{
+"id": 366,
+"name": "Potenc. ATQ ejército",
+"nameEn": "Army ATK Boost",
+"desc": ""
+}
+]
+},
+"40": {
+"id": 40,
+"name": "Lobo Severo",
+"nameEn": "Grim Wolf",
+"altName": "Fenrir",
+"skills": [
+{
+"id": 207,
+"name": "Emboscada feroz",
+"nameEn": "Feral Ambush",
+"desc": "Salta a un objetivo, dañando a los enemigos cercanos en unaárea pequeña."
+},
+{
+"id": 208,
+"name": "Destripador de carne",
+"nameEn": "Flesh Ripper",
+"desc": "Usa sus garras atacando a los enemigos cercanos en una área pequeña, causando daño por 3 veces. También aturde al objetivo por 0.5seg."
+},
+{
+"id": 209,
+"name": "Grito de Lobo",
+"nameEn": "Howl from Beyond",
+"desc": "Lobo grita causando daño a todos los enemigos en unaárea mediana, y restaura PS por 5seg."
+},
+{
+"id": 210,
+"name": "Sed Sangrienta",
+"nameEn": "Bloodlust",
+"desc": "El Lobo Severo está abrumado con un deseo de sangre."
+}
+],
+"battleSkills": [
+{
+"id": 367,
+"name": "Rugido Salvaje",
+"nameEn": "Savage Roar",
+"desc": ""
+},
+{
+"id": 368,
+"name": "Canción de batalla",
+"nameEn": "Battle Song",
+"desc": ""
+},
+{
+"id": 369,
+"name": "Potenciador DEF infantería",
+"nameEn": "Infantry DEF Boost",
+"desc": ""
+},
+{
+"id": 370,
+"name": "Potenciador ATQ infantería",
+"nameEn": "Infantry ATK Boost",
+"desc": ""
+}
+]
+},
+"41": {
+"id": 41,
+"name": "Zorro de la Tormenta",
+"nameEn": "Storm Fox",
+"altName": "Mizuki",
+"skills": [
+{
+"id": 887,
+"name": "Reclu.",
+"nameEn": "Hire",
+"desc": "Gira su paraguas, lanzando un hechizo que daña a todos los enemigos. También deshabilita la curación para 8s"
+},
+{
+"id": 888,
+"name": "Chaparrón",
+"nameEn": "Cloudburst",
+"desc": "Convoca una lluvia mágica, bendiciendo a los aliados cercanos en un área media por 8s."
+},
+{
+"id": 889,
+"name": "Tormenta de Sakura",
+"nameEn": "Sakura Storm",
+"desc": "Crea una maldición sobre un objetivo, causando daño a los enemigos ceárea media y reduciendo ATQ por 5s."
+},
+{
+"id": 890,
+"name": "Zorro de Fuego",
+"nameEn": "Fox Fire",
+"desc": "La Tormenta Zorro se basa en su energía mística para encantar a sus aliados."
+}
+],
+"battleSkills": [
+{
+"id": 936,
+"name": "Floración Completa",
+"nameEn": "Full Bloom",
+"desc": ""
+},
+{
+"id": 937,
+"name": "Muñeco de entrenamiento",
+"nameEn": "Training Dummy",
+"desc": ""
+},
+{
+"id": 938,
+"name": "Canción de batalla",
+"nameEn": "Battle Song",
+"desc": ""
+},
+{
+"id": 939,
+"name": "Potenc. ATQ ejército",
+"nameEn": "Army ATK Boost",
+"desc": ""
+}
+]
+},
+"42": {
+"id": 42,
+"name": "Dragón del Caos",
+"nameEn": "Chaos Dragon",
+"altName": "Gravios",
+"skills": [
+{
+"id": 892,
+"name": "Pionero",
+"nameEn": "Trail Blazer",
+"desc": "Dispara un rayo de fuego, causando daño a los enemigos en una área media, y quemándolos por 3s."
+},
+{
+"id": 893,
+"name": "Furia de Dragón",
+"nameEn": "Dragon Rage",
+"desc": "Gravios deja escapar un rugido feroz rango medio daña a todos los enemigos en un cono, y aumenta su CRIT por 8s."
+},
+{
+"id": 894,
+"name": "Baile de la Muerte",
+"nameEn": "Dance of Death",
+"desc": "Gira su lanza, desencadenando una onda de fuego que golpea a todos los enemigos cercanos en una área larga e inflige Vulnerabilidad por 5s."
+},
+{
+"id": 895,
+"name": "Todos Despedidos",
+"nameEn": "All Fired Up",
+"desc": "El humo oscuro engulle al Dragón del Caos, haciéndolo más mortal en la batalla."
+}
+],
+"battleSkills": [
+{
+"id": 940,
+"name": "Tormenta de Venganza",
+"nameEn": "Vengeance Storm",
+"desc": ""
+},
+{
+"id": 941,
+"name": "Potenciador investigación",
+"nameEn": "Research Boost",
+"desc": ""
+},
+{
+"id": 942,
+"name": "Defensa inquebrantable",
+"nameEn": "Impenetrable Defense",
+"desc": ""
+},
+{
+"id": 943,
+"name": "Potenc. ATQ ejército",
+"nameEn": "Army ATK Boost",
+"desc": ""
+}
+]
+},
+"43": {
+"id": 43,
+"name": "Tramoyista",
+"nameEn": "Shape Shifter",
+"altName": "Lilith",
+"skills": [
+{
+"id": 897,
+"name": "Conseguir el punto?",
+"nameEn": "Get the Point?",
+"desc": "Invoca una ráfaga de cuchillas de la tierra, dañando a los enemigos largo alcance y golpeándolos de nuevo."
+},
+{
+"id": 898,
+"name": "Pincho giratorio",
+"nameEn": "Spinning Barbs",
+"desc": "Desencadena un ataque giratorio, causando daño a los enemigos en un área media 2 veces. También los maldice por 5s."
+},
+{
+"id": 899,
+"name": "Haciendo Confeti",
+"nameEn": "Making Confetti",
+"desc": "Tritura los enemigos cercanos en una pequeña área, causando daño e infligiendo Stun por 1s."
+},
+{
+"id": 900,
+"name": "Todavía! Todavía!",
+"nameEn": "Encore! Encore!",
+"desc": "Tramoyista reforma su cuerpo tras la muerte y absorbe todos los daños por 12s."
+}
+],
+"battleSkills": [
+{
+"id": 944,
+"name": "¡Hazlos reír!",
+"nameEn": "Make 'Em Laugh!",
+"desc": ""
+},
+{
+"id": 945,
+"name": "Canción de batalla",
+"nameEn": "Battle Song",
+"desc": ""
+},
+{
+"id": 946,
+"name": "Potenciador ATQ infantería",
+"nameEn": "Infantry ATK Boost",
+"desc": ""
+},
+{
+"id": 947,
+"name": "Potenciador ATQ caballería",
+"nameEn": "Cavalry ATK Boost",
+"desc": ""
+}
+]
+},
+"44": {
+"id": 44,
+"name": "Don Guapo",
+"nameEn": "Don Guapo",
+"altName": "Alfonso",
+"skills": [
+{
+"id": 902,
+"name": "El Diablo",
+"nameEn": "El Diablo",
+"desc": "Dispara explosivos a un objetivo y causa 3 estallidos a los enemigos cercanos en un área media."
+},
+{
+"id": 903,
+"name": "Estocada",
+"nameEn": "Estocada",
+"desc": "Da una estocada y causa daño a los enemigos cercanos en un área pequeña. Además aumenta su ATQ durante 5 s."
+},
+{
+"id": 904,
+"name": "La Bomba",
+"nameEn": "La Bomba",
+"desc": "Dispara al enemigo con menos PS, causando daño y aturdimiento durante 3 s."
+},
+{
+"id": 905,
+"name": "Habanera",
+"nameEn": "Habanera",
+"desc": "Don Guapo mantiene la elegancia incluso en las batallas más violentas."
+}
+],
+"battleSkills": [
+{
+"id": 948,
+"name": "Guerrilla",
+"nameEn": "Guerrilla Charge",
+"desc": ""
+},
+{
+"id": 949,
+"name": "Provisión de Anima",
+"nameEn": "Anima Storage",
+"desc": ""
+},
+{
+"id": 951,
+"name": "Potenciador ATQ caballería",
+"nameEn": "Cavalry ATK Boost",
+"desc": ""
+},
+{
+"id": 950,
+"name": "Escena bélica",
+"nameEn": "Wonder Army",
+"desc": ""
+}
+]
+},
+"45": {
+"id": 45,
+"name": "Tejedor de Luz",
+"nameEn": "Lightweaver",
+"altName": "Elora",
+"skills": [
+{
+"id": 907,
+"name": "Difracción",
+"nameEn": "Diffraction",
+"desc": "Dispara un orbe de luz que inflige daño a los enemigos en un área pequeña. El orbe rebota hasta 6 veces entre los enemigos."
+},
+{
+"id": 908,
+"name": "Guarda Luminosa",
+"nameEn": "Luminous Ward",
+"desc": "Invoca a un guardián que vuela entre aliados y les otorga un Escudo de Luz por 5s. El guardián solo puede otorgar hasta 6 Escudos de Luz."
+},
+{
+"id": 909,
+"name": "Mira La Luz",
+"nameEn": "See The Light",
+"desc": "Dispara un rayo de luz desde larga distancia, causando daño a todos los enemigos en una línea."
+},
+{
+"id": 910,
+"name": "Escena de Vuelta",
+"nameEn": "Flashback",
+"desc": "Determinado a ver a su padre otra vez, el Tejedor de Luz recurre a su fuerza interior para luchar contra la adversidad."
+}
+],
+"battleSkills": [
+{
+"id": 952,
+"name": "Prisma Quebrado",
+"nameEn": "Prism Break",
+"desc": ""
+},
+{
+"id": 953,
+"name": "Canción de batalla",
+"nameEn": "Battle Song",
+"desc": ""
+},
+{
+"id": 954,
+"name": "Potenciador ATQ artillería",
+"nameEn": "Ranged ATK Boost",
+"desc": ""
+},
+{
+"id": 955,
+"name": "Potenciador ATQ infantería",
+"nameEn": "Infantry ATK Boost",
+"desc": ""
+}
+]
+},
+"46": {
+"id": 46,
+"name": "Princesa Caracol",
+"nameEn": "Snail Princess",
+"altName": "Shelley",
+"skills": [
+{
+"id": 912,
+"name": "Samba lenta",
+"nameEn": "Snail Samba",
+"desc": "Convoca a un grupo de caracoles para atacar a los enemigos cercanos en un área mediana durante 5s. También inflige Confusión durante 5s."
+},
+{
+"id": 913,
+"name": "Explosión sónica",
+"nameEn": "Sonic Shrill",
+"desc": "Genera una explosión sónica, causando daño de largo alcance a todos los enemigos en un grupo y disminuye su DEFM durante 5s."
+},
+{
+"id": 914,
+"name": "Canción hipnotizante",
+"nameEn": "Hypnotizing Hymn",
+"desc": "Toca un extraña pero melódica canción con su flauta, causando daño a todos los enemigos y reduciendo CRIT durante 4s."
+},
+{
+"id": 915,
+"name": "Oda a la victoria",
+"nameEn": "Victory Verse",
+"desc": "La Princesa Caracol toca una enardecedora melodía, subiendo la moral y confianza de sus aliados."
+}
+],
+"battleSkills": [
+{
+"id": 956,
+"name": "Canción militar",
+"nameEn": "Star Song",
+"desc": ""
+},
+{
+"id": 957,
+"name": "Entrenador de Monstruitos",
+"nameEn": "Familiar Trainer",
+"desc": ""
+},
+{
+"id": 958,
+"name": "Potenciador ATQ artillería",
+"nameEn": "Ranged ATK Boost",
+"desc": ""
+},
+{
+"id": 959,
+"name": "Escena bélica",
+"nameEn": "Wonder Army",
+"desc": ""
+}
+]
+},
+"47": {
+"id": 47,
+"name": "Cazadora Maldita",
+"nameEn": "Cursed Hunter",
+"altName": "Reclu.",
+"skills": [
+{
+"id": 917,
+"name": "Acero de la Justicia",
+"nameEn": "Blades of Justice",
+"desc": "Provoca ondas con sus espadas, causando daño a medio alcance2 veces a todos los enemigos en una línea."
+},
+{
+"id": 918,
+"name": "Sombra letal",
+"nameEn": "Piercing Dash",
+"desc": "Sorprende por detrás a su objetivo, causando daño 4 veces a los enemigos cercanos en un área pequeña."
+},
+{
+"id": 919,
+"name": "Protección Sagrada",
+"nameEn": "Holy Protection",
+"desc": "Sana al aliado más débil y gana Tutela Divina durante 5s."
+},
+{
+"id": 920,
+"name": "Bendición del Supremo",
+"nameEn": "Almighty Blessing",
+"desc": "La Cazadora Maldita bendice las armas de sus aliados, permitiendo que atraviesen las defensas enemigas."
+}
+],
+"battleSkills": [
+{
+"id": 960,
+"name": "Intervención Divina",
+"nameEn": "Divine Intervention",
+"desc": ""
+},
+{
+"id": 961,
+"name": "Experto en Fusión",
+"nameEn": "Merging Expert",
+"desc": ""
+},
+{
+"id": 963,
+"name": "Potenciador ATQ infantería",
+"nameEn": "Infantry ATK Boost",
+"desc": ""
+},
+{
+"id": 962,
+"name": "Escena bélica",
+"nameEn": "Wonder Army",
+"desc": ""
+}
+]
+},
+"48": {
+"id": 48,
+"name": "Maestro bombardero",
+"nameEn": "Boommeister",
+"altName": "Manfred Brandt",
+"skills": [
+{
+"id": 922,
+"name": "Explosión de cañón",
+"nameEn": "Cannon Burst",
+"desc": "Dispara una poderosa descarga de energía a los enemigos de largo alcance, que causa daño a todos los enemigos en un cono y los hace retroceder."
+},
+{
+"id": 923,
+"name": "Cuchilla fogosa",
+"nameEn": "Boom Beam",
+"desc": "Saca una espada cargada de energía de su cañón y acuchilla a un enemigo con largo alcance, causando daño a todos los enemigos en una línea."
+},
+{
+"id": 924,
+"name": "Unión de armas",
+"nameEn": "Join Arms",
+"desc": "Apoya a los aliados en combate con una combinación de armas durante 8s."
+},
+{
+"id": 925,
+"name": "Experto en combate",
+"nameEn": "Combat Specialist",
+"desc": "El Maestro bombardero dirige a las tropas en la batalla y aumenta el daño causado por sus aliados."
+}
+],
+"battleSkills": [
+{
+"id": 964,
+"name": "Bombardeo",
+"nameEn": "Bombardment",
+"desc": ""
+},
+{
+"id": 965,
+"name": "Bendición de DEF",
+"nameEn": "DEF Blessing",
+"desc": ""
+},
+{
+"id": 966,
+"name": "Bendición de PS",
+"nameEn": "HP Blessing",
+"desc": ""
+},
+{
+"id": 967,
+"name": "Bendición de ATQ",
+"nameEn": "ATK Blessing",
+"desc": ""
+}
+]
+},
+"49": {
+"id": 49,
+"name": "Cronista",
+"nameEn": "Chronicler",
+"altName": "Lisa",
+"skills": [
+{
+"id": 927,
+"name": "Art Attack",
+"nameEn": "Splash Lash",
+"desc": "Ataca a los enemigos con una pintura, causando daño a largo alcance a los enemigos en una línea y reduciendo su MDEF durante 8 segundos."
+},
+{
+"id": 928,
+"name": "Pájarobomba",
+"nameEn": "Birdy Blitz",
+"desc": "Pinta un pájaro que saltará entre los enemigos y los atacará hasta 6 veces."
+},
+{
+"id": 929,
+"name": "Los colores del viento",
+"nameEn": "Colors of the Wind",
+"desc": "Invoca una serie de colores vertiginosos, causa daño a los enemigos en un área media y los inmoviliza por 2 segundos. Este hechizo dura 5 segundos."
+},
+{
+"id": 930,
+"name": "Verdadera belleza",
+"nameEn": "True Beauty",
+"desc": "El Cronista se inspira en los colores de la naturaleza."
+}
+],
+"battleSkills": [
+{
+"id": 968,
+"name": "Estallido de colores",
+"nameEn": "Splash of Color",
+"desc": ""
+},
+{
+"id": 969,
+"name": "Refuerzo de ATQ infantería",
+"nameEn": "Infantry Counter Boost",
+"desc": ""
+},
+{
+"id": 970,
+"name": "Refuerzo de ATQ artillería",
+"nameEn": "Ranged Counter Boost",
+"desc": ""
+},
+{
+"id": 971,
+"name": "Refuerzo de ATQ caballería",
+"nameEn": "Cavalry Counter Boost",
+"desc": ""
+}
+]
+},
+"50": {
+"id": 50,
+"name": "El magmaroide",
+"nameEn": "Magmaroid",
+"altName": "Vulcano",
+"skills": [
+{
+"id": 932,
+"name": "Lluvia de lava",
+"nameEn": "Fever Pitch",
+"desc": "Lanza una roca gigante en llamas a un objetivo, causando daño a los enemigos cercanos en un área media y provocando aturdimiento durante 5 segundos."
+},
+{
+"id": 933,
+"name": "Cabezazo",
+"nameEn": "Head Bang",
+"desc": "Da un cabezazo masivo, causando daño a todos los enemigos en un área media y provocando aturdimiento durante 1 segundo."
+},
+{
+"id": 934,
+"name": "Puñetazo de fuego",
+"nameEn": "Flame Chop",
+"desc": "Realiza un poderoso golpe con su mano derecha, causando daño a todos los enemigos en un área pequeña y provocando aturdimiento durante 1 segundo."
+},
+{
+"id": 935,
+"name": "Rock and roll",
+"nameEn": "Rock Hard",
+"desc": "El Magmaroide es capaz de resistir los ataques mágicos que se le presentan."
+}
+],
+"battleSkills": [
+{
+"id": 972,
+"name": "Ola de calor",
+"nameEn": "Heat Wave",
+"desc": ""
+},
+{
+"id": 973,
+"name": "Bendición de DEF de infantería",
+"nameEn": "Infantry DEF Blessing",
+"desc": ""
+},
+{
+"id": 974,
+"name": "Bendición de ATQ de infantería",
+"nameEn": "Infantry ATK Blessing",
+"desc": ""
+},
+{
+"id": 975,
+"name": "Mejora de elaboración de equipo",
+"nameEn": "Gear Crafting Boost",
+"desc": ""
+}
+]
+},
+"51": {
+"id": 51,
+"name": "Duque no muerto",
+"nameEn": "Necroduke",
+"altName": "Lionel",
+"skills": [
+{
+"id": 1256,
+"name": "Paliza",
+"nameEn": "Slam Down",
+"desc": "Da un gran golpe cargado de poder mágico, que causa daño a los enemigos en un área media y provoca aturdimiento durante 1 segundo."
+},
+{
+"id": 1257,
+"name": "Rayo poderoso",
+"nameEn": "Power Ray",
+"desc": "Lanza un rayo mágico, que causa daño a largo alcance a los enemigos en una línea y se dota de avaricia durante 5 segundos."
+},
+{
+"id": 1258,
+"name": "Mano estranguladora",
+"nameEn": "Chokehold",
+"desc": "Libera una mano mágica que ataca a un enemigo y le inflige asfixia durante 5 segundos."
+},
+{
+"id": 1259,
+"name": "Banquete de almas",
+"nameEn": "Soul Banquet",
+"desc": "El Duque no muerto se deleita en un derramamiento de sangre y gana PS y PM a intervalos regulares durante la batalla."
+}
+],
+"battleSkills": [
+{
+"id": 1305,
+"name": "Dominio de los difuntos",
+"nameEn": "Departed's Domain",
+"desc": ""
+},
+{
+"id": 1306,
+"name": "Bendición de DEF de caballería",
+"nameEn": "Cavalry DEF Blessing",
+"desc": ""
+},
+{
+"id": 1307,
+"name": "Bendición de ATQ de caballería",
+"nameEn": "Cavalry ATK Blessing",
+"desc": ""
+},
+{
+"id": 1308,
+"name": "Mejora de elaboración de equipo",
+"nameEn": "Gear Crafting Boost",
+"desc": ""
+}
+]
+},
+"52": {
+"id": 52,
+"name": "Pegaso",
+"nameEn": "Pegasus",
+"altName": "Seiya",
+"skills": [
+{
+"id": 1261,
+"name": "Puño Meteórico de Pegaso",
+"nameEn": "Pegasus Meteor Fist",
+"desc": "Hace arder su cosmos e inflige daño a los enemigos dentro de un área amplia 10 veces."
+},
+{
+"id": 1262,
+"name": "Golpe de cometa",
+"nameEn": "Comet Crush",
+"desc": "Embiste a un objetivo como un cometa ardiente, infligiendo daño a los enemigos cercanos en un área pequeña."
+},
+{
+"id": 1263,
+"name": "Llamado de Atenea",
+"nameEn": "Athena's Call",
+"desc": "Seiya ha recibido la protección de Atenea y es capaz de volver a encender su cosmos para revivir tras caer en combate. Regenera PM durante 10 segundos después de revivir."
+},
+{
+"id": 1264,
+"name": "Poder del cosmos",
+"nameEn": "Cosmo Power",
+"desc": "Seiya arde y hace estallar su cosmos, aumentando enormemente su destreza en la batalla."
+}
+],
+"battleSkills": [
+{
+"id": 1309,
+"name": "Estrella de Pegaso",
+"nameEn": "Pegasus Star",
+"desc": ""
+},
+{
+"id": 1310,
+"name": "Canción de batalla",
+"nameEn": "Battle Song",
+"desc": ""
+},
+{
+"id": 1311,
+"name": "Potenciador DEF infantería",
+"nameEn": "Infantry DEF Boost",
+"desc": ""
+},
+{
+"id": 1312,
+"name": "Potenciador ATQ infantería",
+"nameEn": "Infantry ATK Boost",
+"desc": ""
+}
+]
+},
+"53": {
+"id": 53,
+"name": "Sabia del desierto",
+"nameEn": "Sand Sage",
+"altName": "Ilia",
+"skills": [
+{
+"id": 1266,
+"name": "Tormenta de arena",
+"nameEn": "Sandstorm",
+"desc": "Invoca una tormenta de arena que inflige daño a todos los enemigos en un área media. Dura hasta 5 s."
+},
+{
+"id": 1267,
+"name": "Jaula de arena",
+"nameEn": "Sandbox",
+"desc": "Atrapa a un enemigo con magia de arena, causando daño e infligiendo aturdimiento por 3 s."
+},
+{
+"id": 1268,
+"name": "Arenas movedizas",
+"nameEn": "Shifting Sands",
+"desc": "Invoca púas de arena que infligen daño a todos los enemigos en un área media."
+},
+{
+"id": 1269,
+"name": "Bendición del desierto",
+"nameEn": "Sand's Blessing",
+"desc": "La Sabia del desierto canaliza las bendiciones del Espíritu del desierto y aumenta la fuerza de todos los aliados."
+}
+],
+"battleSkills": [
+{
+"id": 1313,
+"name": "Explosión de arena",
+"nameEn": "Sand Blast",
+"desc": ""
+},
+{
+"id": 1314,
+"name": "Bendición de DEF de artillería",
+"nameEn": "Ranged DEF Blessing",
+"desc": ""
+},
+{
+"id": 1315,
+"name": "Bendición de ATQ de artillería",
+"nameEn": "Ranged ATK Blessing",
+"desc": ""
+},
+{
+"id": 1316,
+"name": "Mejora de elaboración de equipo",
+"nameEn": "Gear Crafting Boost",
+"desc": ""
+}
+]
+},
+"54": {
+"id": 54,
+"name": "Doncella escudo",
+"nameEn": "Shield Maiden",
+"altName": "Marcia",
+"skills": [
+{
+"id": 1271,
+"name": "Agitatierra",
+"nameEn": "Earth Shaker",
+"desc": "Invoca al Espíritu del desierto con su escudo, lo que inflige daño a los enemigos en un área media e inflige Vulnerabilidad durante 8 s."
+},
+{
+"id": 1272,
+"name": "Tiro de lanza",
+"nameEn": "Spear Throw",
+"desc": "Tira su lanza a un enemigo y le inflige Sangrado durante 3 s."
+},
+{
+"id": 1273,
+"name": "Asalto con lanza",
+"nameEn": "Spear Assault",
+"desc": "Tira su lanza a los enemigos e inflige daño de medio alcance a todos los enemigos en un cono 5 veces."
+},
+{
+"id": 1274,
+"name": "Ataque veloz",
+"nameEn": "Quick Attack",
+"desc": "La Doncella escudo se mueve a la velocidad del rayo, apareciendo detrás de su objetivo y golpeándolo con fuerza."
+}
+],
+"battleSkills": [
+{
+"id": 1317,
+"name": "Escudo implacable",
+"nameEn": "Stalwart Shield",
+"desc": ""
+},
+{
+"id": 1318,
+"name": "Entrenador de Monstruitos",
+"nameEn": "Familiar Trainer",
+"desc": ""
+},
+{
+"id": 1319,
+"name": "Bendición de DEF de infantería",
+"nameEn": "Infantry DEF Blessing",
+"desc": ""
+},
+{
+"id": 1320,
+"name": "Bendición de ATQ de infantería",
+"nameEn": "Infantry ATK Blessing",
+"desc": ""
+}
+]
+},
+"55": {
+"id": 55,
+"name": "Rompeolas",
+"nameEn": "Wave Crasher",
+"altName": "Austin",
+"skills": [
+{
+"id": 1276,
+"name": "Echar el ancla",
+"nameEn": "Drop Anchor",
+"desc": "Golpea el ancla del guardián contra el suelo, desatando una gran onda expansiva que hace retroceder a todos los enemigos cercanos en un área grande e inflige aturdimiento durante 3 s."
+},
+{
+"id": 1277,
+"name": "Levar anclas",
+"nameEn": "Anchor Aweigh",
+"desc": "Balancea el ancla del guardián, infligiendo daño a los enemigos en un área media e infligiendo Rompeolas durante 5 s."
+},
+{
+"id": 1278,
+"name": "Remolino de la ribera",
+"nameEn": "Riptide Whirl",
+"desc": "Lanza su martillo hacia un objetivo. El martillo rebota hasta 6 veces entre los enemigos, infligiendo daño y reduciendo el ATQ durante 5 s."
+},
+{
+"id": 1279,
+"name": "Bendición del mar",
+"nameEn": "Sea's Blessing",
+"desc": "El Rompeolas recibe una bendición de su tatuaje que aumenta sus reflejos."
+}
+],
+"battleSkills": [
+{
+"id": 1321,
+"name": "Haciendo olas",
+"nameEn": "Making Waves",
+"desc": ""
+},
+{
+"id": 1322,
+"name": "Bendición de DEF de caballería",
+"nameEn": "Cavalry DEF Blessing",
+"desc": ""
+},
+{
+"id": 1323,
+"name": "Bendición de PS de caballería",
+"nameEn": "Cavalry HP Blessing",
+"desc": ""
+},
+{
+"id": 1324,
+"name": "Bendición de ATQ de caballería",
+"nameEn": "Cavalry ATK Blessing",
+"desc": ""
+}
+]
+},
+"56": {
+"id": 56,
+"name": "Alquimista errante",
+"nameEn": "Wandering Alchemist",
+"altName": "Kimiya",
+"skills": [
+{
+"id": 1281,
+"name": "Desesperación corrosiva",
+"nameEn": "Corrosive Despair",
+"desc": "Lanza una botella de desesperación corrosiva a un objetivo, que inflige DAÑO a los enemigos en una área media. También inflige corrosión durante 8s."
+},
+{
+"id": 1282,
+"name": "Esencia energizante",
+"nameEn": "Essence of Vigor",
+"desc": "Cura al aliado más débil y le otorga energía durante 5 s."
+},
+{
+"id": 1283,
+"name": "Refrescar",
+"nameEn": "Chill Out",
+"desc": "Lanza una botella de escarcha glacial a un objetivo que inflige daño a los enemigos en un área media. También inflige Congelar durante 1 s."
+},
+{
+"id": 1284,
+"name": "Maestra de alquimia",
+"nameEn": "Alchemy Master",
+"desc": "La alquimista errante realiza una transmutación que reduce el daño mágico de todos los aliados."
+}
+],
+"battleSkills": [
+{
+"id": 1325,
+"name": "Descubrimiento alquímico",
+"nameEn": "Alchemical Breakthrough",
+"desc": ""
+},
+{
+"id": 1326,
+"name": "Bendición de DEF de artillería",
+"nameEn": "Ranged DEF Blessing",
+"desc": ""
+},
+{
+"id": 1327,
+"name": "Bendición de PS de artillería",
+"nameEn": "Ranged HP Blessing",
+"desc": ""
+},
+{
+"id": 1328,
+"name": "Bendición de ATQ de artillería",
+"nameEn": "Ranged ATK Blessing",
+"desc": ""
+}
+]
+},
+"57": {
+"id": 57,
+"name": "Doncella de las flores",
+"nameEn": "Flower Maiden",
+"altName": "Rolanda",
+"skills": [
+{
+"id": 1286,
+"name": "Brotes en flor",
+"nameEn": "Burgeoning Blossoms",
+"desc": "Invoca enormes enredaderas en flor que serpentean hacia delante, infligiendo daño a larga distancia 3 veces a los enemigos en su camino. Se otorga un Escudo de enredadera durante 4 s."
+},
+{
+"id": 1287,
+"name": "Guardiana de las flores",
+"nameEn": "Keeper of Flowers",
+"desc": "Restaura los PS propios con magia y se otorga un Escudo de enredadera durante un máximo de 4 s."
+},
+{
+"id": 1288,
+"name": "Trampa sinuosa",
+"nameEn": "Sinuous Trap",
+"desc": "Ordena a las enredaderas en flor que ataquen al enemigo más lejano. Inflige daño al objetivo y lo atrapa en el lugar en el que se encuentra durante 3 s."
+},
+{
+"id": 1289,
+"name": "Flores prósperas",
+"nameEn": "Prosperous Blooms",
+"desc": "El control de la Doncella de las flores sobre la flora y la fauna la bendice con una vitalidad floreciente."
+}
+],
+"battleSkills": [
+{
+"id": 1329,
+"name": "Tempestad floral",
+"nameEn": "Floral Tempest",
+"desc": ""
+},
+{
+"id": 1330,
+"name": "Bendición de DEF",
+"nameEn": "DEF Blessing",
+"desc": ""
+},
+{
+"id": 1331,
+"name": "Bendición de PS",
+"nameEn": "HP Blessing",
+"desc": ""
+},
+{
+"id": 1332,
+"name": "Bendición de ATQ",
+"nameEn": "ATK Blessing",
+"desc": ""
+}
+]
+},
+"60": {
+"id": 60,
+"name": "Espada sagrada",
+"nameEn": "Holy Sword",
+"altName": "Reclu.",
+"skills": [
+{
+"id": 1301,
+"name": "Reclu.",
+"nameEn": "Hire",
+"desc": "Avanza tajantemente con ambas espadas, con lo que causa daño de largo alcance a los enemigos en línea e inflige Aturdimiento durante 1 s."
+},
+{
+"id": 1302,
+"name": "Ráfaga de cuchillas",
+"nameEn": "Blade Flurry",
+"desc": "Golpea a los enemigos con golpes de espada rápidos, con lo que causa un daño de medio alcance a todos los enemigos en un cono e inflige Vulnerabilidad durante 5 s."
+},
+{
+"id": 1303,
+"name": "Destello de plata",
+"nameEn": "Silver Flash",
+"desc": "Se teletransporta detrás del objetivo, con lo que causa daño a los enemigos en un área pequeña e inflige Aturdimiento durante 1 s."
+},
+{
+"id": 1304,
+"name": "Emblema radiante",
+"nameEn": "Radiant Emblem",
+"desc": "El emblema radiante blinda a su campeón: Espada sagrada obtiene un escudo radiante de 5 s a intervalos durante el combate."
+}
+],
+"battleSkills": [
+{
+"id": 1341,
+"name": "Veredicto divino",
+"nameEn": "Divine Verdict",
+"desc": ""
+},
+{
+"id": 1342,
+"name": "Muñeco de entrenamiento",
+"nameEn": "Training Dummy",
+"desc": ""
+},
+{
+"id": 1343,
+"name": "Potenciador PS infantería",
+"nameEn": "Infantry HP Boost",
+"desc": ""
+},
+{
+"id": 1344,
+"name": "Potenciador ATQ infantería",
+"nameEn": "Infantry ATK Boost",
+"desc": ""
+}
+]
+},
+"61": {
+"id": 61,
+"name": "Unicorno™ Stellina",
+"nameEn": "Stellina Unicorno™",
+"altName": "Stellina",
+"skills": [
+{
+"id": 2728,
+"name": "Ola arcoíris",
+"nameEn": "Rainbow Wave",
+"desc": "Lanza magia arcoíris e inflige daño a los enemigos circundantes en un área amplia 4 veces. A su vez, inflige Marchitez durante 6 s."
+},
+{
+"id": 2729,
+"name": "Carga arcoíris",
+"nameEn": "Rainbow Charge",
+"desc": "Aprovecha la energía del arcoíris para cargar contra un enemigo e infligir daño."
+},
+{
+"id": 2730,
+"name": "Baile estelar",
+"nameEn": "Starlight Dance",
+"desc": "Irradiando la luz del arcoíris, daña a los enemigos cercanos en un área pequeña e inflige silencio durante 3 s, con lo que no pueden lanzar hechizos."
+},
+{
+"id": 2731,
+"name": "Guardia colorida",
+"nameEn": "Colorful Protection",
+"desc": "La magia arcoíris del Unicorno™ Stellina aumenta su resistencia a los ataques mágicos."
+}
+],
+"battleSkills": [
+{
+"id": 2777,
+"name": "Tormenta iridiscente",
+"nameEn": "Iridescent Storm",
+"desc": ""
+},
+{
+"id": 2778,
+"name": "Potenciador PS caballería",
+"nameEn": "Cavalry HP Boost",
+"desc": ""
+},
+{
+"id": 2779,
+"name": "Defensa inquebrantable",
+"nameEn": "Impenetrable Defense",
+"desc": ""
+},
+{
+"id": 2780,
+"name": "Potenciador ATQ caballería",
+"nameEn": "Cavalry ATK Boost",
+"desc": ""
+}
+]
+},
+"100": {
+"id": 100,
+"name": "Oráculo",
+"nameEn": "Oracle",
+"altName": "Bellena",
+"skills": [
+{
+"id": 987,
+"name": "Escritura Sagrada",
+"nameEn": "Sacred Writ",
+"desc": "Invoca la palabra de la Diosa, curando a todos los aliados y concediéndoles Protección Divina por 6s"
+},
+{
+"id": 988,
+"name": "Flechas Sagradas",
+"nameEn": "Holy Arrows",
+"desc": "Fuegos 3 rayos de luz en un enemigo."
+},
+{
+"id": 989,
+"name": "Consagración",
+"nameEn": "Consecration",
+"desc": "Crea un círculo mágico, causando daño a los enemigos en un área media y los inmobiliza por 2s. Este hechizo dura por 5s."
+},
+{
+"id": 990,
+"name": "Luz Divina",
+"nameEn": "Divine Light",
+"desc": "Bendecido por la Diosa, el Oráculo puede curar heridas tanto de carne como de espíritu"
+}
+],
+"battleSkills": [
+{
+"id": 697,
+"name": "Juicio",
+"nameEn": "Judgment",
+"desc": ""
+},
+{
+"id": 698,
+"name": "Bendición de DEF",
+"nameEn": "DEF Blessing",
+"desc": ""
+},
+{
+"id": 699,
+"name": "Bendición de PS",
+"nameEn": "HP Blessing",
+"desc": ""
+},
+{
+"id": 700,
+"name": "Bendición de ATQ",
+"nameEn": "ATK Blessing",
+"desc": ""
+}
+]
+},
+"101": {
+"id": 101,
+"name": "Oráculo",
+"nameEn": "Oracle",
+"altName": "Bellena",
+"skills": [
+{
+"id": 702,
+"name": "Escritura Sagrada",
+"nameEn": "Sacred Writ",
+"desc": "Invoca la palabra de la Diosa, curando a todos los aliados y concediéndoles Protección Divina por 6s"
+},
+{
+"id": 703,
+"name": "Flechas Sagradas",
+"nameEn": "Holy Arrows",
+"desc": "Fuegos 3 rayos de luz en un enemigo."
+},
+{
+"id": 704,
+"name": "Consagración",
+"nameEn": "Consecration",
+"desc": "Crea un círculo mágico, causando daño a los enemigos en un área media y los inmobiliza por 2s. Este hechizo dura por 5s."
+},
+{
+"id": 705,
+"name": "Luz Divina",
+"nameEn": "Divine Light",
+"desc": "Bendecido por la Diosa, el Oráculo puede curar heridas tanto de carne como de espíritu"
+}
+],
+"battleSkills": []
+},
+"102": {
+"id": 102,
+"name": "El Grandulón",
+"nameEn": "The Big Guy",
+"altName": "Un Ojo",
+"skills": [
+{
+"id": 67,
+"name": "Devastación",
+"nameEn": "Rampage",
+"desc": "Hace girar su enorme cuerpo y corre hacia los enemigos, dañándolos 5 veces en un área pequeña. Provoca Aturdimiento durante 1 s."
+},
+{
+"id": 68,
+"name": "Impacto brutal",
+"nameEn": "Brutal Impact",
+"desc": "Lanza una bola de acero desde media distancia que causa daño a todos los enemigos en un cono y provoca Aturdimiento durante 1 s."
+},
+{
+"id": 69,
+"name": "Terremoto",
+"nameEn": "Quake",
+"desc": "Golpea el suelo con el cuerpo, daña a todos los enemigos en un área mediana y provoca Aturdimiento durante 1 s."
+},
+{
+"id": 70,
+"name": "Piel gruesa",
+"nameEn": "Thick Skin",
+"desc": "La gran barriga de El Grandulón le permite bloquear todo el daño de los enemigos."
+}
+],
+"battleSkills": [
+{
+"id": 255,
+"name": "Grieta tectónica",
+"nameEn": "Tectonic Crack",
+"desc": ""
+},
+{
+"id": 257,
+"name": "Potenciador DEF infantería",
+"nameEn": "Infantry DEF Boost",
+"desc": ""
+},
+{
+"id": 258,
+"name": "Potenciador ATQ infantería",
+"nameEn": "Infantry ATK Boost",
+"desc": ""
+}
+]
+},
+"104": {
+"id": 104,
+"name": "Magus",
+"nameEn": "Magus",
+"altName": "",
+"skills": [],
+"battleSkills": []
+},
+"105": {
+"id": 105,
+"name": "Gallo del norte",
+"nameEn": "Megrim",
+"altName": "",
+"skills": [],
+"battleSkills": []
+},
+"106": {
+"id": 106,
+"name": "Soldado fantasma",
+"nameEn": "Wraith Soldier",
+"altName": "",
+"skills": [],
+"battleSkills": []
+},
+"107": {
+"id": 107,
+"name": "Escudero",
+"nameEn": "Squire",
+"altName": "",
+"skills": [],
+"battleSkills": []
+},
+"108": {
+"id": 108,
+"name": "Guardián",
+"nameEn": "Oath Keeper",
+"altName": "Wesley",
+"skills": [],
+"battleSkills": [
+{
+"id": 211,
+"name": "Golpe fatal",
+"nameEn": "Fatal Strike",
+"desc": ""
+},
+{
+"id": 212,
+"name": "Potenciador PS infantería",
+"nameEn": "Infantry HP Boost",
+"desc": ""
+},
+{
+"id": 213,
+"name": "Gestión suministro de comida",
+"nameEn": "Food Supply Management",
+"desc": ""
+},
+{
+"id": 214,
+"name": "Potenciador ATQ infantería",
+"nameEn": "Infantry ATK Boost",
+"desc": ""
+}
+]
+},
+"109": {
+"id": 109,
+"name": "Cuervo Negro",
+"nameEn": "Black Crow",
+"altName": "Chadra",
+"skills": [],
+"battleSkills": [
+{
+"id": 215,
+"name": "Muerte silenciosa",
+"nameEn": "Silent Kill",
+"desc": ""
+},
+{
+"id": 216,
+"name": "Potenciador PS artillería",
+"nameEn": "Ranged HP Boost",
+"desc": ""
+},
+{
+"id": 217,
+"name": "Potenciador DEF artillería",
+"nameEn": "Ranged DEF Boost",
+"desc": ""
+},
+{
+"id": 218,
+"name": "Potenciador ATQ trampa",
+"nameEn": "Trap ATK Boost",
+"desc": ""
+}
+]
+},
+"110": {
+"id": 110,
+"name": "Sabio de Viento",
+"nameEn": "Sage of Storms",
+"altName": "Anderson",
+"skills": [],
+"battleSkills": [
+{
+"id": 219,
+"name": "Ducha eléctrica",
+"nameEn": "Electric Shower",
+"desc": ""
+},
+{
+"id": 220,
+"name": "Potenciador construcción",
+"nameEn": "Construction Boost",
+"desc": ""
+},
+{
+"id": 221,
+"name": "Potenciador ATQ trampa",
+"nameEn": "Trap ATK Boost",
+"desc": ""
+},
+{
+"id": 222,
+"name": "Potenciador DEF caballería",
+"nameEn": "Cavalry DEF Boost",
+"desc": ""
+}
+]
+},
+"192": {
+"id": 192,
+"name": "Pargo",
+"nameEn": "Snapper",
+"altName": "",
+"skills": [],
+"battleSkills": []
+},
+"193": {
+"id": 193,
+"name": "Mutanus",
+"nameEn": "Rotgill",
+"altName": "",
+"skills": [],
+"battleSkills": []
+},
+"194": {
+"id": 194,
+"name": "Hombre topo",
+"nameEn": "Mole Man",
+"altName": "",
+"skills": [],
+"battleSkills": []
+},
+"195": {
+"id": 195,
+"name": "Duérgar",
+"nameEn": "Duergar",
+"altName": "",
+"skills": [],
+"battleSkills": []
+},
+"196": {
+"id": 196,
+"name": "Hydra",
+"nameEn": "Hydro",
+"altName": "",
+"skills": [],
+"battleSkills": []
+},
+"197": {
+"id": 197,
+"name": "Inferno",
+"nameEn": "Infernite",
+"altName": "",
+"skills": [],
+"battleSkills": []
+},
+"198": {
+"id": 198,
+"name": "Himno de marea",
+"nameEn": "Tidal Hymn",
+"altName": "",
+"skills": [],
+"battleSkills": []
+},
+"201": {
+"id": 201,
+"name": "Escudero",
+"nameEn": "Squire",
+"altName": "",
+"skills": [],
+"battleSkills": []
+},
+"202": {
+"id": 202,
+"name": "Cazador",
+"nameEn": "Huntsman",
+"altName": "",
+"skills": [],
+"battleSkills": []
+},
+"203": {
+"id": 203,
+"name": "Mago aprendiz",
+"nameEn": "Mage Apprentice",
+"altName": "",
+"skills": [],
+"battleSkills": []
+},
+"204": {
+"id": 204,
+"name": "Chico robot",
+"nameEn": "Bot Boy",
+"altName": "",
+"skills": [],
+"battleSkills": []
+},
+"205": {
+"id": 205,
+"name": "Sinestrus",
+"nameEn": "Darkhand",
+"altName": "",
+"skills": [],
+"battleSkills": []
+},
+"206": {
+"id": 206,
+"name": "Magus",
+"nameEn": "Magus",
+"altName": "",
+"skills": [],
+"battleSkills": []
+},
+"207": {
+"id": 207,
+"name": "Gallo del norte",
+"nameEn": "Megrim",
+"altName": "",
+"skills": [],
+"battleSkills": []
+},
+"208": {
+"id": 208,
+"name": "Matón",
+"nameEn": "Bruiser",
+"altName": "",
+"skills": [],
+"battleSkills": []
+},
+"209": {
+"id": 209,
+"name": "Baum",
+"nameEn": "Oakroot",
+"altName": "",
+"skills": [],
+"battleSkills": []
+},
+"210": {
+"id": 210,
+"name": "Conchaspina",
+"nameEn": "Terraspike",
+"altName": "",
+"skills": [],
+"battleSkills": []
+},
+"211": {
+"id": 211,
+"name": "Murmillo",
+"nameEn": "Mirmillon",
+"altName": "",
+"skills": [],
+"battleSkills": []
+},
+"212": {
+"id": 212,
+"name": "Arquero élite",
+"nameEn": "Ranger",
+"altName": "",
+"skills": [],
+"battleSkills": []
+},
+"213": {
+"id": 213,
+"name": "Anciano chamán",
+"nameEn": "Shaman Elder",
+"altName": "",
+"skills": [],
+"battleSkills": []
+},
+"214": {
+"id": 214,
+"name": "Jaziek",
+"nameEn": "Jaziek",
+"altName": "",
+"skills": [],
+"battleSkills": []
+},
+"215": {
+"id": 215,
+"name": "Hombre simio",
+"nameEn": "Apeman",
+"altName": "",
+"skills": [],
+"battleSkills": []
+},
+"216": {
+"id": 216,
+"name": "Clérigo resucitado",
+"nameEn": "Risen Cleric",
+"altName": "",
+"skills": [],
+"battleSkills": []
+},
+"217": {
+"id": 217,
+"name": "Soldado fantasma",
+"nameEn": "Wraith Soldier",
+"altName": "",
+"skills": [],
+"battleSkills": []
+},
+"218": {
+"id": 218,
+"name": "Gargantua",
+"nameEn": "Gargantua",
+"altName": "",
+"skills": [],
+"battleSkills": []
+},
+"219": {
+"id": 219,
+"name": "Magmalius",
+"nameEn": "Magmalord",
+"altName": "",
+"skills": [],
+"battleSkills": []
+}
+}
+}

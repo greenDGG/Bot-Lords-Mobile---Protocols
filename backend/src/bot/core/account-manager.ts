@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { BotInstance } from './bot-instance';
 import { configService } from '../../config/config.service';
-import { BotConfig, defaultBotConfig } from '../../models/bot-config';
+import { BotConfig, defaultBotConfig, pickSupply } from '../../models/bot-config';
 import { databaseService } from '../../database/database.service';
 
 export interface AccountInfo {
@@ -99,7 +99,7 @@ export class AccountManager extends EventEmitter {
       adminQuest: doc.adminQuest || { enable: true },
       guildQuest: doc.guildQuest || { enable: true },
       resourceLimit: doc.resourceLimit || { wheat: 1_000_000_000, wood: 1_000_000_000, stone: 1_000_000_000, ore: 1_000_000_000, gold: 1_000_000_000 },
-      supply: doc.supply || { enable: false, targetPlayer: '', threshold: 7000000, maxAmount: 6000000, caravanLimit: 4 },
+      supply: pickSupply(doc.supply),
       events: doc.events || { enable: true },
       coliseum: doc.coliseum || { reclaimGems: false, autoAttack: false, hero0: 1, hero1: 3, hero2: 6, hero3: 5, hero4: 23 },
       sweep: doc.sweep || { enable: false, payload: '0202010001' },

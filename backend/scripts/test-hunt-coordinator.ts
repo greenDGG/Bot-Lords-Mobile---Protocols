@@ -92,5 +92,50 @@ huntCoordinator.release(1);
 huntCoordinator.release(2);
 check('todo liberado', huntCoordinator.snapshot().length === 0);
 
+// ── 8. Cupo extra (el "sexto") cuando a los miembros les falta energía ─────
+console.log('\n8) Cupo extra con energía baja');
+huntCoordinator.reset();
+const probe = (golpes: number, activo = true) => ({ canHunt: () => activo, hitCapacity: () => golpes });
+huntCoordinator.claim(1, { id: 600, x: 3, y: 3, level: 2, hp: 100 }, ON);
+huntCoordinator.reportHit(1, 600, 100, 85); // daño 15% → ceil(89.25/15) = 6 golpes
+huntCoordinator.registerBot(1, probe(1));
+g = gate(1, 600);
+check('daño 15% → needed se corta en max=5', g.needed === 5, g);
+for (let id = 2; id <= 5; id++) {
+  huntCoordinator.registerBot(id, probe(1));
+  check(`bot ${id} entra mientras haya lugar`, huntCoordinator.claim(id, { id: 600, x: 3, y: 3, level: 2, hp: 85 }, ON).ok);
+}
+g = gate(1, 600);
+check('5 miembros con energía para 1 golpe < 6 golpes → needed=6', g.needed === 6, g);
+check('entra el sexto', huntCoordinator.canClaim(6, 600, ON).ok);
+for (let id = 1; id <= 5; id++) huntCoordinator.registerBot(id, probe(10));
+g = gate(1, 600);
+check('con energía suficiente vuelve a needed=5', g.needed === 5, g);
+check('el séptimo ya no entra', !huntCoordinator.canClaim(7, 600, ON).ok);
+
+// ── 9. Aviso al gremio: ¿puede otro bot rematarlo? ─────────────────────────
+console.log('\n9) someoneElseCanKill');
+huntCoordinator.reset();
+huntCoordinator.claim(1, { id: 700, x: 4, y: 4, level: 2, hp: 100 }, ON);
+huntCoordinator.reportHit(1, 700, 100, 80); // daño 20% → ceil(84/20) = 5 golpes
+const hp700 = { level: 2, hp: 80 };
+check('nadie registrado → hay que avisar', !huntCoordinator.someoneElseCanKill(700, 1, hp700).ok);
+huntCoordinator.registerBot(2, probe(9, false));
+check('caza apagada no cuenta', !huntCoordinator.someoneElseCanKill(700, 1, hp700).ok);
+huntCoordinator.registerBot(2, probe(4));
+check('4 < 5 golpes → no puede rematarlo', !huntCoordinator.someoneElseCanKill(700, 1, hp700).ok);
+huntCoordinator.registerBot(2, probe(5));
+const rem = huntCoordinator.someoneElseCanKill(700, 1, hp700);
+check('energía para los 5 golpes → no se avisa', rem.ok && rem.iggId === 2 && rem.hits === 5, rem);
+check('a mí mismo no me cuento', !huntCoordinator.someoneElseCanKill(700, 2, hp700).ok);
+
+// ── 10. Aviso al gremio: 1 solo mensaje por bicho ──────────────────────────
+console.log('\n10) claimAnnounce (cooldown compartido por tile)');
+huntCoordinator.reset();
+check('primer aviso permitido', huntCoordinator.claimAnnounce(900, 300_000, 1000));
+check('otro bot no repite el mismo bicho', !huntCoordinator.claimAnnounce(900, 300_000, 1500));
+check('otro bicho sí se puede avisar', huntCoordinator.claimAnnounce(901, 300_000, 1500));
+check('pasado el cooldown vuelve', huntCoordinator.claimAnnounce(900, 300_000, 1000 + 300_001));
+
 console.log(failures === 0 ? '\nTODO OK' : `\n${failures} FALLA(S)`);
 if (failures > 0) process.exit(1);

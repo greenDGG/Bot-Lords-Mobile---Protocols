@@ -47,3 +47,32 @@ bien tenemos esto que es cuando se cancela una agrupacion o termina
 
 2479 te dice que agrupacioin indice termino
 y 2477 te dice las agrupaciones restantes que quedan
+
+---
+
+## 2477: dos campos (confirmado con ~4400 muestras de logs, oct 2026)
+
+Body = 8 bytes = `u32[0] u32[1]`:
+
+- `u32[0]` = agrupaciones **propias del gremio** en curso (va de 0 a 7)
+- `u32[1]` = agrupación **en contra del gremio** (agruparon a alguien del
+  gremio, no necesariamente a este bot): siempre 0 ó 1
+
+Distribución observada:
+
+| u32[0] | u32[1] | ocurrencias |
+|--------|--------|-------------|
+| 0      | 0      | 3177        |
+| 1..7   | 0      | 1138        |
+| 0/1/2  | 1      | 317         |
+
+Casos:
+```
+01000000 00000000  → normal (gremio agrupando, nadie en contra)
+00000000 01000000  → agruparon a un miembro del gremio (u32[1] = 1)
+01000000 01000000  → ambas a la vez (159 muestras) → campos independientes
+00000000 00000000  → nada activo
+```
+
+Secuencia típica al terminar todo (mismo segundo): `(1,1) → (0,1) → (0,0)`
+(un 2477 por cambio).

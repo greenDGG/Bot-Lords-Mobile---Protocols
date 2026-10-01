@@ -14,6 +14,14 @@ import { EventEmitter } from 'events';
  * Sin datos de daño se asume 1 golpe (manda 1 bot y aprende). Un bot que ya
  * está cubierto por otros (`active >= needed`) queda "surplus": se libera y
  * va a por otro bicho en vez de gastar energía de más.
+ *
+ * `needed` es también el máximo de miembros, con una excepción: si el squad
+ * ya está lleno y a sus miembros les queda poca energía para cubrir todos los
+ * golpes, se abre UN cupo extra (el "sexto") para que entre un bot que sí
+ * tenga energía. Y cuando a un bot se le acaba la energía sólo se avisa al
+ * gremio si NINGÚN otro bot conectado puede rematar el bicho
+ * (`someoneElseCanKill()`): si alguien puede, ese solo entra al liberarse el
+ * slot y el chat queda limpio.
  */
 
 /** Política tomada de config.hunt.squad */
@@ -22,6 +30,17 @@ export interface SquadPolicy {
   enable: boolean;
   /** máximo de bots que pueden golpear el mismo bicho */
   max: number;
+}
+
+/**
+ * Visto vivo de cada BotInstance: el coordinador no guarda energía (cambia en
+ * cada golpe), sólo una sonda que consulta al momento online/config/energía.
+ */
+export interface BotHuntProbe {
+  /** ¿está conectado y con la caza habilitada en su config? */
+  canHunt: () => boolean;
+  /** golpes que puede aportar al nivel dado con su energía actual */
+  hitCapacity: (level: number) => number;
 }
 
 export interface SquadMember {
@@ -79,6 +98,10 @@ const HISTORY_LIMIT = 60;
 
 class HuntCoordinator extends EventEmitter {
   private squads = new Map<number, HuntSquad>();
+  /** sondas en vivo por bot (energía/online consultadas al momento) */
+  private probes = new Map<number, BotHuntProbe>();
+  /** tileId → cuándo se publicó el último aviso "sin energía" (compartido) */
+  private announcedAt = new Map<number, number>();
   /** daño observado por bot y nivel (`iggId:level`) en % de HP */
   private damageByBot = new Map<string, number[]>();
   /** daño observado por nivel, de cualquier bot */
@@ -116,6 +139,60 @@ class HuntCoordinator extends EventEmitter {
     if (sq.members.size === 0) return true;
     sq.policy = policy;
     return sq.members.size < this.needed(sq);
+  }
+
+  /** Registra la sonda de un bot (BotInstance, al crear la instancia). */
+  registerBot(iggId: number, probe: BotHuntProbe): void {
+    this.probes.set(iggId, probe);
+  }
+
+  unregisterBot(iggId: number): void {
+    this.probes.delete(iggId);
+  }
+
+  /**
+   * ¿Puede OTRO bot rematar este bicho con su energía? Se consultan las
+   * sondas en vivo (online + hunt.enable + `energía / costo por golpe` del
+   * nivel) contra los golpes que faltan.
+   *
+   * Es el criterio del aviso al gremio: si alguien puede terminarlo, no se
+   * publica nada — al liberarse el slot ese bot entra solo.
+   */
+  someoneElseCanKill(
+    tileId: number,
+    excludeIggId: number,
+    fallback: { level: number; hp: number },
+  ): { ok: boolean; iggId?: number; hits: number } {
+    const sq = this.peek(tileId);
+    const level = sq?.level ?? fallback.level;
+    const hp = sq && sq.hp > 0 ? sq.hp : Math.max(0, Math.min(100, fallback.hp));
+    if (hp <= 0) return { ok: false, hits: 0 };
+    // Sin squad (o sin datos de daño) se asume 1 golpe: con energía para un
+    // golpe el bot igual se sube, así que no hace falta avisar.
+    const hits = sq ? Math.max(1, this.rawHits(sq)) : 1;
+    for (const [id, probe] of this.probes) {
+      if (id === excludeIggId) continue;
+      if (!probe.canHunt()) continue;
+      if (probe.hitCapacity(level) >= hits) return { ok: true, iggId: id, hits };
+    }
+    return { ok: false, hits };
+  }
+
+  /**
+   * Reserva el turno de publicar el aviso "sin energía" de UN tile: el
+   * cooldown es compartido por todos los bots, así 5 bots sin energía no
+   * mandan 5 mensajes con el mismo bicho (sólo 1 cada `cooldownMs`).
+   */
+  claimAnnounce(tileId: number, cooldownMs: number, now = Date.now()): boolean {
+    const last = this.announcedAt.get(tileId);
+    if (last !== undefined && now - last < cooldownMs) return false;
+    this.announcedAt.set(tileId, now);
+    if (this.announcedAt.size > 100) {
+      for (const [id, at] of this.announcedAt) {
+        if (now - at >= cooldownMs) this.announcedAt.delete(id);
+      }
+    }
+    return true;
   }
 
   /**
@@ -271,9 +348,11 @@ class HuntCoordinator extends EventEmitter {
 
   // ── internos ────────────────────────────────────────────────────────────
 
-  /** Solo para tests: limpia squads e históricos de daño. */
+  /** Solo para tests: limpia squads, históricos de daño, sondas y avisos. */
   reset(): void {
     this.squads.clear();
+    this.probes.clear();
+    this.announcedAt.clear();
     this.damageByBot.clear();
     this.damageByLevel.clear();
   }
@@ -282,9 +361,37 @@ class HuntCoordinator extends EventEmitter {
   private needed(sq: HuntSquad): number {
     if (sq.hp <= 0) return 0;
     if (!sq.policy.enable) return 1;
+    const raw = this.rawHits(sq);
+    const base = Math.min(raw, sq.policy.max);
+    // Squad lleno y a los actuales les falta energía para cubrir todos los
+    // golpes → un cupo extra (el "sexto") para el que sí tenga energía.
+    const capacity = this.memberEnergyCapacity(sq);
+    if (capacity >= 0 && capacity < raw && sq.members.size >= base) return base + 1;
+    return base;
+  }
+
+  /** Golpes que faltan para matar, sin tope de cupos. */
+  private rawHits(sq: HuntSquad): number {
+    if (sq.hp <= 0) return 0;
     const avg = this.avgDamage(sq);
     if (avg <= 0) return 1;
-    return Math.max(1, Math.min(sq.policy.max, Math.ceil((sq.hp * 1.05) / avg)));
+    return Math.max(1, Math.ceil((sq.hp * 1.05) / avg));
+  }
+
+  /**
+   * Golpes que los miembros actuales pueden pagar con su energía restante.
+   * -1 = no hay ninguna sonda registrada (sin datos, no se abre cupo extra).
+   */
+  private memberEnergyCapacity(sq: HuntSquad): number {
+    let total = 0;
+    let known = false;
+    for (const m of sq.members.values()) {
+      const probe = this.probes.get(m.iggId);
+      if (!probe) continue;
+      known = true;
+      total += probe.hitCapacity(sq.level);
+    }
+    return known ? total : -1;
   }
 
   /**

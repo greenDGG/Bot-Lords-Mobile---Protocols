@@ -1,6 +1,7 @@
 import type { BotInstance } from '../core/bot-instance';
-import { MarchInfo } from '../models/march.types';
-import { parseMarchIncoming, parseMarchUpdate, parseMarch } from '../parsers/march.parser';
+import { MarchInfo, OwnMarch } from '../models/march.types';
+import { parseMarchIncoming, parseMarchUpdate, parseMarch, lineTypeLabel } from '../parsers/march.parser';
+import { parse2414 } from '../parsers/marches.parser';
 import { requestMarchData } from '../commands/march.commands';
 import { serverNowSec } from '../../utils/clock-sync';
 
@@ -139,7 +140,8 @@ export function handleMarchData(bot: BotInstance, body: Buffer): void {
         const idx = bot.incomingMarches.findIndex(m => m.marchId === marchId);
         if (idx >= 0) {
           bot.incomingMarches[idx].packet = parsed;
-          bot.bot.log(`[ATALAYA] 2446 datos vinculados a marcha ${marchId}: ${parsed.troops.length} tropas, ${parsed.heroes.length} héroes`);
+          const kind = lineTypeLabel(parsed.lineType) ?? `lineType=${parsed.lineType}`;
+          bot.bot.log(`[ATALAYA] 2446 datos vinculados a marcha ${marchId} (${kind}): ${parsed.troops.length} tropas, ${parsed.heroes.length} héroes`);
           bot.armCounter(bot.incomingMarches[idx]);
         }
       }
@@ -149,4 +151,34 @@ export function handleMarchData(bot: BotInstance, body: Buffer): void {
       bot.bot.log(`[ATALAYA] 2446 no se pudo parsear (len=${body.length})`);
     }
   } catch (e: any) { bot.bot.log(`[ATALAYA] 2446 error parseando: ${e?.message}`); }
+}
+
+export function handle2414(bot: BotInstance, body: Buffer): void {
+  try {
+    const data = parse2414(body);
+    if (!data) {
+      bot.bot.log(`[MARCHAS] 2414 no parseado (len=${body.length}) head=${body.subarray(0, 8).toString('hex')}`);
+      return;
+    }
+    const prev = bot.ownMarches;
+    bot.ownMarches = data;
+    if (!prev || prev.limit !== data.limit || prev.count !== data.count) {
+      const fmt = (e: OwnMarch) => {
+        const t = e.troops.map(x => `${x.count} T${x.tier}/t${x.type}`).join('+');
+        const h = e.heroIds.length ? ` h=[${e.heroIds.join(',')}]` : '';
+        return t ? `${t}${h}` : h || 'sin troops';
+      };
+      bot.bot.log(`[MARCHAS] 2414: ${data.count}/${data.limit} marchas — ${data.entries.map(e => `#${e.index} ${e.status} (${e.destX},${e.destY}) ${fmt(e)}`).join(', ')}`);
+    } else {
+      for (const e of data.entries) {
+        const p = prev.entries.find(x => x.index === e.index);
+        if (p && p.status !== e.status) {
+          bot.bot.log(`[MARCHAS] marcha slot ${e.index}: ${p.status} → ${e.status}`);
+        }
+      }
+    }
+    bot.emit('ownMarchesUpdated');
+  } catch (e: any) {
+    bot.bot.log(`[MARCHAS] 2414 error parseando: ${e?.message}`);
+  }
 }

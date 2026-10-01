@@ -61,35 +61,3 @@ export function parseColiseum(body: Buffer): ColiseumState {
 export function parseColiseumRivals(body: Buffer): ColiseumRival[] {
   return parseRivals(body, 4);
 }
-
-export interface HeroEntry {
-  heroId: number;
-  level: number;
-  unknown1: Buffer;
-  rank: number;
-  grade: number;
-  trailing: Buffer;
-}
-
-/** Proto 1201 — Lista de héroes del jugador. */
-export function parseHeroList(body: Buffer): HeroEntry[] {
-  const heroes: HeroEntry[] = [];
-  let offset = 9;
-
-  while (offset + 18 <= body.length) {
-    const heroId = body.readUInt16LE(offset);
-    if (heroId === 0) break;
-    const level = body[offset + 2];
-    const unknown1 = body.subarray(offset + 3, offset + 7);
-    const rank = body[offset + 7];
-    const grade = body[offset + 8];
-
-    let trailLen = 25;
-    const trailing = body.subarray(offset + 9, offset + 9 + trailLen);
-
-    heroes.push({ heroId, level, unknown1, rank, grade, trailing });
-    offset += 9 + trailLen;
-  }
-
-  return heroes;
-}

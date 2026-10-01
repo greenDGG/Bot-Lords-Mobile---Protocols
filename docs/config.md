@@ -106,10 +106,16 @@ La configuración de cada cuenta se guarda en `access/{iggId}/config.json` y en 
 
 ### `supply`
 ```json
-{ "enable": false, "location": "db00af", "threshold": 7000000, "maxAmount": 6000000, "caravanLimit": 4 }
+{ "enable": false, "location": "db00af", "threshold": 7000000, "caravanLimit": 4 }
 ```
 - Envía caravanas (2452) con recursos que superen `threshold` hasta una ubicación (`location` = 3 bytes hex de coordenadas).
-- `caravanLimit`: máximo de caravanas simultáneas; `maxAmount`: cantidad por caravana.
+- `caravanLimit`: máximo de caravanas simultáneas.
+- La cantidad por caravana **no es config**: sale del stat `Capacidad de
+  suministro +` de cada cuenta (Puesto Comercial + "Bolsas más grandes", con el
+  % si lo hay) → `getSupplyCapacity()` en `backend/src/bot/features/player-stats.ts`.
+- Migración: `npm run migrate:supply` borra el `maxAmount` viejo de Mongo y de
+  `access/<iggId>/config.json` (al cargar, `pickSupply`/`stripLegacyConfig` lo
+  descartan igual, así que una config sin migrar no rompe nada).
 - Al recibir 2455 (lote completado) reanuda.
 
 ## Persistencia

@@ -74,6 +74,12 @@ function formatNum(n: number): string {
   return n.toString();
 }
 
+// Tope por campo: como mucho el disponible, y nunca más de 200k (lo que cabe
+// en una cuenta). Si el disponible es 0/desconocido se permite hasta 200k.
+function fieldMax(available: number): number {
+  return available > 0 ? Math.min(available, TROOPS_PER_ACCOUNT) : TROOPS_PER_ACCOUNT;
+}
+
 function formatCountdown(remaining: number): string {
   if (remaining <= 0) return '0s';
   const m = Math.floor(remaining / 60);
@@ -245,8 +251,18 @@ export default function WarDashboard({ socket, bots }: Props) {
   }, [selectedAccounts, getTierTroops]);
 
   const avail = getTierAvail(tier);
+
+  // Si el disponible baja (dato nuevo de tropas), recorta lo ya escrito
+  useEffect(() => {
+    setInf(v => Math.min(v, fieldMax(avail.infantry)));
+    setArt(v => Math.min(v, fieldMax(avail.artillery)));
+    setCav(v => Math.min(v, fieldMax(avail.cavalry)));
+  }, [avail.infantry, avail.artillery, avail.cavalry]);
+
   const total = inf + art + cav;
-  const perAccount = selectedAccounts.size > 0 ? Math.floor(total / selectedAccounts.size) : 0;
+  // `total` ya es la cantidad que CADA cuenta envía (tope 200k por cuenta),
+  // no un acumulado de todas las cuentas.
+  const perAccount = total;
 
   const applyRatio = (input: string) => {
     setRatioInput(input);
@@ -473,21 +489,32 @@ export default function WarDashboard({ socket, bots }: Props) {
                                 style={{ width: '100%', padding: '10px', borderRadius: 8, border: `1px solid ${colors.border}`, background: '#0f172a', color: colors.text, fontSize: 18, fontWeight: 700, letterSpacing: 6, textAlign: 'center', marginBottom: 10, boxSizing: 'border-box' }} />
                               <div style={{ display: 'flex', gap: 12 }}>
                                 {[
-                                  { label: 'Inf', value: inf, max: avail.infantry, key: 'inf' as const },
-                                  { label: 'Art', value: art, max: avail.artillery, key: 'art' as const },
-                                  { label: 'Cab', value: cav, max: avail.cavalry, key: 'cav' as const },
+                                  { label: 'Inf', value: inf, max: fieldMax(avail.infantry), key: 'inf' as const },
+                                  { label: 'Art', value: art, max: fieldMax(avail.artillery), key: 'art' as const },
+                                  { label: 'Cab', value: cav, max: fieldMax(avail.cavalry), key: 'cav' as const },
                                 ].map(f => (
                                   <div key={f.label} style={{ flex: 1 }}>
-                                    <div style={{ fontSize: 11, color: colors.textSecondary, marginBottom: 4, display: 'flex', justifyContent: 'space-between' }}>
+                                    <div style={{ fontSize: 11, color: colors.textSecondary, marginBottom: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                       <span>{f.label}</span>
-                                      <span style={{ fontWeight: 600, color: colors.text }}>{formatNum(f.value)}</span>
+                                      <input
+                                        type="number" min={0} max={f.max} value={Math.min(f.value, f.max)}
+                                        onChange={e => {
+                                          const n = parseInt(e.target.value, 10);
+                                          constrainAndUpdate(f.key, Math.max(0, Math.min(f.max, Number.isNaN(n) ? 0 : n)));
+                                        }}
+                                        style={{
+                                          width: 76, textAlign: 'right', padding: '2px 5px', fontSize: 12, fontWeight: 600,
+                                          background: '#0f172a', border: `1px solid ${colors.border}`, borderRadius: 5,
+                                          color: colors.text, boxSizing: 'border-box',
+                                        }}
+                                      />
                                     </div>
-                                    <input type="range" min={0} max={f.max} value={f.value} onChange={e => constrainAndUpdate(f.key, parseInt(e.target.value))} style={{ width: '100%' }} />
+                                    <input type="range" min={0} max={f.max} value={Math.min(f.value, f.max)} onChange={e => constrainAndUpdate(f.key, parseInt(e.target.value))} style={{ width: '100%' }} />
                                   </div>
                                 ))}
                               </div>
                               <div style={{ marginTop: 8, display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
-                                <span>Total: <strong>{total.toLocaleString()}</strong> / {TROOPS_PER_ACCOUNT.toLocaleString()}</span>
+                                <span>Total: <strong>{total.toLocaleString()}</strong> / {TROOPS_PER_ACCOUNT.toLocaleString()} por cuenta</span>
                                 <span style={{ color: colors.textSecondary }}>x{selectedAccounts.size} cuentas · {perAccount.toLocaleString()}/cuenta</span>
                               </div>
                             </div>

@@ -30,10 +30,13 @@
 - [`2037`](2037.md) — Estado del refinar maná (respuesta del servidor, contador diario 0..5)
 - [`2038`](2037.md#vínculo-con-2038-refinar) — Refinar maná (comando cliente → servidor, ver `2037`)
 - [`2402`](2402.md) — Entrenamiento de tropas (respuesta del servidor)
+- [`2414`](2414.md) — Lista de marchas propias del castillo (S→C, sin request: límite + entries de 150 B con slot, estado, coord destino, nombre, ts y duración)
 - [`3112`](3112.md) — Respuesta de datos (barco / misiones) — identificar por tamaño y questType
 - [`3125`](3125.md) — Cofre VIP — estado (máscara + timestamp) o rechazo de reclamo (servidor → cliente)
 - [`3126`](3126.md) — Cofre VIP — reclamar ranura (cliente → servidor)
-- [`3201`](3201.md) — Investigaciones / research (respuesta del servidor)
+- [`3201`](3201.md) — Investigaciones / research (respuesta del servidor: cabecera 15 B con techId activa + nivel + timestamp + restantes, y cola de 250 B con el nivel de las 500 techs en nibbles)
+- [`3208`](3208.md) — Investigación completada (evento: u16 TechID + u8 nivel, 3 bytes)
+- [`3801`](3801.md) — Talentos del jugador (push de login: u16 puntos sin asignar + 47 u8 con el nivel de cada talento, 102 bytes)
 - [`4044`](4044.md) — Cofre del Tesoro Eterno (Everlasting Treasure) — lista de items para reclamar
 - [`5201`](5201.md) — Coliseo — puesto, peleas (máx 5), gemas y rivales (estado del servidor)
 - [`5204`](5204.md) — Coliseo — solicitar rivales (comando cliente → servidor)
@@ -85,6 +88,18 @@ Nota: el aviso de carta con la cola `88 01 00 00 00 <dígito>` llega por
 **`3439` (`_MSG_RESP_NOTICEINFO`)**, no por el 9868 — ver
 [9868 § dónde está el dígito](9868.md#dónde-está-realmente-el-dígito-3439-noticeinfo).
 
+## Laberinto (evento)
+
+Evento donde se golpea un monstruo por recursos (−100 estrellas por golpe);
+al llegar a 10 golpes puede aparecer el gremblin, que da gemas. Tiros gratis
+de la bendición divina: byte `[20]` del `7004`.
+
+- [`7004`](7004.md) — Laberinto: estado del golpe / ronda (S→C, 22 B) + rechazos `65`/`67`
+- `7001` — Abrir laberinto (C→S, 5 B: seq + `00`)
+- `7002` — Respuesta del 7001 (S→C, 17 B, ver [`7004`](7004.md#7002-respuesta-del-7001))
+- `7003` — Golpear (C→S, 5 B: seq + `01` normal / `00` élite)
+- `7005` — Visto en captura (C→S, 4 B: sólo seq, sin identificar)
+
 ## Supply / Caravanas
 
 - [`2452`](2452.md) — Enviar caravana de recursos (C→S, 23 bytes: coord + 5 recursos)
@@ -110,7 +125,7 @@ Nota: el aviso de carta con la cola `88 01 00 00 00 <dígito>` llega por
 
 - [`2472`](2472.md) — Enviar tropas a agrupación (C→S, 13B nombre + mask + cantidades)
 - [`2476`](2476.md) — Abrir pantalla de agrupaciones (C→S, payload vacío)
-- [`2477`](2477.md) — Notificación inicio/fin de agrupación (S→C, 1 byte: 01=inicio, 00=fin)
+- [`2477`](2477.md) — Contadores de agrupación (S→C, 8B: u32[0]=propias del gremio 0..7, u32[1]=en contra del gremio 0|1)
 - [`2478`](2478.md) — Lista de agrupaciones activas (S→C, ~58B por entrada: timestamp, coord, rallyType, names)
 - [`2483`](2483.md) — Participantes de una agrupación (S→C, nombre + mask + tropas por participante)
 - [`2485`](2485.md) — Notificación de actualización (S→C)

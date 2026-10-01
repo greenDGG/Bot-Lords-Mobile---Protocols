@@ -505,3 +505,98 @@ a5ceb76a
 12d80f0000000000009c0078c30e0051d0b76a000000004200000075000000
 
 0fd70f0000000000009c00cdc20e00
+
+
+
+
+
+
+
+[17:50:20.289] #9065 OUT proto=3634 size=7 plain_len=7
+[17:50:20.289]   plain: 010100
+[17:50:20.290]   enc: aa010000010100
+[17:50:20.628] #9067 IN proto=3698 size=23
+[17:50:20.629]   hex: 
+00
+0101
+00
+84d3ba6a
+00000000
+02
+1600
+01
+3f00
+00
+[17:50:20.629]   enc: 0001010084d3ba6a00000000021600013f0000
+[17:50:23.299] #9068 OUT proto=3634 size=7 plain_len=7
+[17:50:23.300]   plain: 000100
+[17:50:23.696] #9070 IN proto=3698 size=23
+[17:50:23.696]   hex: 
+00
+0001
+00
+87d3ba6a
+00000000
+00
+2100
+01
+3f00
+00
+[17:50:23.697]   enc: 0000010087d3ba6a00000000002100013f0000
+
+
+
+
+
+
+
+
+
+[18:10:17.135] #10674 IN proto=7004 size=26
+[18:10:17.135]   hex: 1a005c1b
+01 // comienza una nueva ronda, 01 es normal, y 02 es gremblin que es el que da gemas
+01 // tipo/dificultad | 01 es normal | 00 es elite x10
+01 // golpes dados (es raro empieza en 01 en vez de 00 01 seria sin golpes o algo asi) maximo son 10 golpes, pero con la aparicion del gremblin puede superar esos 10 
+00000000 // solo para el gremblin cantidad de gemas que te dara
+48f80000 // cantidad de estrellas sagradas restantes
+177b0001 // no logro encontrarle un match
+ff03 01 // { id, cantidad del item}
+00000002 // igual no logro encontrar un match
+//
+1a005c1b010101000000000c53000086a61000da0f0100010002 // version de la derrota del normal
+//
+02
+01
+0b
+2c01
+0000
+dc5a0000
+06b92a00
+cb04 01 
+00000002 variante con gremblin
+//
+0301012c010000f45600000e480b00cb040100000002 // version que el gremblin se retira
+
+00
+01
+02
+00000000e4f70000e1a70901de0f0100010002
+
+
+00
+01
+03
+0000000080f70000cfbf0c0110040100000002
+
+//elite
+[18:21:08.934] #565 OUT proto=7003 size=5 plain_len=5
+[18:21:08.934]   plain: 2b00000000
+[18:21:08.935]   enc: 2b00000000
+[18:21:09.358] #567 IN proto=7004 size=26
+[18:21:09.359]   hex: 
+
+0000030000000044070000856c0300ff030b00000001
+
+
+
+000004000000005c0300009694060059040b00000001

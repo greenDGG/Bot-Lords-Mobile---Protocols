@@ -1,4 +1,5 @@
 import { Schema, Document, model } from 'mongoose';
+import type { SupplyConfig } from '../../models/bot-config';
 
 // ── Token ──
 export interface IToken extends Document {
@@ -46,7 +47,7 @@ export interface IConfig extends Document {
   adminQuest: any;
   guildQuest: any;
   resourceLimit: any;
-  supply: any;
+  supply: SupplyConfig;
   events: any;
   coliseum: any;
   sweep: any;

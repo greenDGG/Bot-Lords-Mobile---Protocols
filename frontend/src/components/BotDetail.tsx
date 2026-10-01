@@ -1,19 +1,47 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useSocket } from '../hooks/useSocket';
 import { colors } from './Theme';
 import WarDashboard from './WarDashboard';
 import LogViewer from './LogViewer';
 import MapViewerDemo from './MapViewerDemo';
 import { getItemsSync, getItemsData } from '../data/items';
+import { getTechsSync, getTechsData, setTechsData } from '../data/techs';
 
 interface PlayerInfo {
   playerName: string; level: number; power: number; kills: number; gems: number; vipExp: number; energy: number;
   castleX?: number; castleY?: number;
+  /** Resistencia actual y tope (120 + bonus de investigación). */
+  currentResistencia?: number;
+  resistenciaMax?: number;
+  /** Recuperación de energía por hora (1800/h + bonus de investigación). */
+  energyRegen?: { perHour: number; perSec: number; bonusPct: number; basePerHour: number };
 }
 
 interface Resources {
   wheat: number; stone: number; wood: number; mineral: number; gold: number;
   wheatProd: number; stoneProd: number; woodProd: number; mineralProd: number; goldProd: number;
+}
+
+interface OwnMarch {
+  index: number; state: number; status: 'flying' | 'arrived' | 'unknown';
+  heroIds: number[];
+  troops: { type: number; tier: number; count: number }[];
+  destX: number; destY: number; name: string; startAt: number; durationSec: number; unknown106: number;
+}
+
+interface OwnMarches {
+  limit: number; count: number; entries: OwnMarch[];
+}
+
+// El backend puede tardar en reiniciarse y mandar entries sin tropas/héroes;
+// se normaliza para que el render no reviente con `.length` de undefined.
+function normalizeOwnMarches(d: OwnMarches | null | undefined): OwnMarches | null {
+  if (!d) return null;
+  return {
+    limit: d.limit ?? 0,
+    count: d.count ?? 0,
+    entries: (d.entries || []).map(e => ({ ...e, troops: e.troops || [], heroIds: e.heroIds || [] })),
+  };
 }
 
 interface TroopTraining {
@@ -36,12 +64,13 @@ export default function BotDetail({ iggId, onBack }: Props) {
   const [logs, setLogs] = useState<string[]>([]);
   const [chatText, setChatText] = useState('');
   const [chatMessages, setChatMessages] = useState<{ id: string; sender: string; guild: string; channel: string; text: string; self: boolean }[]>([]);
-  const [activeTab, setActiveTab] = useState<'info' | 'resources' | 'wars' | 'logs' | 'chat' | 'config' | 'camara' | 'construcciones' | 'transmutacion' | 'cuartel' | 'lider' | 'enfermeria' | 'atalaya' | 'mapa' | 'coliseo' | 'misiones' | 'guildApps' | 'trajes'>('info');
+  const [activeTab, setActiveTab] = useState<'info' | 'resources' | 'wars' | 'logs' | 'chat' | 'config' | 'camara' | 'construcciones' | 'academia' | 'stats' | 'transmutacion' | 'cuartel' | 'lider' | 'enfermeria' | 'atalaya' | 'mapa' | 'coliseo' | 'heroes' | 'misiones' | 'guildApps' | 'trajes' | 'talentos'>('info');
   const [warNotif, setWarNotif] = useState(0);
   const [treasureChamber, setTreasureChamber] = useState<{ level: number; gems: number; startTime: number; durationType: number; endTime: number } | null>(null);
   const [troopState, setTroopState] = useState<{ troops: { type: number; tier: number; count: number }[] }>({ troops: [] });
   const [hospitalState, setHospitalState] = useState<{ troops: { type: number; tier: number; injured: number; healing: number }[]; finishTimestamp: number; totalHealingSeconds: number; isHealing: boolean; totalCost: { wheat: number; wood: number; stone: number; mineral: number; gold: number }; healingCost: { wheat: number; wood: number; stone: number; mineral: number; gold: number } } | null>(null);
   const [incomingMarches, setIncomingMarches] = useState<{ marchId: number; arrivalTimestamp: number; updated: boolean; marchType?: number; packet?: any }[]>([]);
+  const [ownMarches, setOwnMarches] = useState<OwnMarches | null>(null);
   const [marchHistory, setMarchHistory] = useState<any[]>([]);
   const [mapTiles, setMapTiles] = useState<any[]>([]);
   const [mapMarches, setMapMarches] = useState<any[]>([]);
@@ -51,6 +80,7 @@ export default function BotDetail({ iggId, onBack }: Props) {
   const [buildingState, setBuildingState] = useState<{ buildings: { position: number; id: number; level: number }[] }>({ buildings: [] });
   const [essenceState, setEssenceState] = useState<{ slots: { index: number; essenceLevel: number; finishTimestamp: number; baseMinutes: number; isRunning: boolean; isEmpty: boolean }[]; autoStoreLevel: number } | null>(null);
   const [coliseum, setColiseum] = useState<{ rank: number; fightsDone: number; gems: number; rivals: { name: string; guildTag: string; heroId: number }[] } | null>(null);
+  const [heroes, setHeroes] = useState<{ heroId: number; name: string; nameEn: string; level: number; power: number; rank: number; grade: number; skills: { id: number; name: string; nameEn: string }[]; battleSkills: { id: number; name: string; nameEn: string }[] }[]>([]);
   const [missions, setMissions] = useState<{ progress: number; activeMission: { missionId: number; name: string; timestamp: number; total: number; points: number; available: boolean } | null; missions: { missionId: number; name: string; timestamp: number; total: number; points: number; available: boolean }[] } | null>(null);
   const [missionRecords, setMissionRecords] = useState<{ header: any; records: { type: string; missionId?: number; level?: number; status?: number; timestamp?: number }[] } | null>(null);
   const [fdgExtension, setFdgExtension] = useState<{ activeMission: { missionId: number; level: number; remaining: number; endTimestamp: number; timeMinutes: number; startTimestamp: number; missionType: number; specialFlag: boolean } | null; mission200: { appearanceTimestamp: number; level: number; missionId: number; completed: number } | null; mission120: { appearanceTimestamp: number; level: number; missionId: number; completed: number } | null } | null>(null);
@@ -63,7 +93,11 @@ export default function BotDetail({ iggId, onBack }: Props) {
   const [costumes, setCostumes] = useState<{ id: number; grade: number; gemLevel1: number; gemLevel2: number; gemLevel3: number; stealthLevel1: number; gemId1: number; gemId2: number; gemId3: number; stealthId1: number; index: number; end: number; raw: string }[]>([]);
   const [equippedCostumes, setEquippedCostumes] = useState<{ id: number; grade: number; index: number }[]>([]);
   const [costumeDB, setCostumeDB] = useState<Record<number, { id: number; name: string; buffs: Record<number, { buffId: number; value: number }[]> }>>({});
-  const [buffDefs, setBuffDefs] = useState<Record<number, { id: number; name: string; unit: string }>>({});
+  const [effectDefs, setEffectDefs] = useState<Record<number, { id: number; name: string; unit: string; scope?: string }>>({});
+  const [buildingDB, setBuildingDB] = useState<Record<number, { id: number; name: string; nameTable?: string; maxLevel: number; temporal?: boolean; levels: Record<number, { time: number; costs: Record<string, number>; might: number }> }>>({});
+  const [talents, setTalents] = useState<{ unassigned: number; levels: number[] } | null>(null);
+  const [talentDB, setTalentDB] = useState<Record<number, { id: number; name: string; branch: number; row: number; maxLevel: number; effectId: number; levels: Record<number, number> }>>({});
+  const [talentBranches, setTalentBranches] = useState<{ id: number; name: string; count: number; talents: number[] }[]>([]);
   const [localConstructions, setLocalConstructions] = useState<{ active: boolean; position: number; id: number; level: number; remaining: number }[]>([]);
   const [botConfig, setBotConfig] = useState<any>(null);
   const [chestDialog, setChestDialog] = useState<{ itemId: number; max: number } | null>(null);
@@ -74,12 +108,20 @@ export default function BotDetail({ iggId, onBack }: Props) {
   const logsEndRef = useRef<HTMLDivElement>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
   const [itemsReady, setItemsReady] = useState(!!getItemsSync());
+  const [techsReady, setTechsReady] = useState(!!getTechsSync());
+  const [research, setResearch] = useState<{ techLevels: number[]; activeTechId: number; activeLevel: number; remainingSeconds: number } | null>(null);
+  const [localResearchRemaining, setLocalResearchRemaining] = useState(0);
+  const [techKindFilter, setTechKindFilter] = useState<string>('todas');
+  const [techSearch, setTechSearch] = useState('');
+  const [statsOpenKey, setStatsOpenKey] = useState<string | null>(null);
+  const [playerStats, setPlayerStats] = useState<any[]>([]);
   const [showSupplyDialog, setShowSupplyDialog] = useState(false);
   const [supplyTarget, setSupplyTarget] = useState('');
   const [supplySending, setSupplySending] = useState(false);
   const [supplyStopping, setSupplyStopping] = useState(false);
   const [supplyResult, setSupplyResult] = useState<{ ok: boolean; message: string } | null>(null);
   useEffect(() => { getItemsData().then(() => setItemsReady(true)); }, []);
+  useEffect(() => { getTechsData().then(() => setTechsReady(true)); }, []);
 
   useEffect(() => {
     if (!connected) return;
@@ -97,14 +139,18 @@ export default function BotDetail({ iggId, onBack }: Props) {
       setTreasureChamber(data.treasureChamber || null);
       if (data.buildingState) setBuildingState(data.buildingState);
       if (data.constructions) updateConstructions(data.constructions);
+      if (data.research !== undefined) applyResearch(data.research);
+      if (Array.isArray(data.playerStats)) setPlayerStats(data.playerStats);
       if (data.essenceState) setEssenceState(data.essenceState);
       if (data.coliseum) setColiseum(data.coliseum);
+      if (data.heroes !== undefined) setHeroes(data.heroes || []);
       if (data.missions) setMissions(data.missions);
       if (data.missionRecords) setMissionRecords(data.missionRecords);
       if (data.fdgExtension) setFdgExtension(data.fdgExtension);
       if (data.troopState) setTroopState(data.troopState);
       if (data.hospitalState !== undefined) setHospitalState(data.hospitalState);
       if (data.incomingMarches !== undefined) setIncomingMarches(data.incomingMarches);
+      if (data.ownMarches !== undefined) setOwnMarches(normalizeOwnMarches(data.ownMarches));
       if (data.marchHistory !== undefined) setMarchHistory(data.marchHistory);
       if (data.mapTiles !== undefined) setMapTiles(data.mapTiles);
       if (data.mapMarches !== undefined) setMapMarches(data.mapMarches || []);
@@ -121,7 +167,11 @@ export default function BotDetail({ iggId, onBack }: Props) {
       if (data.costumes !== undefined) setCostumes(data.costumes || []);
       if (data.equippedCostumes !== undefined) setEquippedCostumes(data.equippedCostumes || []);
       if (data.costumeDB) setCostumeDB(data.costumeDB);
-      if (data.buffDefs) setBuffDefs(data.buffDefs);
+      if (data.effects) setEffectDefs(data.effects);
+      if (data.buildingDB) setBuildingDB(data.buildingDB);
+      if (data.talentDB) setTalentDB(data.talentDB);
+      if (data.talentBranches) setTalentBranches(data.talentBranches);
+      if (data.talents !== undefined) setTalents(data.talents || null);
       setOnline(data.online);
       if (data.logs) setLogs(data.logs);
     };
@@ -164,14 +214,30 @@ export default function BotDetail({ iggId, onBack }: Props) {
     socket.on('troopTraining', onTroopTraining);
     socket.on('inventory', onInventory);
     socket.on('warNotification', onWarNotif);
-    socket.on('buildingState', (data: { iggId: number; buildingState: any }) => {
+    socket.on('buildingState', (data: { iggId: number; buildingState: any; playerStats?: any[] }) => {
       if (data.iggId !== iggId) return;
       if (data.buildingState) setBuildingState(data.buildingState);
+      if (Array.isArray(data.playerStats)) setPlayerStats(data.playerStats);
     });
     socket.on('constructions', (data: { iggId: number; constructions: any }) => {
       if (data.iggId !== iggId) return;
       if (data.constructions) updateConstructions(data.constructions);
     });
+    socket.on('research', (data: { iggId: number; research: any; playerStats?: any[] }) => {
+      if (data.iggId !== iggId) return;
+      applyResearch(data.research);
+      setPlayerStats(Array.isArray(data.playerStats) ? data.playerStats : []);
+    });
+    socket.on('talents', (data: { iggId: number; talents: any; playerStats?: any[] }) => {
+      if (data.iggId !== iggId) return;
+      setTalents(data.talents || null);
+      setPlayerStats(Array.isArray(data.playerStats) ? data.playerStats : []);
+    });
+    socket.on('techs', (data: any) => {
+      setTechsData(data);
+      setTechsReady(true);
+    });
+    if (!getTechsSync()) socket.emit('getTechs');
     socket.on('essence', (data: { iggId: number; essenceState: any }) => {
       if (data.iggId !== iggId) return;
       if (data.essenceState) setEssenceState(data.essenceState);
@@ -183,6 +249,10 @@ export default function BotDetail({ iggId, onBack }: Props) {
     socket.on('missions', (data: { iggId: number; missions: any }) => {
       if (data.iggId !== iggId) return;
       setMissions(data.missions || null);
+    });
+    socket.on('heroes', (data: { iggId: number; heroes: any[] }) => {
+      if (data.iggId !== iggId) return;
+      setHeroes(data.heroes || []);
     });
     socket.on('missionRecords', (data: { iggId: number; missionRecords: any }) => {
       if (data.iggId !== iggId) return;
@@ -203,6 +273,10 @@ export default function BotDetail({ iggId, onBack }: Props) {
     socket.on('incomingMarches', (data: { iggId: number; marches: any[] }) => {
       if (data.iggId !== iggId) return;
       setIncomingMarches(data.marches || []);
+    });
+    socket.on('ownMarches', (data: { iggId: number; marches: OwnMarches | null }) => {
+      if (data.iggId !== iggId) return;
+      setOwnMarches(normalizeOwnMarches(data.marches));
     });
     socket.on('configUpdated', (data: { iggId: number; config: any }) => {
       if (data.iggId !== iggId) return;
@@ -263,9 +337,10 @@ export default function BotDetail({ iggId, onBack }: Props) {
       if (data.iggId !== iggId) return;
       setCostumes(data.costumes || []);
     });
-    socket.on('equippedCostumes', (data: { iggId: number; equippedCostumes: any[] }) => {
+    socket.on('equippedCostumes', (data: { iggId: number; equippedCostumes: any[]; playerStats?: any[] }) => {
       if (data.iggId !== iggId) return;
       setEquippedCostumes(data.equippedCostumes || []);
+      if (Array.isArray(data.playerStats)) setPlayerStats(data.playerStats);
     });
 
     const onChestProgress = (data: { iggId: number; opened: number; total: number; done: boolean }) => {
@@ -297,14 +372,19 @@ export default function BotDetail({ iggId, onBack }: Props) {
       socket.off('supplyResult', onSupplyResult);
       socket.off('buildingState');
       socket.off('constructions');
+      socket.off('research');
+      socket.off('talents');
+      socket.off('techs');
       socket.off('essence');
       socket.off('coliseum');
       socket.off('missions');
+      socket.off('heroes');
       socket.off('missionRecords');
       socket.off('fdgExtension');
       socket.off('troops');
       socket.off('hospitalState');
       socket.off('incomingMarches');
+      socket.off('ownMarches');
       socket.off('leaderState');
       socket.off('guildApplications');
       socket.off('configUpdated');
@@ -349,6 +429,11 @@ export default function BotDetail({ iggId, onBack }: Props) {
     })));
   };
 
+  const applyResearch = (data: { techLevels: number[]; activeTechId: number; activeLevel: number; remainingSeconds: number } | null) => {
+    setResearch(data);
+    setLocalResearchRemaining(data?.remainingSeconds || 0);
+  };
+
   // countdown tick
   useEffect(() => {
     const interval = setInterval(() => {
@@ -358,6 +443,7 @@ export default function BotDetail({ iggId, onBack }: Props) {
         return next;
       });
       setLocalTrainingRemaining(prev => Math.max(0, prev - 1));
+      setLocalResearchRemaining(prev => Math.max(0, prev - 1));
     }, 1000);
     return () => clearInterval(interval);
   }, []);
@@ -390,19 +476,28 @@ export default function BotDetail({ iggId, onBack }: Props) {
     const gradeBuffs = def.buffs[grade];
     if (!gradeBuffs) return [];
     return gradeBuffs.map(b => {
-      const bd = buffDefs[b.buffId];
+      const bd = effectDefs[b.buffId];
       return { name: bd?.name || `Buff ${b.buffId}`, value: b.value, unit: bd?.unit || '' };
     });
   };
 
+  const getBuildingName = (id: number) => buildingDB[id]?.name || buildingDB[id]?.nameTable || `ID ${id}`;
+  const getBuildingNext = (id: number, level: number) => {
+    const def = buildingDB[id];
+    if (!def) return null;
+    const next = def.levels?.[level + 1];
+    return next ? { level: level + 1, ...next } : null;
+  };
+
   // (imported from data/items.json via module-level constants)
 
+  type ItemInfo = { name: string; gems?: number; type?: string; drops?: number[] };
   const itemData = itemsReady ? getItemsSync() : null;
-  const ITEMS_DB_LOCAL: Record<number, { name: string; gems: number }> = {};
+  const ITEMS_DB_LOCAL: Record<number, ItemInfo> = {};
   const ITEM_VALUES_LOCAL: Record<number, number> = {};
   const RESOURCE_ITEM_IDS_LOCAL: Record<string, number[]> = {};
   if (itemData) {
-    for (const [k, v] of Object.entries(itemData.ITEMS_DB || {})) ITEMS_DB_LOCAL[Number(k)] = v as { name: string; gems: number };
+    for (const [k, v] of Object.entries(itemData.ITEMS_DB || {})) ITEMS_DB_LOCAL[Number(k)] = v as ItemInfo;
     for (const [k, v] of Object.entries(itemData.ITEM_VALUES || {})) ITEM_VALUES_LOCAL[Number(k)] = v as number;
     for (const [k, v] of Object.entries(itemData.RESOURCE_ITEM_IDS || {})) RESOURCE_ITEM_IDS_LOCAL[k] = v as number[];
   }
@@ -419,6 +514,52 @@ export default function BotDetail({ iggId, onBack }: Props) {
     return total;
   };
 
+  const techsData = techsReady ? getTechsSync() : null;
+  const TECH_MAP: Record<number, any> = {};
+  const KIND_MAP: Record<number, { id: number; name: string }> = {};
+  if (techsData) {
+    for (const [k, v] of Object.entries(techsData.techs || {})) TECH_MAP[Number(k)] = v;
+    for (const [k, v] of Object.entries(techsData.kinds || {})) KIND_MAP[Number(k)] = v as { id: number; name: string };
+  }
+
+  const researchLevels: number[] = research?.techLevels || [];
+
+  const formatEffectValue = (unit: string, value: number) => {
+    if (!value) return '';
+    if (unit === '%') {
+      const pct = value / 100;
+      return `${pct % 1 === 0 ? pct : pct.toFixed(1)}%`;
+    }
+    return unit ? `${value} ${unit}` : `${value}`;
+  };
+
+  const techEffectText = (t: any, level: number) => {
+    if (!t?.effect?.values?.length) return '';
+    const idx = Math.min(Math.max(level, 1), t.effect.values.length) - 1;
+    const value = t.effect.values[idx];
+    if (!value && !t.effect.name) return '';
+    return `${t.effect.name} ${formatEffectValue(t.effect.unit || '', value)}`.trim();
+  };
+
+  const filteredTechs = Object.values(TECH_MAP)
+    .filter((t: any) => (techKindFilter === 'todas' || String(t.kind) === techKindFilter))
+    .filter((t: any) => {
+      const q = techSearch.trim().toLowerCase();
+      return !q || `${t.name} ${t.nameEn}`.toLowerCase().includes(q);
+    })
+    .sort((a: any, b: any) => a.id - b.id);
+
+  const researchStarted = researchLevels.filter(l => l > 0).length;
+  const researchMaxed = researchLevels.filter((l, i) => {
+    const t = TECH_MAP[i + 1];
+    return !!t && t.levelMax > 0 && l === t.levelMax;
+  }).length;
+  const researchLevelsTotal = researchLevels.reduce((acc, l) => acc + l, 0);
+
+  const talentLevels: number[] = talents?.levels || [];
+  const talentsActive = talentLevels.filter(l => l > 0).length;
+  const talentsTotal = talentLevels.reduce((acc, l) => acc + l, 0);
+
   const tabs = [
     { key: 'info' as const, label: 'Info' },
     { key: 'resources' as const, label: 'Recursos' },
@@ -428,6 +569,9 @@ export default function BotDetail({ iggId, onBack }: Props) {
     { key: 'config' as const, label: 'Config' },
     { key: 'camara' as const, label: 'Cámara' },
     { key: 'construcciones' as const, label: 'Construcciones' },
+    { key: 'academia' as const, label: 'Academia' },
+    { key: 'talentos' as const, label: 'Talentos' },
+    { key: 'stats' as const, label: 'Player Stats' },
     { key: 'transmutacion' as const, label: 'Transmutación' },
     { key: 'cuartel' as const, label: 'Cuartel' },
     { key: 'lider' as const, label: 'Líder' },
@@ -435,6 +579,7 @@ export default function BotDetail({ iggId, onBack }: Props) {
     { key: 'atalaya' as const, label: 'Atalaya' },
     { key: 'mapa' as const, label: 'Mapa' },
     { key: 'coliseo' as const, label: 'Coliseo' },
+    { key: 'heroes' as const, label: 'Héroes' },
     { key: 'misiones' as const, label: 'Misiones' },
     { key: 'guildApps' as const, label: 'Guild Apps' },
     { key: 'trajes' as const, label: 'Trajes' },
@@ -462,7 +607,7 @@ export default function BotDetail({ iggId, onBack }: Props) {
         </div>
       </header>
 
-      <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
+      <div style={{ display: 'flex', flexWrap: 'wrap', columnGap: 8, rowGap: 6, marginBottom: 16 }}>
         {tabs.map(t => (
           <button
             key={t.key}
@@ -499,7 +644,21 @@ export default function BotDetail({ iggId, onBack }: Props) {
           <div><strong>Asesinatos:</strong> {formatRes(playerInfo.kills)}</div>
           <div><strong>Gemas:</strong> {playerInfo.gems}</div>
           <div><strong>VIP Exp:</strong> {playerInfo.vipExp}</div>
-          <div><strong>Energía:</strong> {playerInfo.energy}</div>
+          <div>
+            <strong>Energía:</strong> {playerInfo.energy}
+            {playerInfo.energyRegen && (
+              <span style={{ color: colors.textSecondary }}>
+                {' '}(+{Math.round(playerInfo.energyRegen.perHour)}/h
+                {playerInfo.energyRegen.bonusPct > 0
+                  ? ` · +${(playerInfo.energyRegen.bonusPct / 100).toFixed(1)}%`
+                  : ''})
+              </span>
+            )}
+          </div>
+          <div>
+            <strong>RES:</strong>{' '}
+            {playerInfo.currentResistencia ?? 0}/{playerInfo.resistenciaMax ?? 120}
+          </div>
           {playerInfo.castleX !== undefined && (
             <div><strong>Castillo:</strong> X={playerInfo.castleX} Y={playerInfo.castleY}</div>
           )}
@@ -519,12 +678,57 @@ export default function BotDetail({ iggId, onBack }: Props) {
                     {getCostumeBuffs(c.id, c.grade).length > 0 && (
                       <div style={{ marginTop: 4, fontSize: 11, color: colors.success }}>
                         {getCostumeBuffs(c.id, c.grade).map((b, j) => (
-                          <span key={j}>{b.name} +{b.value}{b.unit} </span>
+                          <span key={j}>{b.name} {formatEffectValue(b.unit, b.value)} </span>
                         ))}
                       </div>
                     )}
                   </div>
                 ))}
+              </div>
+            </div>
+          )}
+          {ownMarches && (
+            <div style={{ gridColumn: '1 / -1', marginTop: 8, borderTop: `1px solid ${colors.border}`, paddingTop: 12 }}>
+              <strong>Marchas ({ownMarches.count}/{ownMarches.limit}):</strong>
+              {ownMarches.entries.length === 0 && (
+                <div style={{ color: colors.textSecondary, fontSize: 12, marginTop: 6 }}>Sin marchas activas</div>
+              )}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginTop: 8 }}>
+                {ownMarches.entries.map(m => {
+                  const arrivesAt = m.startAt + m.durationSec;
+                  const remaining = Math.max(0, arrivesAt - Math.floor(now / 1000));
+                  return (
+                    <div key={m.index} style={{
+                      background: '#0d1117', border: `1px solid ${colors.border}`, borderRadius: 6,
+                      padding: '6px 10px', fontSize: 12, display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap',
+                    }}>
+                      <span style={{ fontWeight: 600 }}>Slot {m.index}</span>
+                      <span style={{
+                        color: m.status === 'flying' ? colors.accent : m.status === 'arrived' ? colors.success : colors.warning,
+                      }}>
+                        {m.status === 'flying' ? 'En vuelo' : m.status === 'arrived' ? 'Llegó' : `0x${m.state.toString(16)}`}
+                      </span>
+                      <span>({m.destX},{m.destY})</span>
+                      {m.name && <span>{m.name}</span>}
+                      {m.status === 'flying' && m.startAt > 0 && (
+                        <span style={{ color: colors.textSecondary }}>
+                          llega {new Date(arrivesAt * 1000).toLocaleTimeString()} ·{' '}
+                          {remaining > 0
+                            ? `en ${Math.floor(remaining / 3600)}h ${Math.floor((remaining % 3600) / 60)}m ${remaining % 60}s`
+                            : 'ahora'}
+                        </span>
+                      )}
+                      {m.troops.length > 0 && (
+                        <span style={{ color: colors.textSecondary }}>
+                          {m.troops.map(t => `${t.count} T${t.tier} ${['Inf', 'Arq', 'Cab', 'Asi'][t.type] ?? t.type}`).join(' + ')}
+                        </span>
+                      )}
+                      {m.heroIds.length > 0 && (
+                        <span style={{ color: colors.textSecondary }}>héroes: {m.heroIds.join(',')}</span>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             </div>
           )}
@@ -588,12 +792,12 @@ export default function BotDetail({ iggId, onBack }: Props) {
                   .filter(item => {
                     if (invFilter === 'todos') return true;
                     const info = ITEMS_DB_LOCAL[item.itemId];
-                    return info && (info as any).type === invFilter;
+                    return info && info.type === invFilter;
                   })
                   .sort((a, b) => a.itemId - b.itemId)
                   .map(item => {
                     const info = ITEMS_DB_LOCAL[item.itemId];
-                    const isChest = info && (info as any).type === 'cofre';
+                    const isChest = info && info.type === 'cofre';
                     return (
                       <div key={item.itemId} style={{
                         background: '#000', border: `1px solid ${colors.border}`,
@@ -603,7 +807,7 @@ export default function BotDetail({ iggId, onBack }: Props) {
                       }} onContextMenu={isChest ? (e) => { e.preventDefault(); setChestDialog({ itemId: item.itemId, max: item.amount }); setChestQty(Math.min(item.amount, 100)); } : undefined}>
                         <div style={{ fontSize: 13, color: colors.text }}>{info?.name || `Item #${item.itemId}`}</div>
                         <div style={{ fontSize: 12, color: colors.textSecondary, marginTop: 2 }}>
-                          x{item.amount}{info ? ` (${info.gems} gemas)` : ''}
+                          x{item.amount}{info && typeof info.gems === 'number' && info.gems >= 0 ? ` (${info.gems} gemas)` : ''}
                         </div>
                       </div>
                     );
@@ -724,7 +928,13 @@ export default function BotDetail({ iggId, onBack }: Props) {
       )}
 
       {activeTab === 'config' && botConfig && (
-        <ConfigPanel config={botConfig} socket={socket} iggId={iggId} colors={colors} />
+        <ConfigPanel
+          config={botConfig}
+          socket={socket}
+          iggId={iggId}
+          colors={colors}
+          supplyCapacity={playerStats.find((s: any) => s.name === 'Capacidad de suministro +')?.total || 0}
+        />
       )}
 
       {activeTab === 'config' && !botConfig && (
@@ -773,7 +983,7 @@ export default function BotDetail({ iggId, onBack }: Props) {
                   <div style={{ fontSize: 12, color: colors.textSecondary, marginBottom: 4 }}>
                     {ci === 0 ? 'Cola gratis' : 'Cola gemas'}
                   </div>
-                  <div style={{ fontSize: 14, fontWeight: 600 }}>{BuildingName[c.id] || `ID ${c.id}`}</div>
+                  <div style={{ fontSize: 14, fontWeight: 600 }}>{getBuildingName(c.id)}</div>
                   <div style={{ fontSize: 13, color: colors.textSecondary, marginTop: 2 }}>
                     Nivel {c.level} — {formatTime(c.remaining)}
                   </div>
@@ -787,16 +997,23 @@ export default function BotDetail({ iggId, onBack }: Props) {
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
               {buildingState.buildings
                 .filter(b => b.id !== 0)
-                .sort((a, b) => (BuildingName[a.id] || '').localeCompare(BuildingName[b.id] || ''))
+                .sort((a, b) => getBuildingName(a.id).localeCompare(getBuildingName(b.id)))
                 .map((b, i) => {
                   const inProgress = localConstructions.find(c => c.id === b.id && c.position === b.position);
+                  const def = buildingDB[b.id];
+                  const next = getBuildingNext(b.id, b.level);
                   return (
                     <div key={i} style={{
                       background: colors.surface, border: `1px solid ${inProgress ? '#e6a817' : colors.border}`,
                       borderRadius: 10, padding: '14px 16px', width: 200,
                       display: 'flex', flexDirection: 'column', gap: 6,
                     }}>
-                      <div style={{ fontWeight: 600, fontSize: 14, color: colors.text }}>{BuildingName[b.id] || `ID ${b.id}`}</div>
+                      <div style={{ fontWeight: 600, fontSize: 14, color: colors.text }}>{getBuildingName(b.id)}</div>
+                      {def?.temporal && (
+                        <div style={{ fontSize: 11, color: '#e6a817' }}>
+                          Potenciador temporal — sólo al ejecutar un líder
+                        </div>
+                      )}
                       <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, color: colors.textSecondary }}>
                         <span>Nivel <strong style={{ color: colors.text }}>{b.level}</strong></span>
                         <span>0x{b.position.toString(16).toUpperCase()}</span>
@@ -806,9 +1023,332 @@ export default function BotDetail({ iggId, onBack }: Props) {
                           Subiendo a nivel {inProgress.level} — {formatTime(inProgress.remaining)}
                         </div>
                       )}
+                      {def && next && (
+                        <div style={{ fontSize: 12, color: colors.textSecondary, borderTop: `1px solid ${colors.border}`, paddingTop: 4, marginTop: 2, display: 'flex', flexDirection: 'column', gap: 3 }}>
+                          <div>Nivel {next.level} — {formatTime(next.time)}</div>
+                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '2px 8px' }}>
+                            {BUILDING_COST_ORDER.some(k => (next.costs?.[k] || 0) > 0)
+                              ? BUILDING_COST_ORDER.filter(k => (next.costs?.[k] || 0) > 0).map(k => (
+                                <span key={k}>{BUILDING_COST_LABELS[k]} {formatRes(next.costs[k])}</span>
+                              ))
+                              : <span>Sin costo</span>}
+                          </div>
+                        </div>
+                      )}
+                      {def && !next && (
+                        <div style={{ fontSize: 12, color: colors.textSecondary, borderTop: `1px solid ${colors.border}`, paddingTop: 4, marginTop: 2 }}>
+                          Nivel máximo ({def.maxLevel})
+                        </div>
+                      )}
                     </div>
                   );
                 })}
+            </div>
+          )}
+        </div>
+      )}
+
+      {activeTab === 'academia' && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          <div style={{
+            background: colors.surface, border: `1px solid ${colors.border}`,
+            borderRadius: 8, padding: 16,
+          }}>
+            {!research ? (
+              <div style={{ color: colors.textSecondary }}>Esperando datos de la Academia...</div>
+            ) : research.activeTechId > 0 && localResearchRemaining > 0 ? (() => {
+              const t = TECH_MAP[research.activeTechId];
+              const lvl = research.activeLevel;
+              const total = t?.times?.[lvl] || 0;
+              const pct = total > 0 ? Math.max(0, Math.min(100, ((total - localResearchRemaining) / total) * 100)) : 0;
+              return (
+                <div>
+                  <div style={{ fontSize: 12, color: colors.textSecondary, marginBottom: 4 }}>Investigación en curso</div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12 }}>
+                    <div>
+                      <div style={{ fontSize: 15, fontWeight: 600 }}>
+                        {t ? t.name : `Investigación ${research.activeTechId}`}
+                        <span style={{ color: colors.textSecondary, fontWeight: 400, marginLeft: 8 }}>→ nivel {lvl}</span>
+                      </div>
+                      {t && lvl > 0 && (
+                        <div style={{ fontSize: 13, color: colors.textSecondary, marginTop: 2 }}>{techEffectText(t, lvl)}</div>
+                      )}
+                    </div>
+                    <div style={{ fontSize: 15, fontWeight: 600, whiteSpace: 'nowrap' }}>{formatTime(localResearchRemaining)}</div>
+                  </div>
+                  <div style={{ marginTop: 10, height: 6, background: 'rgba(128,128,128,0.25)', borderRadius: 4 }}>
+                    <div style={{ width: `${pct}%`, height: 6, background: '#e6a817', borderRadius: 4, transition: 'width 1s linear' }} />
+                  </div>
+                </div>
+              );
+            })() : (
+              <div style={{ color: colors.textSecondary }}>Sin investigación en curso</div>
+            )}
+            {research && (
+              <div style={{ display: 'flex', gap: 20, marginTop: 14, fontSize: 13, color: colors.textSecondary, flexWrap: 'wrap' }}>
+                <span>Investigadas: <strong style={{ color: colors.text }}>{researchStarted} / {Object.keys(TECH_MAP).length}</strong></span>
+                <span>Al nivel máximo: <strong style={{ color: colors.text }}>{researchMaxed}</strong></span>
+                <span>En curso: <strong style={{ color: colors.text }}>{research.activeTechId > 0 ? TECH_MAP[research.activeTechId]?.name || research.activeTechId : '—'}</strong></span>
+              </div>
+            )}
+          </div>
+
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+            <input
+              value={techSearch}
+              onChange={e => setTechSearch(e.target.value)}
+              placeholder="Buscar investigación..."
+              style={{
+                background: colors.surface, border: `1px solid ${colors.border}`,
+                borderRadius: 6, color: colors.text, padding: '6px 10px', minWidth: 220, fontSize: 13,
+              }}
+            />
+            <select
+              value={techKindFilter}
+              onChange={e => setTechKindFilter(e.target.value)}
+              style={{
+                background: colors.surface, border: `1px solid ${colors.border}`,
+                borderRadius: 6, color: colors.text, padding: '6px 8px', fontSize: 13,
+              }}
+            >
+              <option value="todas">Todas las categorías</option>
+              {Object.values(KIND_MAP)
+                .sort((a, b) => a.id - b.id)
+                .map(k => <option key={k.id} value={String(k.id)}>{k.name}</option>)}
+            </select>
+            <span style={{ fontSize: 12, color: colors.textSecondary }}>{filteredTechs.length} investigaciones</span>
+          </div>
+
+          {filteredTechs.length === 0 ? (
+            <div style={{
+              background: colors.surface, border: `1px solid ${colors.border}`,
+              borderRadius: 8, padding: 16, color: colors.textSecondary,
+            }}>
+              {techsReady ? 'No se encontraron investigaciones' : 'Cargando catálogo de investigaciones...'}
+            </div>
+          ) : (
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
+              {filteredTechs.map(t => {
+                const lvl = researchLevels[t.id - 1] || 0;
+                const maxed = t.levelMax > 0 && lvl >= t.levelMax;
+                const isActive = research ? research.activeTechId === t.id : false;
+                const activeLevel = research?.activeLevel || 0;
+                return (
+                  <div key={t.id} style={{
+                    width: 240, background: colors.surface,
+                    border: `1px solid ${isActive ? '#e6a817' : colors.border}`,
+                    borderRadius: 10, padding: '12px 14px',
+                    display: 'flex', flexDirection: 'column', gap: 6,
+                  }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8, alignItems: 'baseline' }}>
+                      <span style={{ fontWeight: 600, fontSize: 13, color: colors.text }}>{t.name}</span>
+                      <span style={{ fontSize: 12, color: colors.textSecondary, whiteSpace: 'nowrap' }}>
+                        <strong style={{ color: maxed ? colors.success : lvl > 0 ? colors.text : colors.textSecondary }}>{lvl}</strong>/{t.levelMax}
+                      </span>
+                    </div>
+                    <div style={{ height: 5, background: 'rgba(128,128,128,0.25)', borderRadius: 3 }}>
+                      <div style={{
+                        width: `${t.levelMax > 0 ? Math.min(100, (lvl / t.levelMax) * 100) : 0}%`,
+                        height: 5, borderRadius: 3,
+                        background: maxed ? colors.success : '#4a90d9',
+                      }} />
+                    </div>
+                    <div style={{ fontSize: 12, color: colors.textSecondary }}>{techEffectText(t, Math.max(lvl, 1))}</div>
+                    <div style={{ fontSize: 11, color: colors.textSecondary, opacity: 0.8 }}>
+                      {KIND_MAP[t.kind]?.name || `Kind ${t.kind}`}
+                    </div>
+                    {isActive && (
+                      <div style={{ fontSize: 12, color: '#e6a817', borderTop: `1px solid ${colors.border}`, paddingTop: 5 }}>
+                        En curso: nivel {activeLevel} — {formatTime(localResearchRemaining)}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      )}
+
+      {activeTab === 'talentos' && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          <div style={{
+            background: colors.surface, border: `1px solid ${colors.border}`,
+            borderRadius: 8, padding: 16,
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
+              <div style={{ fontSize: 15, fontWeight: 600 }}>Talentos</div>
+              <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap', fontSize: 13, color: colors.textSecondary }}>
+                <span>Invertidos: <strong style={{ color: colors.text }}>{talentsTotal}</strong></span>
+                <span>Sin asignar: <strong style={{ color: colors.text }}>{talents?.unassigned ?? 0}</strong></span>
+                <span>Activos: <strong style={{ color: colors.text }}>{talentsActive} / {Object.keys(talentDB).length}</strong></span>
+              </div>
+            </div>
+            <div style={{ fontSize: 12, color: colors.textSecondary, marginTop: 6 }}>
+              Sólo se muestran los talentos con puntos invertidos, agrupados por rama del árbol.
+            </div>
+          </div>
+
+          {!talents ? (
+            <div style={{
+              background: colors.surface, border: `1px solid ${colors.border}`,
+              borderRadius: 8, padding: 16, color: colors.textSecondary,
+            }}>
+              Esperando datos de talentos (proto 3801)...
+            </div>
+          ) : (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 12 }}>
+              {talentBranches.map(br => {
+                const branchTalents = (br.talents || [])
+                  .map(id => ({ id, def: talentDB[id], level: talentLevels[id - 1] || 0 }))
+                  .filter(t => !!t.def && t.level > 0)
+                  .sort((a, b) => a.def.row - b.def.row);
+                const branchSpent = (br.talents || []).reduce((acc, id) => acc + (talentLevels[id - 1] || 0), 0);
+                return (
+                  <div key={br.id} style={{
+                    background: colors.surface, border: `1px solid ${colors.border}`,
+                    borderRadius: 10, padding: 14,
+                    display: 'flex', flexDirection: 'column', gap: 8,
+                  }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8, alignItems: 'baseline' }}>
+                      <span style={{ fontWeight: 600, fontSize: 13, color: colors.text }}>{br.name}</span>
+                      <span style={{ fontSize: 12, color: colors.textSecondary, whiteSpace: 'nowrap' }}>
+                        {branchTalents.length} activos · {branchSpent} pts
+                      </span>
+                    </div>
+                    {branchTalents.length === 0 ? (
+                      <div style={{ fontSize: 12, color: colors.textSecondary }}>Sin puntos invertidos</div>
+                    ) : (
+                      branchTalents.map(t => {
+                        const fx = effectDefs[t.def.effectId];
+                        const value = t.def.levels[t.level] || 0;
+                        const pct = t.def.maxLevel > 0 ? Math.min(100, (t.level / t.def.maxLevel) * 100) : 0;
+                        return (
+                          <div key={t.id} style={{
+                            display: 'flex', flexDirection: 'column', gap: 3,
+                            borderTop: `1px solid ${colors.border}`, paddingTop: 6,
+                          }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8, fontSize: 12 }}>
+                              <span style={{ color: colors.text, fontWeight: 600 }}>{t.def.name}</span>
+                              <span style={{ color: colors.success, whiteSpace: 'nowrap' }}>
+                                {formatEffectValue(fx?.unit || '', value)}
+                              </span>
+                            </div>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8, fontSize: 11, color: colors.textSecondary }}>
+                              <span>Nivel {t.level} / {t.def.maxLevel}</span>
+                              {fx?.name && fx.name !== t.def.name ? <span>{fx.name}</span> : <span />}
+                            </div>
+                            <div style={{ height: 4, background: colors.border, borderRadius: 2, overflow: 'hidden' }}>
+                              <div style={{ width: `${pct}%`, height: '100%', background: '#4a90d9' }} />
+                            </div>
+                          </div>
+                        );
+                      })
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      )}
+
+      {activeTab === 'stats' && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          <div style={{
+            background: colors.surface, border: `1px solid ${colors.border}`,
+            borderRadius: 8, padding: 16,
+          }}>
+            <div style={{ fontSize: 15, fontWeight: 600, marginBottom: 8 }}>Stats del jugador</div>
+            {!research ? (
+              <div style={{ color: colors.textSecondary }}>Esperando datos de la Academia...</div>
+            ) : (
+              <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap', fontSize: 13, color: colors.textSecondary }}>
+                <span>Investigaciones: <strong style={{ color: colors.text }}>{researchStarted} / {Object.keys(TECH_MAP).length}</strong></span>
+                <span>Niveles invertidos: <strong style={{ color: colors.text }}>{researchLevelsTotal}</strong></span>
+                <span>Al nivel máximo: <strong style={{ color: colors.text }}>{researchMaxed}</strong></span>
+                <span>Stats acumulados: <strong style={{ color: colors.text }}>{playerStats.length}</strong></span>
+                <span>Construcciones: <strong style={{ color: colors.text }}>{buildingState.buildings.filter(b => b.level > 0).length}</strong></span>
+                <span>Talentos: <strong style={{ color: colors.text }}>{talentsActive} activos</strong></span>
+                <span style={{ opacity: 0.8 }}>Reino = efecto local (producción/almacenamiento)</span>
+              </div>
+            )}
+          </div>
+
+          {playerStats.length === 0 ? (
+            <div style={{
+              background: colors.surface, border: `1px solid ${colors.border}`,
+              borderRadius: 8, padding: 16, color: colors.textSecondary,
+            }}>
+              {research ? 'Todavía no hay stats (investigaciones, trajes, construcciones o talentos)' : 'Esperando datos de la Academia...'}
+            </div>
+          ) : (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 10 }}>
+              {playerStats.map(s => {
+                const open = statsOpenKey === s.key;
+                return (
+                  <div
+                    key={s.key}
+                    onClick={() => setStatsOpenKey(open ? null : s.key)}
+                    style={{
+                      background: colors.surface,
+                      border: `1px solid ${open ? '#4a90d9' : colors.border}`,
+                      borderRadius: 10, padding: '12px 14px', cursor: 'pointer',
+                      display: 'flex', flexDirection: 'column', gap: 4,
+                    }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10, alignItems: 'baseline' }}>
+                      <span style={{ fontWeight: 600, fontSize: 13, color: colors.text }}>{s.name}</span>
+                      <span style={{ fontWeight: 700, fontSize: 14, color: colors.success, whiteSpace: 'nowrap' }}>
+                        {formatEffectValue(s.unit, s.total)}
+                        {s.bonusPct != null && (
+                          <span style={{ fontSize: 11, fontWeight: 600, color: colors.textSecondary, marginLeft: 6 }}>
+                            {formatEffectValue('', s.baseTotal ?? 0)} + {formatEffectValue('%', s.bonusPct)}
+                          </span>
+                        )}
+                      </span>
+                    </div>
+                    <div style={{ fontSize: 11, color: colors.textSecondary }}>
+                      {s.count} {s.count === 1 ? 'aporte' : 'aportes'} · {s.contributions?.length || 0} {s.contributions?.length === 1 ? 'fuente' : 'fuentes'} {open ? '▲' : '▼'}
+                    </div>
+                    {open && (
+                      <div style={{
+                        marginTop: 4, borderTop: `1px solid ${colors.border}`, paddingTop: 6,
+                        display: 'flex', flexDirection: 'column', gap: 8,
+                      }}>
+                        {(s.contributions || []).map((c: any) => (
+                          <div key={c.source} style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                            <div style={{
+                              display: 'flex', justifyContent: 'space-between', gap: 8,
+                              fontSize: 12, fontWeight: 600, color: colors.text,
+                            }}>
+                              <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                                {c.label}
+                                {c.scope === 'local' && (
+                                  <span style={{
+                                    fontSize: 10, fontWeight: 600, color: '#e6a817',
+                                    border: '1px solid #e6a817', borderRadius: 4, padding: '0 4px',
+                                  }}>Reino</span>
+                                )}
+                              </span>
+                              <span>{formatEffectValue(c.unit ?? s.unit, c.total)}</span>
+                            </div>
+                            {[...c.items].sort((a: any, b: any) => b.value - a.value).map((it: any, idx: number) => (
+                              <div key={`${it.id}-${it.level ?? ''}-${idx}`} style={{
+                                display: 'flex', justifyContent: 'space-between', gap: 8,
+                                fontSize: 12, color: colors.textSecondary, paddingLeft: 8,
+                              }}>
+                                <span>{it.name}{it.level ? <span style={{ opacity: 0.7 }}> {c.source === 'costume' ? `G${it.level}` : `nv ${it.level}`}</span> : null}</span>
+                                <span style={{ color: colors.text, whiteSpace: 'nowrap' }}>{formatEffectValue(it.unit ?? s.unit, it.value)}</span>
+                              </div>
+                            ))}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           )}
         </div>
@@ -906,6 +1446,56 @@ export default function BotDetail({ iggId, onBack }: Props) {
                   </div>
                 </div>
               )}
+            </div>
+          )}
+        </div>
+      )}
+
+      {activeTab === 'heroes' && (
+        <div style={{
+          background: colors.surface, border: `1px solid ${colors.border}`,
+          borderRadius: 8, padding: 16,
+        }}>
+          {heroes.length === 0 ? (
+            <div style={{ color: colors.textSecondary }}>Esperando datos de héroes...</div>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <div style={{ fontSize: 12, color: colors.textSecondary }}>
+                {heroes.length} héroes — nivel máx {Math.max(...heroes.map(h => h.level))}
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 10 }}>
+                {[...heroes].sort((a, b) => b.level - a.level || a.heroId - b.heroId).map(h => (
+                  <div key={h.heroId} style={{
+                    border: `1px solid ${colors.border}`, borderRadius: 8, padding: '10px 12px',
+                    display: 'flex', flexDirection: 'column', gap: 6,
+                  }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 8 }}>
+                      <span style={{ fontWeight: 700 }} title={h.nameEn}>{h.name}</span>
+                      <span style={{ fontSize: 12, color: colors.textSecondary }}>#{h.heroId}</span>
+                    </div>
+                    <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', fontSize: 12 }}>
+                      <span style={{ background: 'rgba(88,166,255,.15)', color: colors.primary, borderRadius: 4, padding: '1px 6px' }}>Nv {h.level}</span>
+                      <span style={{ background: 'rgba(188,140,255,.15)', color: colors.accent, borderRadius: 4, padding: '1px 6px' }}>Rango {h.rank}</span>
+                      <span style={{ background: 'rgba(63,185,80,.15)', color: colors.success, borderRadius: 4, padding: '1px 6px' }}>Grado {h.grade}</span>
+                      <span style={{ color: colors.textSecondary }}>{h.power.toLocaleString()} poder</span>
+                    </div>
+                    {h.skills.length > 0 && (
+                      <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
+                        {h.skills.map(s => (
+                          <span key={s.id} title={s.nameEn} style={{ fontSize: 11, border: `1px solid ${colors.border}`, borderRadius: 4, padding: '1px 5px' }}>{s.name}</span>
+                        ))}
+                      </div>
+                    )}
+                    {h.battleSkills.length > 0 && (
+                      <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
+                        {h.battleSkills.map(s => (
+                          <span key={s.id} title={s.nameEn} style={{ fontSize: 11, border: `1px solid ${colors.accent}`, color: colors.accent, borderRadius: 4, padding: '1px 5px' }}>{s.name}</span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </div>
@@ -1140,7 +1730,7 @@ export default function BotDetail({ iggId, onBack }: Props) {
                     {getCostumeBuffs(c.id, c.grade).length > 0 ? (
                       <div style={{ fontSize: 11, color: colors.success }}>
                         {getCostumeBuffs(c.id, c.grade).map((b, j) => (
-                          <div key={j}>{b.name} +{b.value}{b.unit}</div>
+                          <div key={j}>{b.name} {formatEffectValue(b.unit, b.value)}</div>
                         ))}
                       </div>
                     ) : (
@@ -1416,6 +2006,7 @@ export default function BotDetail({ iggId, onBack }: Props) {
                       Marcha <strong>#{m.marchId}</strong>
                       {m.marchType === 0xff05 && <span style={{ color: colors.danger, marginLeft: 6 }}>⚔ Ataque</span>}
                       {m.marchType === 0xff08 && <span style={{ color: '#60a5fa', marginLeft: 6 }}>🔍 Exploración</span>}
+                      {m.packet?.lineType === 10 && <span style={{ color: '#4ade80', marginLeft: 6 }}>🤝 Refuerzo</span>}
                       {m.updated && !isHistory && <span style={{ color: colors.warning, marginLeft: 6 }}>(acelerada)</span>}
                       {isHistory && <span style={{ color: '#4ade80', marginLeft: 6 }}>✔ Llegó</span>}
                     </span>
@@ -1586,28 +2177,9 @@ export default function BotDetail({ iggId, onBack }: Props) {
   );
 }
 
-const BuildingName: Record<number, string> = {
-  0: '—',
-  1: 'Leñador', 2: 'Cantera', 3: 'Mina', 4: 'Granja',
-  5: 'Mansión', 6: 'Cuartel', 7: 'Hospital', 8: 'Castillo',
-  9: 'Almacén', 10: 'Academia', 11: 'Salón de Guerra', 12: 'Muro',
-  13: 'Torre Vigía', 14: 'Embajada', 15: 'Forja', 16: 'Cámara Tesoro',
-  17: 'Puesto Comercial', 18: 'Prisión', 19: 'Altar',
-  20: 'Guarida Monstruos', 21: 'Manantial', 22: 'Aguja Mística',
-  23: 'Gimnasio', 24: 'Piedra Lunar', 25: 'Artefacto',
-  26: 'Mina Poder Mágico', 27: 'Cuartel Poder Mágico',
-  28: 'Casa de Aldea', 29: 'Torre Defensa I', 30: 'Torre Defensa II',
-   31: 'Torre Defensa III',
-  100: 'Desafío de Héroe',
-  101: 'Arena',
-  102: 'Refugio',
-  105: 'Recompensa NPC',
-  106: 'Apuesta',
-  107: 'Monopoly',
-  109: 'Valhalla',
-  110: 'Torre de Defensa',
-   111: 'Reliquias',
-   112: 'Torre de Combate',
+const BUILDING_COST_ORDER = ['food', 'stone', 'timber', 'ore', 'gold'];
+const BUILDING_COST_LABELS: Record<string, string> = {
+  food: 'Comida', stone: 'Piedra', timber: 'Madera', ore: 'Mineral', gold: 'Oro',
 };
 
 // ── Config Panel ──
@@ -1680,7 +2252,7 @@ function setDeep(obj: any, path: string, value: any): any {
   return clone;
 }
 
-function ConfigPanel({ config, socket, iggId, colors }: { config: any; socket: any; iggId: number; colors: any }) {
+function ConfigPanel({ config, socket, iggId, colors, supplyCapacity }: { config: any; socket: any; iggId: number; colors: any; supplyCapacity?: number }) {
   const [draft, setDraft] = useState<any>(config);
   const [saved, setSaved] = useState(false);
   const [changed, setChanged] = useState(false);
@@ -1701,6 +2273,13 @@ function ConfigPanel({ config, socket, iggId, colors }: { config: any; socket: a
     setDraft(config);
     setChanged(false);
   };
+
+  const fmtCap = (v?: number) =>
+    !v || v <= 0
+      ? 'sin datos (investigaciones/construcciones)'
+      : v >= 1e6
+        ? `${(v / 1e6).toFixed(2)}M`
+        : String(v);
 
   const set = (path: string) => ({
     value: getDeep(draft, path),
@@ -1803,8 +2382,11 @@ function ConfigPanel({ config, socket, iggId, colors }: { config: any; socket: a
         <Toggle label="Activo" {...bool('supply.enable')} />
         <TextInput label="Ubicación" {...set('supply.location')} />
         <NumInput label="Umbral" {...set('supply.threshold')} />
-        <NumInput label="Máx. Monto" {...set('supply.maxAmount')} />
         <NumInput label="Límite caravanas" {...set('supply.caravanLimit')} />
+        <div style={{ fontSize: 12, color: '#888' }}>
+          Capacidad por caravana: {fmtCap(supplyCapacity)} — stat "Capacidad de suministro +", no es
+          configurable.
+        </div>
       </Section>
 
       <Section title="Caza (monstruos 2488)">
@@ -1818,9 +2400,9 @@ function ConfigPanel({ config, socket, iggId, colors }: { config: any; socket: a
           alto se reparten hasta el máximo. Squad apagado = 1 bot por bicho.
         </div>
         <div style={{ fontSize: 12, color: '#888' }}>
-          Por nivel: costo de energía por golpe + hex del 2488 sin la coord (va 3 bytes de coord al
-          frente). Dos hex: el que se usa depende de contra qué es débil el bicho (Noceros = magia,
-          Bon Appeti = físico).
+          Por nivel: hex del 2488 sin la coord (va 3 bytes de coord al frente). Dos hex: el que se
+          usa depende de contra qué es débil el bicho (Noceros = magia, Buen Apetito = físico). El
+          costo de energía por golpe se calcula solo (base del nivel − ahorro de investigación).
         </div>
         {(getDeep(draft, 'hunt.levels') || []).map((lv: any, idx: number) => {
           const levels: any[] = getDeep(draft, 'hunt.levels') || [];
@@ -1834,8 +2416,6 @@ function ConfigPanel({ config, socket, iggId, colors }: { config: any; socket: a
             <div key={idx} style={{ display: 'flex', gap: 6, alignItems: 'center', flexWrap: 'wrap' }}>
               <span style={{ fontSize: 13, whiteSpace: 'nowrap' }}>Nivel</span>
               <input type="number" value={lv.level ?? 0} onChange={e => upd({ level: Number(e.target.value) })} style={lvlInput} />
-              <span style={{ fontSize: 13, whiteSpace: 'nowrap' }}>Energía</span>
-              <input type="number" value={lv.energyCost ?? 0} onChange={e => upd({ energyCost: Number(e.target.value) })} style={lvlInput} />
               <span style={{ fontSize: 13, whiteSpace: 'nowrap' }}>Magia</span>
               <input
                 type="text"
@@ -1861,7 +2441,7 @@ function ConfigPanel({ config, socket, iggId, colors }: { config: any; socket: a
             const levels: any[] = getDeep(draft, 'hunt.levels') || [];
             setDraft((d: any) => setDeep(d, 'hunt.levels', [
               ...levels,
-              { level: (levels[levels.length - 1]?.level ?? 1) + 1, energyCost: 40, payloadHexMagia: '', payloadHexFisico: '' },
+              { level: (levels[levels.length - 1]?.level ?? 1) + 1, payloadHexMagia: '', payloadHexFisico: '' },
             ]));
             setChanged(true);
           }}

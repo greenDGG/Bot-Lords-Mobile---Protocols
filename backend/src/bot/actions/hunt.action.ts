@@ -31,8 +31,13 @@ export class HuntAction implements BotAction {
     if (!t.monster) return false;
     const lvl = getHuntLevel(bot.config.hunt, t.monster.level);
     if (!lvl) return false;
-    if (bot.getCurrentEnergy() < lvl.energyCost) {
-      bot.bot.log(`[CAZA] Energía insuficiente: ${bot.getCurrentEnergy()}/${lvl.energyCost}`);
+    const cost = bot.huntEnergyCost(t.monster.level);
+    if (cost <= 0) {
+      bot.bot.log(`[CAZA] Costo de energía desconocido para nivel ${t.monster.level}`);
+      return false;
+    }
+    if (bot.getCurrentEnergy() < cost) {
+      bot.bot.log(`[CAZA] Energía insuficiente: ${bot.getCurrentEnergy()}/${cost}`);
       return false;
     }
 

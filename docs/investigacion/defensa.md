@@ -48,6 +48,23 @@ a4 00 8e 09 05             = header [len=0xa4][proto=0x098e=2446] + count? (5 by
 05                         = ¿Con líder? 05 = sin líder, 00 = con líder
 ```
 
+### Byte 0: lineType (EWATCHTOWER_LINE_TYPE)
+
+El **primer byte del body** identifica el TIPO de marcha — es el campo que
+distingue un ataque de un refuerzo:
+
+| lineType | Significado | Tropas parseadas |
+|----------|-------------|------------------|
+| `05` | **Ataque** | sí (layout completo) |
+| `08` | Exploración | no |
+| `0a` (10) | **Refuerzo** (aliado) — ej. captura "TOKAI  TEIO" tag uFO | no |
+| `0c` (12) | Rally | no |
+
+El parser (`march.parser.ts`) sólo arma tropas con `lineType=5`; el resto va
+por `parseScoutOrShort()` con 0 tropas. `counter-logic.ts:armCounter()`
+descarta cualquier marcha con `lineType !== 5` antes de calcular la amenaza
+(log `[CONTRA] … no es ataque, no se counterea`).
+
 ### Tropas (16 columnas × 4 bytes)
 
 Las 4 columnas primeras son infantería T1-T4, luego artillería, luego caballería, luego asedio:

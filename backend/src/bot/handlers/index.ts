@@ -5,7 +5,7 @@ import { handleMysteryBox } from './mystery-box.handler';
 import { handleResources, handleRefineMana } from './resources.handler';
 import { handleTroopState, handleTroopTraining, handleHospital } from './troops.handler';
 import { handleBuildingState, handleConstructions } from './buildings.handler';
-import { handleMarchIncoming, handleMarchUpdate, handleMarchUpdate2442, handleBattleImminent, handleMarchDataResponse, handleMarchData } from './march.handler';
+import { handleMarchIncoming, handleMarchUpdate, handleMarchUpdate2442, handleBattleImminent, handleMarchDataResponse, handleMarchData, handle2414 } from './march.handler';
 import { handleMarchUpdateSmall } from './march-update.handler';
 import { handleCaravanComplete } from './supply.handler';
 import { handleCaravanAck } from './supply-ack.handler';
@@ -21,6 +21,7 @@ import { handleEssenceTransmutation } from './essence.handler';
 import { handleVipChest } from './vip-chest.handler';
 import { handleDisconnect } from './disconnect.handler';
 import { handleResearch } from './research.handler';
+import { handleResearchEvent } from './research-event.handler';
 import { handle9652, handle9661, handle9663 } from './extravagant-missions.handler';
 import { handleMissionRecords } from './mission-records.handler';
 import { handle3638 } from './fdg-mission-extension.handler';
@@ -28,9 +29,11 @@ import { handleGuildNotification } from './guild-notification.handler';
 import { handleGuildApplications } from './guild-applications.handler';
 import { handleCostumes } from './costume.handler';
 import { handleEquippedCostumes } from './equipped.handler';
+import { handleTalentInfo } from './talent.handler';
 import { handle3610 } from './event-rewards.handler';
 import { handle2489, handle2490, handle2491, handle2492 } from './hunt.handler';
 import { handle9861, handle9862, handle9865, handle9867, handle9868 } from './lucky-card.handler';
+import { handle7004 } from './maze.handler';
 
 type Handler = (bot: BotInstance, body: Buffer, mp: MessagePacket) => void;
 
@@ -42,6 +45,7 @@ const HANDLERS: Record<number, Handler> = {
   1201: handleHeroList,
   1401: handleInventory,
   1417: handleCostumes,
+  3801: handleTalentInfo,
   3804: handleEquippedCostumes,
   2001: handleBuildingState,
   2002: handleConstructions,
@@ -51,6 +55,7 @@ const HANDLERS: Record<number, Handler> = {
   2228: handleWonderSwitch,
   2401: handleTroopState,
   2402: handleTroopTraining,
+  2414: handle2414,
   2425: handleHospital,
   2441: handleBattleImminent,
   2442: handleMarchUpdate2442,
@@ -67,6 +72,7 @@ const HANDLERS: Record<number, Handler> = {
   3112: handle3112,
   3125: handleVipChest,
   3201: handleResearch,
+  3208: handleResearchEvent,
   4044: handleEternalTreasure,
   4201: handleTreasureChamber,
   4401: handleLeaderCaptured,
@@ -74,6 +80,7 @@ const HANDLERS: Record<number, Handler> = {
   4408: handleLeaderExecuted,
   5201: handleColiseumState,
   5205: handleColiseumRivals,
+  7004: handle7004,
   7317: handleEssenceTransmutation,
   9652: handle9652,
   9661: handle9661,

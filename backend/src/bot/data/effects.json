@@ -1,0 +1,3855 @@
+{
+  "source": "Table.unity3d (effect) + stringtables",
+  "effects": {
+    "1": {
+      "id": 1,
+      "name": "FUE +{0}",
+      "nameEn": "Strength +{0}",
+      "unit": "",
+      "scope": "global"
+    },
+    "2": {
+      "id": 2,
+      "name": "DES +{0}",
+      "nameEn": "Dexterity +{0}",
+      "unit": "",
+      "scope": "global"
+    },
+    "3": {
+      "id": 3,
+      "name": "INT +{0}",
+      "nameEn": "Intelligence +{0}",
+      "unit": "",
+      "scope": "global"
+    },
+    "4": {
+      "id": 4,
+      "name": "PS +{0}",
+      "nameEn": "HP +{0}",
+      "unit": "",
+      "scope": "global"
+    },
+    "5": {
+      "id": 5,
+      "name": "ATQ +{0}",
+      "nameEn": "ATK +{0}",
+      "unit": "",
+      "scope": "global"
+    },
+    "6": {
+      "id": 6,
+      "name": "ATQM +{0}",
+      "nameEn": "MATK +{0}",
+      "unit": "",
+      "scope": "global"
+    },
+    "7": {
+      "id": 7,
+      "name": "DEF +{0}",
+      "nameEn": "DEF +{0}",
+      "unit": "",
+      "scope": "global"
+    },
+    "8": {
+      "id": 8,
+      "name": "DEFM +{0}",
+      "nameEn": "MDEF +{0}",
+      "unit": "",
+      "scope": "global"
+    },
+    "9": {
+      "id": 9,
+      "name": "CRÍT +{0}",
+      "nameEn": "Physical Critical +{0}",
+      "unit": "",
+      "scope": "global"
+    },
+    "10": {
+      "id": 10,
+      "name": "CRÍTM +{0}",
+      "nameEn": "Magic Critical +{0}",
+      "unit": "",
+      "scope": "global"
+    },
+    "11": {
+      "id": 11,
+      "name": "Recuperación (ronda) +{0}",
+      "nameEn": "Recovery (Round) +{0}",
+      "unit": "",
+      "scope": "global"
+    },
+    "12": {
+      "id": 12,
+      "name": "Recarga (ronda) +{0}",
+      "nameEn": "Recharge (Round) +{0}",
+      "unit": "",
+      "scope": "global"
+    },
+    "13": {
+      "id": 13,
+      "name": "Reflejos +{0}",
+      "nameEn": "Reflex +{0}",
+      "unit": "",
+      "scope": "global"
+    },
+    "14": {
+      "id": 14,
+      "name": "Perforación +{0}",
+      "nameEn": "Pierce +{0}",
+      "unit": "",
+      "scope": "global"
+    },
+    "15": {
+      "id": 15,
+      "name": "Empuje +{0}",
+      "nameEn": "Force +{0}",
+      "unit": "",
+      "scope": "global"
+    },
+    "16": {
+      "id": 16,
+      "name": "Potencia {0}%",
+      "nameEn": "Potency {0}%",
+      "unit": "%",
+      "scope": "global"
+    },
+    "17": {
+      "id": 17,
+      "name": "Robo de vida +{0}",
+      "nameEn": "Life Leech +{0}",
+      "unit": "",
+      "scope": "global"
+    },
+    "18": {
+      "id": 18,
+      "name": "Precisión +{0}",
+      "nameEn": "Accuracy +{0}",
+      "unit": "",
+      "scope": "global"
+    },
+    "19": {
+      "id": 19,
+      "name": "Concentración +{0}",
+      "nameEn": "Focus +{0}",
+      "unit": "",
+      "scope": "global"
+    },
+    "20": {
+      "id": 20,
+      "name": "Enfoque de sanación + {0}%",
+      "nameEn": "Healing Focus +{0}%",
+      "unit": "%",
+      "scope": "global"
+    },
+    "21": {
+      "id": 21,
+      "name": "Fortaleza +{0}%",
+      "nameEn": "Resistance +{0}%",
+      "unit": "%",
+      "scope": "global"
+    },
+    "22": {
+      "id": 22,
+      "name": "",
+      "nameEn": "",
+      "unit": "%",
+      "scope": "global"
+    },
+    "23": {
+      "id": 23,
+      "name": "",
+      "nameEn": "",
+      "unit": "",
+      "scope": "global"
+    },
+    "24": {
+      "id": 24,
+      "name": "",
+      "nameEn": "",
+      "unit": "%",
+      "scope": "global"
+    },
+    "25": {
+      "id": 25,
+      "name": "Recuperación/segundo",
+      "nameEn": "Recovery/second",
+      "unit": "",
+      "scope": "global"
+    },
+    "26": {
+      "id": 26,
+      "name": "Recarga/segundo",
+      "nameEn": "Recharge/second",
+      "unit": "",
+      "scope": "global"
+    },
+    "27": {
+      "id": 27,
+      "name": "Robustez",
+      "nameEn": "Fortitude",
+      "unit": "%",
+      "scope": "global"
+    },
+    "28": {
+      "id": 28,
+      "name": "Determinación",
+      "nameEn": "Will",
+      "unit": "%",
+      "scope": "global"
+    },
+    "29": {
+      "id": 29,
+      "name": "Aguante",
+      "nameEn": "Endurance",
+      "unit": "%",
+      "scope": "global"
+    },
+    "30": {
+      "id": 30,
+      "name": "FUE + {0}%",
+      "nameEn": "STR +{0}%",
+      "unit": "",
+      "scope": "global"
+    },
+    "31": {
+      "id": 31,
+      "name": "DES + {0}%",
+      "nameEn": "DEX +{0}%",
+      "unit": "",
+      "scope": "global"
+    },
+    "32": {
+      "id": 32,
+      "name": "INT + {0}%",
+      "nameEn": "INT +{0}%",
+      "unit": "",
+      "scope": "global"
+    },
+    "33": {
+      "id": 33,
+      "name": "Max PS + {0}%",
+      "nameEn": "Max HP +{0}%",
+      "unit": "",
+      "scope": "global"
+    },
+    "34": {
+      "id": 34,
+      "name": "ATQ + {0}%",
+      "nameEn": "ATK +{0}%",
+      "unit": "",
+      "scope": "global"
+    },
+    "35": {
+      "id": 35,
+      "name": "ATQM + {0}%",
+      "nameEn": "MATK +{0}%",
+      "unit": "",
+      "scope": "global"
+    },
+    "36": {
+      "id": 36,
+      "name": "DEF + {0}%",
+      "nameEn": "DEF +{0}%",
+      "unit": "",
+      "scope": "global"
+    },
+    "37": {
+      "id": 37,
+      "name": "DEFM + {0}%",
+      "nameEn": "MDEF +{0}%",
+      "unit": "",
+      "scope": "global"
+    },
+    "38": {
+      "id": 38,
+      "name": "CRIT + {0}%",
+      "nameEn": "CRIT +{0}%",
+      "unit": "",
+      "scope": "global"
+    },
+    "39": {
+      "id": 39,
+      "name": "MCRIT + {0}%",
+      "nameEn": "MCRIT +{0}%",
+      "unit": "",
+      "scope": "global"
+    },
+    "40": {
+      "id": 40,
+      "name": "Perforación + {0}%",
+      "nameEn": "Pierce +{0}%",
+      "unit": "",
+      "scope": "global"
+    },
+    "41": {
+      "id": 41,
+      "name": "Fuerza + {0}%",
+      "nameEn": "Force +{0}%",
+      "unit": "",
+      "scope": "global"
+    },
+    "42": {
+      "id": 42,
+      "name": "額外治療效果+{0}%",
+      "nameEn": "額外治療效果+{0}%",
+      "unit": "",
+      "scope": "global"
+    },
+    "43": {
+      "id": 43,
+      "name": "",
+      "nameEn": "",
+      "unit": "",
+      "scope": "global"
+    },
+    "101": {
+      "id": 101,
+      "name": "力量下降",
+      "nameEn": "力量下降",
+      "unit": "",
+      "scope": "global"
+    },
+    "102": {
+      "id": 102,
+      "name": "敏捷下降",
+      "nameEn": "敏捷下降",
+      "unit": "",
+      "scope": "global"
+    },
+    "103": {
+      "id": 103,
+      "name": "智力下降",
+      "nameEn": "智力下降",
+      "unit": "",
+      "scope": "global"
+    },
+    "104": {
+      "id": 104,
+      "name": "最大生命力下降",
+      "nameEn": "最大生命力下降",
+      "unit": "",
+      "scope": "global"
+    },
+    "105": {
+      "id": 105,
+      "name": "物理攻擊力下降",
+      "nameEn": "物理攻擊力下降",
+      "unit": "",
+      "scope": "global"
+    },
+    "106": {
+      "id": 106,
+      "name": "魔法強度下降",
+      "nameEn": "魔法強度下降",
+      "unit": "",
+      "scope": "global"
+    },
+    "107": {
+      "id": 107,
+      "name": "物理護甲下降",
+      "nameEn": "物理護甲下降",
+      "unit": "",
+      "scope": "global"
+    },
+    "108": {
+      "id": 108,
+      "name": "魔法抗性下降",
+      "nameEn": "魔法抗性下降",
+      "unit": "",
+      "scope": "global"
+    },
+    "109": {
+      "id": 109,
+      "name": "物理暴擊下降",
+      "nameEn": "物理暴擊下降",
+      "unit": "",
+      "scope": "global"
+    },
+    "110": {
+      "id": 110,
+      "name": "魔法暴擊下降",
+      "nameEn": "魔法暴擊下降",
+      "unit": "",
+      "scope": "global"
+    },
+    "111": {
+      "id": 111,
+      "name": "生命回復下降",
+      "nameEn": "生命回復下降",
+      "unit": "",
+      "scope": "global"
+    },
+    "112": {
+      "id": 112,
+      "name": "怒氣回復下降",
+      "nameEn": "怒氣回復下降",
+      "unit": "",
+      "scope": "global"
+    },
+    "113": {
+      "id": 113,
+      "name": "閃避下降",
+      "nameEn": "閃避下降",
+      "unit": "",
+      "scope": "global"
+    },
+    "114": {
+      "id": 114,
+      "name": "穿透物理護甲下降",
+      "nameEn": "穿透物理護甲下降",
+      "unit": "",
+      "scope": "global"
+    },
+    "115": {
+      "id": 115,
+      "name": "忽視魔法抗性下降",
+      "nameEn": "忽視魔法抗性下降",
+      "unit": "",
+      "scope": "global"
+    },
+    "116": {
+      "id": 116,
+      "name": "怒氣消耗+",
+      "nameEn": "怒氣消耗+",
+      "unit": "%",
+      "scope": "global"
+    },
+    "117": {
+      "id": 117,
+      "name": "吸血等級下降",
+      "nameEn": "吸血等級下降",
+      "unit": "",
+      "scope": "global"
+    },
+    "118": {
+      "id": 118,
+      "name": "命中等級下降",
+      "nameEn": "命中等級下降",
+      "unit": "",
+      "scope": "global"
+    },
+    "119": {
+      "id": 119,
+      "name": "技能等級下降",
+      "nameEn": "技能等級下降",
+      "unit": "",
+      "scope": "global"
+    },
+    "120": {
+      "id": 120,
+      "name": "治療技能效果降低",
+      "nameEn": "治療技能效果降低",
+      "unit": "%",
+      "scope": "global"
+    },
+    "121": {
+      "id": 121,
+      "name": "增加被沉默幾率",
+      "nameEn": "增加被沉默幾率",
+      "unit": "%",
+      "scope": "global"
+    },
+    "122": {
+      "id": 122,
+      "name": "移動速度下降",
+      "nameEn": "移動速度下降",
+      "unit": "%",
+      "scope": "global"
+    },
+    "123": {
+      "id": 123,
+      "name": "攻擊範圍減少",
+      "nameEn": "攻擊範圍減少",
+      "unit": "",
+      "scope": "global"
+    },
+    "124": {
+      "id": 124,
+      "name": "攻擊速度下降",
+      "nameEn": "攻擊速度下降",
+      "unit": "%",
+      "scope": "global"
+    },
+    "125": {
+      "id": 125,
+      "name": "戰鬥中每秒生命損失",
+      "nameEn": "戰鬥中每秒生命損失",
+      "unit": "",
+      "scope": "global"
+    },
+    "126": {
+      "id": 126,
+      "name": "戰鬥中每秒怒氣損失",
+      "nameEn": "戰鬥中每秒怒氣損失",
+      "unit": "",
+      "scope": "global"
+    },
+    "127": {
+      "id": 127,
+      "name": "增加受到的物理傷害",
+      "nameEn": "增加受到的物理傷害",
+      "unit": "%",
+      "scope": "global"
+    },
+    "128": {
+      "id": 128,
+      "name": "增加受到的魔法傷害",
+      "nameEn": "增加受到的魔法傷害",
+      "unit": "%",
+      "scope": "global"
+    },
+    "129": {
+      "id": 129,
+      "name": "增加受到的傷害",
+      "nameEn": "增加受到的傷害",
+      "unit": "%",
+      "scope": "global"
+    },
+    "130": {
+      "id": 130,
+      "name": "FUE - {0}%",
+      "nameEn": "STR -{0}%",
+      "unit": "",
+      "scope": "global"
+    },
+    "131": {
+      "id": 131,
+      "name": "DES - {0}%",
+      "nameEn": "DEX -{0}%",
+      "unit": "",
+      "scope": "global"
+    },
+    "132": {
+      "id": 132,
+      "name": "INT - {0}%",
+      "nameEn": "INT -{0}%",
+      "unit": "",
+      "scope": "global"
+    },
+    "133": {
+      "id": 133,
+      "name": "Max PS - {0}%",
+      "nameEn": "Max HP -{0}%",
+      "unit": "",
+      "scope": "global"
+    },
+    "134": {
+      "id": 134,
+      "name": "ATQ - {0}%",
+      "nameEn": "ATK -{0}%",
+      "unit": "",
+      "scope": "global"
+    },
+    "135": {
+      "id": 135,
+      "name": "ATQM - {0}%",
+      "nameEn": "MATK -{0}%",
+      "unit": "",
+      "scope": "global"
+    },
+    "136": {
+      "id": 136,
+      "name": "DEF - {0}%",
+      "nameEn": "DEF -{0}%",
+      "unit": "",
+      "scope": "global"
+    },
+    "137": {
+      "id": 137,
+      "name": "DEFM - {0}%",
+      "nameEn": "MDEF -{0}%",
+      "unit": "",
+      "scope": "global"
+    },
+    "138": {
+      "id": 138,
+      "name": "CRIT - {0}%",
+      "nameEn": "CRIT -{0}%",
+      "unit": "",
+      "scope": "global"
+    },
+    "139": {
+      "id": 139,
+      "name": "MCRIT - {0}%",
+      "nameEn": "MCRIT -{0}%",
+      "unit": "",
+      "scope": "global"
+    },
+    "140": {
+      "id": 140,
+      "name": "Perforación + {0}%",
+      "nameEn": "Pierce -{0}%",
+      "unit": "",
+      "scope": "global"
+    },
+    "141": {
+      "id": 141,
+      "name": "Fuerza + {0}%",
+      "nameEn": "Force -{0}%",
+      "unit": "",
+      "scope": "global"
+    },
+    "142": {
+      "id": 142,
+      "name": "額外治療效果-{0}%",
+      "nameEn": "額外治療效果-{0}%",
+      "unit": "",
+      "scope": "global"
+    },
+    "143": {
+      "id": 143,
+      "name": "",
+      "nameEn": "",
+      "unit": "",
+      "scope": "global"
+    },
+    "201": {
+      "id": 201,
+      "name": "ATQ infantería +",
+      "nameEn": "Infantry ATK +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "202": {
+      "id": 202,
+      "name": "ATQ caballería +",
+      "nameEn": "Cavalry ATK +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "203": {
+      "id": 203,
+      "name": "ATQ artillería +",
+      "nameEn": "Ranged ATK +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "204": {
+      "id": 204,
+      "name": "ATQ máquina de asedio +",
+      "nameEn": "Siege Engine ATK +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "205": {
+      "id": 205,
+      "name": "ATQ de trampa +",
+      "nameEn": "Trap ATK +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "206": {
+      "id": 206,
+      "name": "DEF de infantería +",
+      "nameEn": "Infantry DEF +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "207": {
+      "id": 207,
+      "name": "DEF de caballería +",
+      "nameEn": "Cavalry DEF +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "208": {
+      "id": 208,
+      "name": "DEF de artillería +",
+      "nameEn": "Ranged DEF +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "209": {
+      "id": 209,
+      "name": "DEF de máquina de asedio +",
+      "nameEn": "Siege Engine DEF +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "210": {
+      "id": 210,
+      "name": "DEF de trampa +",
+      "nameEn": "Trap DEF +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "211": {
+      "id": 211,
+      "name": "PS máx. infantería +",
+      "nameEn": "Infantry Max HP +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "212": {
+      "id": 212,
+      "name": "PS máx. caballería +",
+      "nameEn": "Cavalry Max HP +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "213": {
+      "id": 213,
+      "name": "PS máx. artillería +",
+      "nameEn": "Ranged Max HP +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "214": {
+      "id": 214,
+      "name": "PS máx. máquina asedio +",
+      "nameEn": "Siege Engine Max HP +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "215": {
+      "id": 215,
+      "name": "PS máx. trampa +",
+      "nameEn": "Trap Max HP +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "216": {
+      "id": 216,
+      "name": "ATQ de ejército +",
+      "nameEn": "Army ATK +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "217": {
+      "id": 217,
+      "name": "DEF de ejército +",
+      "nameEn": "Army DEF +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "218": {
+      "id": 218,
+      "name": "PS máx. ejército +",
+      "nameEn": "Army Max HP +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "219": {
+      "id": 219,
+      "name": "Capacidad ejército +",
+      "nameEn": "Army Capacity +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "220": {
+      "id": 220,
+      "name": "Velocidad de viaje +",
+      "nameEn": "Travel Speed +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "221": {
+      "id": 221,
+      "name": "Sanción ATQ ejército",
+      "nameEn": "Army ATK Penalty",
+      "unit": "%",
+      "scope": "global"
+    },
+    "222": {
+      "id": 222,
+      "name": "Sanción DEF ejército",
+      "nameEn": "Army DEF Penalty",
+      "unit": "%",
+      "scope": "global"
+    },
+    "223": {
+      "id": 223,
+      "name": "Sanción PS máx. ejército",
+      "nameEn": "Army Max HP Penalty",
+      "unit": "%",
+      "scope": "global"
+    },
+    "224": {
+      "id": 224,
+      "name": "Sanción capacidad ejército",
+      "nameEn": "Army Capacity Penalty",
+      "unit": "%",
+      "scope": "global"
+    },
+    "225": {
+      "id": 225,
+      "name": "Sanción vel. viaje",
+      "nameEn": "Travel Speed Penalty",
+      "unit": "%",
+      "scope": "global"
+    },
+    "226": {
+      "id": 226,
+      "name": "Reduce mantenimiento en",
+      "nameEn": "Reduces Upkeep by",
+      "unit": "%",
+      "scope": "global"
+    },
+    "227": {
+      "id": 227,
+      "name": "ATQ defensores +",
+      "nameEn": "Defenders ATK +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "228": {
+      "id": 228,
+      "name": "DEF defensores +",
+      "nameEn": "Defenders DEF +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "229": {
+      "id": 229,
+      "name": "PS máx. defensores +",
+      "nameEn": "Defenders Max HP +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "230": {
+      "id": 230,
+      "name": "Debilita PS Max Ejército Enemigo en",
+      "nameEn": "Weakens Enemy Army Max HP by",
+      "unit": "%",
+      "scope": "global"
+    },
+    "231": {
+      "id": 231,
+      "name": "Debilita ATQ Ejército Enemigo en",
+      "nameEn": "Weakens Enemy Army ATK by",
+      "unit": "%",
+      "scope": "global"
+    },
+    "232": {
+      "id": 232,
+      "name": "Debilita DEF Ejército Enemigo en",
+      "nameEn": "Weakens Enemy Army DEF by",
+      "unit": "%",
+      "scope": "global"
+    },
+    "233": {
+      "id": 233,
+      "name": "Límite de ejército +",
+      "nameEn": "Army Limit +",
+      "unit": "",
+      "scope": "global"
+    },
+    "234": {
+      "id": 234,
+      "name": "Héroes desplegables en ejército +",
+      "nameEn": "Deployable Heroes in Army +",
+      "unit": "",
+      "scope": "global"
+    },
+    "235": {
+      "id": 235,
+      "name": "Mando +",
+      "nameEn": "Command +",
+      "unit": "",
+      "scope": "global"
+    },
+    "236": {
+      "id": 236,
+      "name": "Mando +",
+      "nameEn": "Command +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "237": {
+      "id": 237,
+      "name": "Vel. viaje tropas invasoras +",
+      "nameEn": "Invading Troops Travel Speed +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "238": {
+      "id": 238,
+      "name": "Vel. viaje ejército coalición +",
+      "nameEn": "Coalition Army Travel Speed +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "239": {
+      "id": 239,
+      "name": "Vel. viaje tropas de suministro +",
+      "nameEn": "Supply Troops Travel Speed +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "240": {
+      "id": 240,
+      "name": "Vel. viaje tropas recolectoras +",
+      "nameEn": "Gathering Troops Travel Speed +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "241": {
+      "id": 241,
+      "name": "Vel. viaje cacería de monstruos +",
+      "nameEn": "Monster Hunt Travel Speed +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "242": {
+      "id": 242,
+      "name": "Producción de comida +",
+      "nameEn": "Food Production +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "243": {
+      "id": 243,
+      "name": "Producción de piedra +",
+      "nameEn": "Stone Production +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "244": {
+      "id": 244,
+      "name": "Producción de madera +",
+      "nameEn": "Timber Production +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "245": {
+      "id": 245,
+      "name": "Producción de mineral +",
+      "nameEn": "Ore Production +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "246": {
+      "id": 246,
+      "name": "Producción de oro +",
+      "nameEn": "Gold Production +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "247": {
+      "id": 247,
+      "name": "Aumenta produc. de recursos",
+      "nameEn": "Increases Resource Production",
+      "unit": "%",
+      "scope": "global"
+    },
+    "248": {
+      "id": 248,
+      "name": "Vel. construcción +",
+      "nameEn": "Construction Speed +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "249": {
+      "id": 249,
+      "name": "Vel. investigación +",
+      "nameEn": "Research Speed +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "250": {
+      "id": 250,
+      "name": "Vel. forja +",
+      "nameEn": "Forging Speed +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "251": {
+      "id": 251,
+      "name": "Vel. entrenamiento +",
+      "nameEn": "Training Speed +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "252": {
+      "id": 252,
+      "name": "Vel. construcción trampas +",
+      "nameEn": "Trap-building Speed +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "253": {
+      "id": 253,
+      "name": "Vel. curación en enfermería +",
+      "nameEn": "Infirmary Healing Speed +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "254": {
+      "id": 254,
+      "name": "Vel. de recolección +",
+      "nameEn": "Gathering Speed +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "255": {
+      "id": 255,
+      "name": "Vel. de recolección de gemas +",
+      "nameEn": "Gem Gathering Speed +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "256": {
+      "id": 256,
+      "name": "Producción de comida / hora +",
+      "nameEn": "Food Production / Hour +",
+      "unit": "",
+      "scope": "local"
+    },
+    "257": {
+      "id": 257,
+      "name": "Producción de piedra / hora +",
+      "nameEn": "Stone Production / Hour +",
+      "unit": "",
+      "scope": "local"
+    },
+    "258": {
+      "id": 258,
+      "name": "Producción de madera / hora +",
+      "nameEn": "Timber Production / Hour +",
+      "unit": "",
+      "scope": "local"
+    },
+    "259": {
+      "id": 259,
+      "name": "Producción de mineral / hora +",
+      "nameEn": "Ore Production / Hour +",
+      "unit": "",
+      "scope": "local"
+    },
+    "260": {
+      "id": 260,
+      "name": "Producción de oro / hora +",
+      "nameEn": "Gold Production / Hour +",
+      "unit": "",
+      "scope": "local"
+    },
+    "261": {
+      "id": 261,
+      "name": "Almacén de comida +",
+      "nameEn": "Food Storage +",
+      "unit": "",
+      "scope": "local"
+    },
+    "262": {
+      "id": 262,
+      "name": "Almacén de piedra +",
+      "nameEn": "Stone Storage +",
+      "unit": "",
+      "scope": "local"
+    },
+    "263": {
+      "id": 263,
+      "name": "Almacén de madera +",
+      "nameEn": "Timber Storage +",
+      "unit": "",
+      "scope": "local"
+    },
+    "264": {
+      "id": 264,
+      "name": "Almacén de mineral +",
+      "nameEn": "Ore Storage +",
+      "unit": "",
+      "scope": "local"
+    },
+    "265": {
+      "id": 265,
+      "name": "Almacén de oro +",
+      "nameEn": "Gold Storage +",
+      "unit": "",
+      "scope": "local"
+    },
+    "266": {
+      "id": 266,
+      "name": "Capacidad del cuartel +",
+      "nameEn": "Barracks Capacity +",
+      "unit": "",
+      "scope": "local"
+    },
+    "267": {
+      "id": 267,
+      "name": "Capacidad del cuartel +",
+      "nameEn": "Barracks Capacity +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "268": {
+      "id": 268,
+      "name": "Trampas máx. desplegables +",
+      "nameEn": "Max Deployable Traps +",
+      "unit": "",
+      "scope": "local"
+    },
+    "269": {
+      "id": 269,
+      "name": "PS muralla máx. +",
+      "nameEn": "Max Wall HP +",
+      "unit": "",
+      "scope": "local"
+    },
+    "270": {
+      "id": 270,
+      "name": "Capacidad de enfermería +",
+      "nameEn": "Infirmary Capacity +",
+      "unit": "",
+      "scope": "local"
+    },
+    "271": {
+      "id": 271,
+      "name": "Capacidad de la cámara +",
+      "nameEn": "Vault Storage +",
+      "unit": "",
+      "scope": "local"
+    },
+    "272": {
+      "id": 272,
+      "name": "Capacidad de suministro +",
+      "nameEn": "Supply Capacity +",
+      "unit": "",
+      "scope": "local"
+    },
+    "273": {
+      "id": 273,
+      "name": "Impuesto suministro +",
+      "nameEn": "Supply Tax",
+      "unit": "%",
+      "scope": "global"
+    },
+    "274": {
+      "id": 274,
+      "name": "Tamaño máx. tropas recolectoras +",
+      "nameEn": "Max Gathering Troops Size +",
+      "unit": "",
+      "scope": "global"
+    },
+    "275": {
+      "id": 275,
+      "name": "Tamaño máx. tropa aliada +",
+      "nameEn": "Max Allied Army Size +",
+      "unit": "",
+      "scope": "global"
+    },
+    "276": {
+      "id": 276,
+      "name": "Tamaño máx. ejército de coalición +",
+      "nameEn": "Max Coalition Army Size +",
+      "unit": "",
+      "scope": "global"
+    },
+    "277": {
+      "id": 277,
+      "name": "Tipo de interés +",
+      "nameEn": "Interest Rate +",
+      "unit": "%",
+      "scope": "local"
+    },
+    "278": {
+      "id": 278,
+      "name": "Depósito máximo +",
+      "nameEn": "Max Deposit +",
+      "unit": "",
+      "scope": "local"
+    },
+    "279": {
+      "id": 279,
+      "name": "Ayuda MAX+",
+      "nameEn": "Max Help +",
+      "unit": "",
+      "scope": "global"
+    },
+    "280": {
+      "id": 280,
+      "name": "Reduce coste soldado infant. en",
+      "nameEn": "Reduces Grunt cost by",
+      "unit": "%",
+      "scope": "global"
+    },
+    "281": {
+      "id": 281,
+      "name": "Reduce el coste del arquero en",
+      "nameEn": "Reduces Archer cost by",
+      "unit": "%",
+      "scope": "global"
+    },
+    "282": {
+      "id": 282,
+      "name": "Reduce el coste del catafracto en",
+      "nameEn": "Reduces Cataphract cost by",
+      "unit": "%",
+      "scope": "global"
+    },
+    "283": {
+      "id": 283,
+      "name": "Reduce el coste de la balista en",
+      "nameEn": "Reduces Ballista cost by",
+      "unit": "%",
+      "scope": "global"
+    },
+    "284": {
+      "id": 284,
+      "name": "Reduce el coste del gladiador en",
+      "nameEn": "Reduces Gladiator cost by",
+      "unit": "%",
+      "scope": "global"
+    },
+    "285": {
+      "id": 285,
+      "name": "Reduce el coste del tirador en",
+      "nameEn": "Reduces Sharpshooter cost by",
+      "unit": "%",
+      "scope": "global"
+    },
+    "286": {
+      "id": 286,
+      "name": "Reduce el coste de jinete reptiliano en",
+      "nameEn": "Reduces Reptilian Rider cost by",
+      "unit": "%",
+      "scope": "global"
+    },
+    "287": {
+      "id": 287,
+      "name": "Reduce el coste de la catapulta en",
+      "nameEn": "Reduces Catapult cost by",
+      "unit": "%",
+      "scope": "global"
+    },
+    "288": {
+      "id": 288,
+      "name": "Reduce el coste de la guardia real en",
+      "nameEn": "Reduces Royal Guard cost by",
+      "unit": "%",
+      "scope": "global"
+    },
+    "289": {
+      "id": 289,
+      "name": "Reduce el coste del francotirador en",
+      "nameEn": "Reduces Stealth Sniper cost by",
+      "unit": "%",
+      "scope": "global"
+    },
+    "290": {
+      "id": 290,
+      "name": "Reduce el coste de la caballería real en",
+      "nameEn": "Reduces Royal Cavalry cost by",
+      "unit": "%",
+      "scope": "global"
+    },
+    "291": {
+      "id": 291,
+      "name": "Reduce el coste del lanzapiedras en",
+      "nameEn": "Reduces Fire Trebuchet cost by",
+      "unit": "%",
+      "scope": "global"
+    },
+    "292": {
+      "id": 292,
+      "name": "Reduce el coste del guerrero heroico en",
+      "nameEn": "Reduces Heroic Fighter cost by",
+      "unit": "%",
+      "scope": "global"
+    },
+    "293": {
+      "id": 293,
+      "name": "Reduce el coste del cañonero heroico en",
+      "nameEn": "Reduces Heroic Cannoneer cost by",
+      "unit": "%",
+      "scope": "global"
+    },
+    "294": {
+      "id": 294,
+      "name": "Reduce el coste del Jinete Dragón Ancestral en",
+      "nameEn": "Reduces Ancient Drake Rider cost by",
+      "unit": "%",
+      "scope": "global"
+    },
+    "295": {
+      "id": 295,
+      "name": "Reduce el coste del destructor en",
+      "nameEn": "Reduces Destroyer cost by",
+      "unit": "%",
+      "scope": "global"
+    },
+    "296": {
+      "id": 296,
+      "name": "Recuperación trampas I +",
+      "nameEn": "Trap Retrieval I +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "297": {
+      "id": 297,
+      "name": "Recuperación trampas II +",
+      "nameEn": "Trap Retrieval II +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "298": {
+      "id": 298,
+      "name": "Recuperación trampas III +",
+      "nameEn": "Trap Retrieval III +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "299": {
+      "id": 299,
+      "name": "Recuperación trampas IV +",
+      "nameEn": "Trap Retrieval IV +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "300": {
+      "id": 300,
+      "name": "Recuperación trampas +",
+      "nameEn": "Trap Retrieval +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "301": {
+      "id": 301,
+      "name": "Acelera la agrupación en",
+      "nameEn": "Accelerates Rally by",
+      "unit": "%",
+      "scope": "global"
+    },
+    "302": {
+      "id": 302,
+      "name": "Vel. viaje tropas aliadas +",
+      "nameEn": "Allied Troops Travel Speed +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "303": {
+      "id": 303,
+      "name": "ATQ de ejército de coalición +",
+      "nameEn": "Coalition Army ATK +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "304": {
+      "id": 304,
+      "name": "Potenciador EXP jugador +",
+      "nameEn": "Player EXP Boost +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "305": {
+      "id": 305,
+      "name": "Reduce tiempo espera ejecución en",
+      "nameEn": "Reduces Execution Wait Time by",
+      "unit": "minutos",
+      "scope": "global"
+    },
+    "306": {
+      "id": 306,
+      "name": "統御經驗保留+",
+      "nameEn": "統御經驗保留+",
+      "unit": "%",
+      "scope": "global"
+    },
+    "307": {
+      "id": 307,
+      "name": "單一陀上限(看到請通報)",
+      "nameEn": "單一陀上限(看到請通報)",
+      "unit": "",
+      "scope": "global"
+    },
+    "308": {
+      "id": 308,
+      "name": "Reduce el ATQ de tropa invasora enemiga",
+      "nameEn": "Reduces Enemy Invading Troops ATK by",
+      "unit": "%",
+      "scope": "global"
+    },
+    "309": {
+      "id": 309,
+      "name": "Reduce el coste de forja en",
+      "nameEn": "Reduces Forging cost by",
+      "unit": "%",
+      "scope": "global"
+    },
+    "310": {
+      "id": 310,
+      "name": "Tamaño máx. +",
+      "nameEn": "Max Army Size +",
+      "unit": "",
+      "scope": "global"
+    },
+    "311": {
+      "id": 311,
+      "name": "PS máx. muralla +",
+      "nameEn": "Wall HP Boost +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "312": {
+      "id": 312,
+      "name": "Capacidad Almacén +",
+      "nameEn": "Vault Storage +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "313": {
+      "id": 313,
+      "name": "DEF muralla +",
+      "nameEn": "Wall DEF +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "314": {
+      "id": 314,
+      "name": "Vel. reparación muralla del castillo +",
+      "nameEn": "Castle Wall repair speed +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "315": {
+      "id": 315,
+      "name": "Acelerador de Duración potenc. caract. Altar +",
+      "nameEn": "Altar Stat Boost Duration +",
+      "unit": "minutos",
+      "scope": "global"
+    },
+    "316": {
+      "id": 316,
+      "name": "Reducción impuesto suministro +",
+      "nameEn": "Supply Tax Reduction +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "317": {
+      "id": 317,
+      "name": "Reclu.",
+      "nameEn": "Hire",
+      "unit": "%",
+      "scope": "global"
+    },
+    "318": {
+      "id": 318,
+      "name": "Ahorro de energía",
+      "nameEn": "Energy Saver",
+      "unit": "%",
+      "scope": "global"
+    },
+    "319": {
+      "id": 319,
+      "name": "Energía +",
+      "nameEn": "Energy +",
+      "unit": "",
+      "scope": "global"
+    },
+    "320": {
+      "id": 320,
+      "name": "Límite cacerías seguidas +",
+      "nameEn": "Hunts in a Row limit +",
+      "unit": "",
+      "scope": "global"
+    },
+    "321": {
+      "id": 321,
+      "name": "Potenc. daño cacería de monstruos +",
+      "nameEn": "Monster Hunt DMG Boost +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "322": {
+      "id": 322,
+      "name": "PS máx. cacería de monstruos +",
+      "nameEn": "Monster Hunt Max HP +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "323": {
+      "id": 323,
+      "name": "Efecto curativo cacería de monstruos +",
+      "nameEn": "Monster Hunt Healing Effect +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "324": {
+      "id": 324,
+      "name": "PM iniciales cacería de monstruos +",
+      "nameEn": "Monster Hunt Starting MP +",
+      "unit": "",
+      "scope": "global"
+    },
+    "325": {
+      "id": 325,
+      "name": "Máximo Set de Equipo +",
+      "nameEn": "Max Equipment Sets +",
+      "unit": "",
+      "scope": "global"
+    },
+    "326": {
+      "id": 326,
+      "name": "Máximo Set de Talento +",
+      "nameEn": "Max Talent Sets +",
+      "unit": "",
+      "scope": "global"
+    },
+    "327": {
+      "id": 327,
+      "name": "Producción de todos los recursos",
+      "nameEn": "Production of all Resources",
+      "unit": "%",
+      "scope": "global"
+    },
+    "328": {
+      "id": 328,
+      "name": "Índice producción de comida",
+      "nameEn": "Food Production Rate",
+      "unit": "%",
+      "scope": "global"
+    },
+    "329": {
+      "id": 329,
+      "name": "Índice producción de piedra",
+      "nameEn": "Stone Production Rate",
+      "unit": "%",
+      "scope": "global"
+    },
+    "330": {
+      "id": 330,
+      "name": "Índice producción de madera",
+      "nameEn": "Timber Production Rate",
+      "unit": "%",
+      "scope": "global"
+    },
+    "331": {
+      "id": 331,
+      "name": "Índice producción de mineral",
+      "nameEn": "Ore Production Rate",
+      "unit": "%",
+      "scope": "global"
+    },
+    "332": {
+      "id": 332,
+      "name": "Índice producción de oro",
+      "nameEn": "Gold Production Rate",
+      "unit": "%",
+      "scope": "global"
+    },
+    "333": {
+      "id": 333,
+      "name": "Vel. construcción",
+      "nameEn": "Construction Speed",
+      "unit": "%",
+      "scope": "global"
+    },
+    "334": {
+      "id": 334,
+      "name": "Vel. investigación",
+      "nameEn": "Research Speed",
+      "unit": "%",
+      "scope": "global"
+    },
+    "335": {
+      "id": 335,
+      "name": "Vel. entrenamiento",
+      "nameEn": "Training Speed",
+      "unit": "%",
+      "scope": "global"
+    },
+    "336": {
+      "id": 336,
+      "name": "Max Escuadrones +",
+      "nameEn": "Max Battalions +",
+      "unit": "",
+      "scope": "global"
+    },
+    "337": {
+      "id": 337,
+      "name": "Capacidad de enfermería +",
+      "nameEn": "Infirmary Capacity +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "338": {
+      "id": 338,
+      "name": "Almacén de oro +",
+      "nameEn": "Gold Storage +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "339": {
+      "id": 339,
+      "name": "Reduce el Tiempo de Transmutación en",
+      "nameEn": "Reduces Transmutation Time by",
+      "unit": "%",
+      "scope": "global"
+    },
+    "340": {
+      "id": 340,
+      "name": "La coalición de Fortaleza Oscura - Velocidad del viaje del ejército +",
+      "nameEn": "Darknest Coalition - Army Travel Speed +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "341": {
+      "id": 341,
+      "name": "La coalición de Fortaleza Oscura - Velocidad del viaje de tropas +",
+      "nameEn": "Darknest Coalition - Troop Travel Speed +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "342": {
+      "id": 342,
+      "name": "Máximo tamaño de ejército (Fortaleza Oscura) +",
+      "nameEn": "Max Army Size (Darknest) +",
+      "unit": "",
+      "scope": "global"
+    },
+    "343": {
+      "id": 343,
+      "name": "ATQ Ejército (Fortaleza Oscura) +",
+      "nameEn": "Army ATK (Darknest) +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "344": {
+      "id": 344,
+      "name": "DEF Ejército (Fortaleza Oscura) +",
+      "nameEn": "Army DEF (Darknest) +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "345": {
+      "id": 345,
+      "name": "PS Ejército (Fortaleza Oscura) +",
+      "nameEn": "Army HP (Darknest) +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "346": {
+      "id": 346,
+      "name": "Capacidad de Albergue +",
+      "nameEn": "Shelter Capacity +",
+      "unit": "",
+      "scope": "global"
+    },
+    "347": {
+      "id": 347,
+      "name": "Máxima RES +",
+      "nameEn": "Max STA +",
+      "unit": "",
+      "scope": "global"
+    },
+    "348": {
+      "id": 348,
+      "name": "Puntos de Talento +",
+      "nameEn": "Talent Points +",
+      "unit": "",
+      "scope": "global"
+    },
+    "349": {
+      "id": 349,
+      "name": "ATQ Ejército (Furia de Batalla) +",
+      "nameEn": "Army ATK (Battle Fury) +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "350": {
+      "id": 350,
+      "name": "DEF Ejército (Furia de Batalla) +",
+      "nameEn": "Army DEF (Battle Fury) +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "351": {
+      "id": 351,
+      "name": "PS Ejército (Furia de Batalla) +",
+      "nameEn": "Army HP (Battle Fury) +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "352": {
+      "id": 352,
+      "name": "Suministros extra +",
+      "nameEn": "Extra Supplies +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "353": {
+      "id": 353,
+      "name": "MÁX capacidad de comida +",
+      "nameEn": "Max Food Storage +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "354": {
+      "id": 354,
+      "name": "MÁX capacidad de piedra +",
+      "nameEn": "Max Stone Storage +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "355": {
+      "id": 355,
+      "name": "MÁX capacidad de madera +",
+      "nameEn": "Max Timber Storage +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "356": {
+      "id": 356,
+      "name": "MÁX capacidad de mineral +",
+      "nameEn": "Max Ore Storage +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "357": {
+      "id": 357,
+      "name": "Fusionando Pacto +",
+      "nameEn": "Pact Merging +",
+      "unit": "",
+      "scope": "global"
+    },
+    "358": {
+      "id": 358,
+      "name": "Producción de Ánima / Hora +",
+      "nameEn": "Anima Production / Hour +",
+      "unit": "",
+      "scope": "local"
+    },
+    "359": {
+      "id": 359,
+      "name": "Capacidad Máx de Ánima +",
+      "nameEn": "Max Anima Storage +",
+      "unit": "",
+      "scope": "local"
+    },
+    "360": {
+      "id": 360,
+      "name": "Acelerar Fusión (Pactos) +",
+      "nameEn": "Merging Speed (Pacts) +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "361": {
+      "id": 361,
+      "name": "Nvl de EXP de Monstruito en Entrenam. +",
+      "nameEn": "Familiar Training Lv EXP +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "362": {
+      "id": 362,
+      "name": "Espacios de Entrenam. Monstruito +",
+      "nameEn": "Familiar Training Slots +",
+      "unit": "",
+      "scope": "global"
+    },
+    "363": {
+      "id": 363,
+      "name": "Tiempo de entrenam. Monstruito +",
+      "nameEn": "Familiar Training Time +",
+      "unit": "minutos",
+      "scope": "global"
+    },
+    "364": {
+      "id": 364,
+      "name": "Fusionando Piedras de Habilidad +",
+      "nameEn": "Skillstone Merging +",
+      "unit": "",
+      "scope": "global"
+    },
+    "365": {
+      "id": 365,
+      "name": "Producción de Ánima",
+      "nameEn": "Anima Production +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "366": {
+      "id": 366,
+      "name": "Capacidad Máx de Ánima +",
+      "nameEn": "Max Anima Storage +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "367": {
+      "id": 367,
+      "name": "Reduce el coste de Fusión de Pacto 1 en",
+      "nameEn": "Reduces Merging Cost for Pact 1 by",
+      "unit": "%",
+      "scope": "global"
+    },
+    "368": {
+      "id": 368,
+      "name": "Reduce el coste de Fusión de Pacto 2 en",
+      "nameEn": "Reduces Merging Cost for Pact 2 by",
+      "unit": "%",
+      "scope": "global"
+    },
+    "369": {
+      "id": 369,
+      "name": "Reduce el coste de Fusión de Pacto 3 en",
+      "nameEn": "Reduces Merging Cost for Pact 3 by",
+      "unit": "%",
+      "scope": "global"
+    },
+    "370": {
+      "id": 370,
+      "name": "Reduce el coste de Fusión de Pacto 4 en",
+      "nameEn": "Reduces Merging Cost for Pact 4 by",
+      "unit": "%",
+      "scope": "global"
+    },
+    "371": {
+      "id": 371,
+      "name": "EXP de Habilidad de Monstruito +",
+      "nameEn": "Familiar Skill EXP +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "372": {
+      "id": 372,
+      "name": "Acelerar Fusión (Piedras de Habilidad) +",
+      "nameEn": "Merging Speed (Skillstones) +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "373": {
+      "id": 373,
+      "name": "Duración de Protector +",
+      "nameEn": "Ward Duration +",
+      "unit": "minutos",
+      "scope": "global"
+    },
+    "374": {
+      "id": 374,
+      "name": "Escapada de Líder +",
+      "nameEn": "Leader Escape +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "375": {
+      "id": 375,
+      "name": "",
+      "nameEn": "",
+      "unit": "%",
+      "scope": "global"
+    },
+    "376": {
+      "id": 376,
+      "name": "Producción de todos los recursos",
+      "nameEn": "Production of all Resources",
+      "unit": "%",
+      "scope": "global"
+    },
+    "377": {
+      "id": 377,
+      "name": "Sanción vel. viaje",
+      "nameEn": "Travel Speed Penalty",
+      "unit": "%",
+      "scope": "global"
+    },
+    "378": {
+      "id": 378,
+      "name": "Capacidad de suministro +",
+      "nameEn": "Supply Capacity +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "379": {
+      "id": 379,
+      "name": "Tamaño máx. ejército de coalición +",
+      "nameEn": "Max Coalition Army Size +",
+      "unit": "",
+      "scope": "global"
+    },
+    "380": {
+      "id": 380,
+      "name": "ATQ máx. Infantería (con Líder) +",
+      "nameEn": "Infantry ATK (with Leader) +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "381": {
+      "id": 381,
+      "name": "ATQ máx. Caballería (con Líder) +",
+      "nameEn": "Cavalry ATK (with Leader) +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "382": {
+      "id": 382,
+      "name": "ATQ máx. Artillería (con Líder) +",
+      "nameEn": "Ranged ATK (with Leader) +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "383": {
+      "id": 383,
+      "name": "ATQ máx. Máquina de asedio (con Líder) +",
+      "nameEn": "Siege Engine ATK (with Leader) +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "384": {
+      "id": 384,
+      "name": "DEF Infantería (con Líder) +",
+      "nameEn": "Infantry DEF (with Leader) +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "385": {
+      "id": 385,
+      "name": "DEF Caballería (con Líder) +",
+      "nameEn": "Cavalry DEF (with Leader) +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "386": {
+      "id": 386,
+      "name": "DEF Artillería (con Líder) +",
+      "nameEn": "Ranged DEF (with Leader) +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "387": {
+      "id": 387,
+      "name": "DEF Máquina de asedio (con Líder) +",
+      "nameEn": "Siege Engine DEF (with Leader) +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "388": {
+      "id": 388,
+      "name": "PS máx. Infantería (con Líder) +",
+      "nameEn": "Infantry Max HP (with Leader) +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "389": {
+      "id": 389,
+      "name": "PS máx. Caballería (con Líder) +",
+      "nameEn": "Cavalry Max HP (with Leader) +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "390": {
+      "id": 390,
+      "name": "PS máx. Artillería (con Líder) +",
+      "nameEn": "Ranged Max HP (with Leader) +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "391": {
+      "id": 391,
+      "name": "PS máx. Máquina de asedio (con Líder) +",
+      "nameEn": "Siege Engine Max HP (with Leader) +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "392": {
+      "id": 392,
+      "name": "ATQ Infantería (Furia de Batalla) +",
+      "nameEn": "Infantry ATK (Battle Fury) +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "393": {
+      "id": 393,
+      "name": "ATQ Caballería (Furia de Batalla) +",
+      "nameEn": "Cavalry ATK (Battle Fury) +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "394": {
+      "id": 394,
+      "name": "ATQ Artillería (Furia de Batalla) +",
+      "nameEn": "Ranged ATK (Battle Fury) +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "395": {
+      "id": 395,
+      "name": "ATQ Máquina de asedio (Furia de Batalla) +",
+      "nameEn": "Siege Engine ATK (Battle Fury) +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "396": {
+      "id": 396,
+      "name": "DEF Infantería (Furia de Batalla) +",
+      "nameEn": "Infantry DEF (Battle Fury) +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "397": {
+      "id": 397,
+      "name": "DEF Caballería (Furia de Batalla) +",
+      "nameEn": "Cavalry DEF (Battle Fury) +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "398": {
+      "id": 398,
+      "name": "DEF Artillería (Furia de Batalla) +",
+      "nameEn": "Ranged DEF (Battle Fury) +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "399": {
+      "id": 399,
+      "name": "DEF Máquina de asedio (Furia de Batalla) +",
+      "nameEn": "Siege Engine DEF (Battle Fury) +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "400": {
+      "id": 400,
+      "name": "PS máx. Infantería (Furia de Batalla) +",
+      "nameEn": "Infantry Max HP (Battle Fury) +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "401": {
+      "id": 401,
+      "name": "PS máx. Caballería (Furia de Batalla) +",
+      "nameEn": "Cavalry Max HP (Battle Fury) +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "402": {
+      "id": 402,
+      "name": "PS máx. Artillería (Furia de Batalla) +",
+      "nameEn": "Ranged Max HP (Battle Fury) +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "403": {
+      "id": 403,
+      "name": "PS máx. Máquina de asedio (Furia de Batalla) +",
+      "nameEn": "Siege Engine Max HP (Battle Fury) +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "404": {
+      "id": 404,
+      "name": "",
+      "nameEn": "",
+      "unit": "",
+      "scope": "global"
+    },
+    "405": {
+      "id": 405,
+      "name": "Ataque en Manada +",
+      "nameEn": "Pack Attack +",
+      "unit": "",
+      "scope": "global"
+    },
+    "406": {
+      "id": 406,
+      "name": "Tamaño máx. Ejército de Agrupación (Maravilla) +",
+      "nameEn": "Max Coalition Army Size (Wonder) +",
+      "unit": "",
+      "scope": "global"
+    },
+    "407": {
+      "id": 407,
+      "name": "Tamaño Máx. de Ejército (Maravilla) +",
+      "nameEn": "Max Army Size (Wonder) +",
+      "unit": "",
+      "scope": "global"
+    },
+    "408": {
+      "id": 408,
+      "name": "Velocidad de Viaje (Maravilla) +",
+      "nameEn": "Wonder Travel Speed +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "409": {
+      "id": 409,
+      "name": "ATQ Infantería (Maravilla) +",
+      "nameEn": "Infantry ATK (Wonder) +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "410": {
+      "id": 410,
+      "name": "ATQ Caballería (Maravilla) +",
+      "nameEn": "Cavalry ATK (Wonder) +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "411": {
+      "id": 411,
+      "name": "ATQ Artillería (Maravilla) +",
+      "nameEn": "Ranged ATK (Wonder) +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "412": {
+      "id": 412,
+      "name": "ATQ Maquina de Asedio (Maravilla) +",
+      "nameEn": "Siege Engine ATK (Wonder) +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "413": {
+      "id": 413,
+      "name": "DEF Infantería (Maravilla) +",
+      "nameEn": "Infantry DEF (Wonder) +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "414": {
+      "id": 414,
+      "name": "DEF Caballería (Maravilla) +",
+      "nameEn": "Cavalry DEF (Wonder) +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "415": {
+      "id": 415,
+      "name": "DEF Artillería (Maravilla) +",
+      "nameEn": "Ranged DEF (Wonder) +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "416": {
+      "id": 416,
+      "name": "DEF Maquina de Asedio (Maravilla) +",
+      "nameEn": "Siege Engine DEF (Wonder) +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "417": {
+      "id": 417,
+      "name": "PS Infantería (Maravilla) +",
+      "nameEn": "Infantry HP (Wonder) +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "418": {
+      "id": 418,
+      "name": "PS Caballería (Maravilla) +",
+      "nameEn": "Cavalry HP (Wonder) +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "419": {
+      "id": 419,
+      "name": "PS Artillería (Maravilla) +",
+      "nameEn": "Ranged HP (Wonder) +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "420": {
+      "id": 420,
+      "name": "PS Máquina de Asedio (Maravilla) +",
+      "nameEn": "Siege Engine HP (Wonder) +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "421": {
+      "id": 421,
+      "name": "",
+      "nameEn": "",
+      "unit": "%",
+      "scope": "global"
+    },
+    "422": {
+      "id": 422,
+      "name": "",
+      "nameEn": "",
+      "unit": "%",
+      "scope": "global"
+    },
+    "423": {
+      "id": 423,
+      "name": "",
+      "nameEn": "",
+      "unit": "%",
+      "scope": "global"
+    },
+    "424": {
+      "id": 424,
+      "name": "",
+      "nameEn": "",
+      "unit": "%",
+      "scope": "global"
+    },
+    "425": {
+      "id": 425,
+      "name": "",
+      "nameEn": "",
+      "unit": "%",
+      "scope": "global"
+    },
+    "426": {
+      "id": 426,
+      "name": "",
+      "nameEn": "",
+      "unit": "%",
+      "scope": "global"
+    },
+    "427": {
+      "id": 427,
+      "name": "",
+      "nameEn": "",
+      "unit": "%",
+      "scope": "global"
+    },
+    "428": {
+      "id": 428,
+      "name": "",
+      "nameEn": "",
+      "unit": "%",
+      "scope": "global"
+    },
+    "429": {
+      "id": 429,
+      "name": "",
+      "nameEn": "",
+      "unit": "%",
+      "scope": "global"
+    },
+    "430": {
+      "id": 430,
+      "name": "",
+      "nameEn": "",
+      "unit": "%",
+      "scope": "global"
+    },
+    "431": {
+      "id": 431,
+      "name": "",
+      "nameEn": "",
+      "unit": "%",
+      "scope": "global"
+    },
+    "432": {
+      "id": 432,
+      "name": "",
+      "nameEn": "",
+      "unit": "%",
+      "scope": "global"
+    },
+    "433": {
+      "id": 433,
+      "name": "",
+      "nameEn": "",
+      "unit": "%",
+      "scope": "global"
+    },
+    "434": {
+      "id": 434,
+      "name": "ATQ Infantería (con Monstruito) +",
+      "nameEn": "Infantry ATK (with Familiar) +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "435": {
+      "id": 435,
+      "name": "ATQ Caballería (con Monstruito) +",
+      "nameEn": "Cavalry ATK (with Familiar) +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "436": {
+      "id": 436,
+      "name": "ATQ Artillería (con Monstruito) +",
+      "nameEn": "Ranged ATK (with Familiar) +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "437": {
+      "id": 437,
+      "name": "DEF Infantería (con Monstruito) +",
+      "nameEn": "Infantry DEF (with Familiar) +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "438": {
+      "id": 438,
+      "name": "DEF Caballería (con Monstruito) +",
+      "nameEn": "Cavalry DEF (with Familiar) +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "439": {
+      "id": 439,
+      "name": "DEF Artillería (con Monstruito) +",
+      "nameEn": "Ranged DEF (with Familiar) +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "440": {
+      "id": 440,
+      "name": "PS Infantería (con Monstruito) +",
+      "nameEn": "Infantry HP (with Familiar) +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "441": {
+      "id": 441,
+      "name": "PS Caballería (con Monstruito) +",
+      "nameEn": "Cavalry HP (with Familiar) +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "442": {
+      "id": 442,
+      "name": "PS Artillería (con Monstruito) +",
+      "nameEn": "Ranged HP (with Familiar) +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "443": {
+      "id": 443,
+      "name": "ATQ de ejército (con Monstruito) +",
+      "nameEn": "Army ATK (with Familiar) +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "444": {
+      "id": 444,
+      "name": "DEF de ejército (con Monstruito) +",
+      "nameEn": "Army DEF (with Familiar) +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "445": {
+      "id": 445,
+      "name": "PS máx. de ejército (con Monstruito) +",
+      "nameEn": "Army Max HP (with Familiar) +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "446": {
+      "id": 446,
+      "name": "",
+      "nameEn": "",
+      "unit": "%",
+      "scope": "global"
+    },
+    "447": {
+      "id": 447,
+      "name": "",
+      "nameEn": "",
+      "unit": "%",
+      "scope": "global"
+    },
+    "448": {
+      "id": 448,
+      "name": "",
+      "nameEn": "",
+      "unit": "%",
+      "scope": "global"
+    },
+    "449": {
+      "id": 449,
+      "name": "",
+      "nameEn": "",
+      "unit": "%",
+      "scope": "global"
+    },
+    "450": {
+      "id": 450,
+      "name": "Producción de lunite/hora +",
+      "nameEn": "Lunite Production / hour +",
+      "unit": "",
+      "scope": "local"
+    },
+    "451": {
+      "id": 451,
+      "name": "Producción de lunite +",
+      "nameEn": "Lunite Production +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "452": {
+      "id": 452,
+      "name": "Almacenamiento máx. de lunite +",
+      "nameEn": "Max Lunite Storage +",
+      "unit": "",
+      "scope": "local"
+    },
+    "453": {
+      "id": 453,
+      "name": "Almacenamiento máx. de lunite +",
+      "nameEn": "Max Lunite Storage +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "454": {
+      "id": 454,
+      "name": "Capacidad de elaboración +",
+      "nameEn": "Crafting Capacity +",
+      "unit": "",
+      "scope": "global"
+    },
+    "455": {
+      "id": 455,
+      "name": "Velocidad de elaboración +",
+      "nameEn": "Crafting Speed +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "456": {
+      "id": 456,
+      "name": "Refuerzo de ATQ infantería a artillería+",
+      "nameEn": "Infantry-Ranged Counter Boost+",
+      "unit": "%",
+      "scope": "global"
+    },
+    "457": {
+      "id": 457,
+      "name": "Refuerzo de ATQ caballería a infantería+",
+      "nameEn": "Cavalry-Infantry Counter Boost+",
+      "unit": "%",
+      "scope": "global"
+    },
+    "458": {
+      "id": 458,
+      "name": "Refuerzo de ATQ artillería a caballería+",
+      "nameEn": "Ranged-Cavalry Counter Boost+",
+      "unit": "%",
+      "scope": "global"
+    },
+    "459": {
+      "id": 459,
+      "name": "Velocidad de producción de devoción+",
+      "nameEn": "Devotion Production Speed+",
+      "unit": "%",
+      "scope": "global"
+    },
+    "460": {
+      "id": 460,
+      "name": "Devoción de tareas divinas+",
+      "nameEn": "Devotion from Divine Tasks+",
+      "unit": "%",
+      "scope": "global"
+    },
+    "461": {
+      "id": 461,
+      "name": "Debilita el ATQ de la infantería enemiga (maravilla) en un",
+      "nameEn": "Weakens Enemy Infantry ATK (Wonder) by",
+      "unit": "%",
+      "scope": "global"
+    },
+    "462": {
+      "id": 462,
+      "name": "Debilita el ATQ de la caballería enemiga (maravilla) en un",
+      "nameEn": "Weakens Enemy Cavalry ATK (Wonder) by",
+      "unit": "%",
+      "scope": "global"
+    },
+    "463": {
+      "id": 463,
+      "name": "Debilita el ATQ de la artillería enemiga (maravilla) en un",
+      "nameEn": "Weakens Enemy Ranged ATK (Wonder) by",
+      "unit": "%",
+      "scope": "global"
+    },
+    "464": {
+      "id": 464,
+      "name": "Debilita la DEF de la infantería enemiga (maravilla) en un",
+      "nameEn": "Weakens Enemy Infantry DEF (Wonder) by",
+      "unit": "%",
+      "scope": "global"
+    },
+    "465": {
+      "id": 465,
+      "name": "Debilita la DEF de la caballería enemiga (maravilla) en un",
+      "nameEn": "Weakens Enemy Cavalry DEF (Wonder) by",
+      "unit": "%",
+      "scope": "global"
+    },
+    "466": {
+      "id": 466,
+      "name": "Debilita la DEF de la artillería enemiga (maravilla) en un",
+      "nameEn": "Weakens Enemy Ranged DEF (Wonder) by",
+      "unit": "%",
+      "scope": "global"
+    },
+    "467": {
+      "id": 467,
+      "name": "Debilita los PS máx. de la infantería enemiga (maravilla) en un",
+      "nameEn": "Weakens Enemy Infantry Max HP (Wonder) by",
+      "unit": "%",
+      "scope": "global"
+    },
+    "468": {
+      "id": 468,
+      "name": "Debilita los PS máx. de la caballería enemiga (maravilla) en un",
+      "nameEn": "Weakens Enemy Cavalry Max HP (Wonder) by",
+      "unit": "%",
+      "scope": "global"
+    },
+    "469": {
+      "id": 469,
+      "name": "Debilita los PS máx. de la artillería enemiga (maravilla) en un",
+      "nameEn": "Weakens Enemy Ranged Max HP (Wonder) by",
+      "unit": "%",
+      "scope": "global"
+    },
+    "470": {
+      "id": 470,
+      "name": "Tamaño máx. de ejército de coalición (participante de agrup. de la maravilla) +",
+      "nameEn": "Max Coalition Army Size (Wonder Rally Participant) +",
+      "unit": "",
+      "scope": "global"
+    },
+    "471": {
+      "id": 471,
+      "name": "ATQ de infantería (maravilla real)+",
+      "nameEn": "Infantry ATK (Royal Wonder)+",
+      "unit": "%",
+      "scope": "global"
+    },
+    "472": {
+      "id": 472,
+      "name": "ATQ de caballería (maravilla real)+",
+      "nameEn": "Cavalry ATK (Royal Wonder)+",
+      "unit": "%",
+      "scope": "global"
+    },
+    "473": {
+      "id": 473,
+      "name": "ATQ de artillería (maravilla real)+",
+      "nameEn": "Ranged ATK (Royal Wonder)+",
+      "unit": "%",
+      "scope": "global"
+    },
+    "474": {
+      "id": 474,
+      "name": "ATQ de infantería (maravilla del distrito)+",
+      "nameEn": "Infantry ATK (District Wonder)+",
+      "unit": "%",
+      "scope": "global"
+    },
+    "475": {
+      "id": 475,
+      "name": "ATQ de caballería (maravilla del distrito)+",
+      "nameEn": "Cavalry ATK (District Wonder)+",
+      "unit": "%",
+      "scope": "global"
+    },
+    "476": {
+      "id": 476,
+      "name": "ATQ de artillería (maravilla del distrito)+",
+      "nameEn": "Ranged ATK (District Wonder)+",
+      "unit": "%",
+      "scope": "global"
+    },
+    "477": {
+      "id": 477,
+      "name": "ATQ de infantería (cáliz real)+",
+      "nameEn": "Infantry ATK (Royal Chalice)+",
+      "unit": "%",
+      "scope": "global"
+    },
+    "478": {
+      "id": 478,
+      "name": "ATQ de caballería (cáliz real)+",
+      "nameEn": "Cavalry ATK (Royal Chalice)+",
+      "unit": "%",
+      "scope": "global"
+    },
+    "479": {
+      "id": 479,
+      "name": "ATQ de artillería (cáliz real)+",
+      "nameEn": "Ranged ATK (Royal Chalice)+",
+      "unit": "%",
+      "scope": "global"
+    },
+    "480": {
+      "id": 480,
+      "name": "集結軍步兵攻擊力+",
+      "nameEn": "集結軍步兵攻擊力+",
+      "unit": "%",
+      "scope": "global"
+    },
+    "481": {
+      "id": 481,
+      "name": "集結軍步兵生命力+",
+      "nameEn": "集結軍步兵生命力+",
+      "unit": "%",
+      "scope": "global"
+    },
+    "482": {
+      "id": 482,
+      "name": "集結軍步兵防禦力+",
+      "nameEn": "集結軍步兵防禦力+",
+      "unit": "%",
+      "scope": "global"
+    },
+    "483": {
+      "id": 483,
+      "name": "集結軍騎兵攻擊力+",
+      "nameEn": "集結軍騎兵攻擊力+",
+      "unit": "%",
+      "scope": "global"
+    },
+    "484": {
+      "id": 484,
+      "name": "集結軍騎兵生命力+",
+      "nameEn": "集結軍騎兵生命力+",
+      "unit": "%",
+      "scope": "global"
+    },
+    "485": {
+      "id": 485,
+      "name": "集結軍騎兵防禦力+",
+      "nameEn": "集結軍騎兵防禦力+",
+      "unit": "%",
+      "scope": "global"
+    },
+    "486": {
+      "id": 486,
+      "name": "集結軍弓兵攻擊力+",
+      "nameEn": "集結軍弓兵攻擊力+",
+      "unit": "%",
+      "scope": "global"
+    },
+    "487": {
+      "id": 487,
+      "name": "集結軍弓兵生命力+",
+      "nameEn": "集結軍弓兵生命力+",
+      "unit": "%",
+      "scope": "global"
+    },
+    "488": {
+      "id": 488,
+      "name": "集結軍弓兵防禦力+",
+      "nameEn": "集結軍弓兵防禦力+",
+      "unit": "%",
+      "scope": "global"
+    },
+    "489": {
+      "id": 489,
+      "name": "集結軍軍團攻擊力+",
+      "nameEn": "集結軍軍團攻擊力+",
+      "unit": "%",
+      "scope": "global"
+    },
+    "490": {
+      "id": 490,
+      "name": "集結軍軍團生命力+",
+      "nameEn": "集結軍軍團生命力+",
+      "unit": "%",
+      "scope": "global"
+    },
+    "491": {
+      "id": 491,
+      "name": "集結軍軍團防禦力+",
+      "nameEn": "集結軍軍團防禦力+",
+      "unit": "%",
+      "scope": "global"
+    },
+    "492": {
+      "id": 492,
+      "name": "Reducción del coste de curación",
+      "nameEn": "Healing Cost Reduction",
+      "unit": "",
+      "scope": "global"
+    },
+    "493": {
+      "id": 493,
+      "name": "Reclu.",
+      "nameEn": "Hire",
+      "unit": "",
+      "scope": "global"
+    },
+    "494": {
+      "id": 494,
+      "name": "Reclu.",
+      "nameEn": "Hire",
+      "unit": "%",
+      "scope": "global"
+    },
+    "495": {
+      "id": 495,
+      "name": "Reducción de la duración de curación",
+      "nameEn": "Healing Duration Reduction",
+      "unit": "%",
+      "scope": "global"
+    },
+    "496": {
+      "id": 496,
+      "name": "Carga de maná de la infantería +",
+      "nameEn": "Infantry Mana Charge +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "497": {
+      "id": 497,
+      "name": "Carga de maná de la caballería +",
+      "nameEn": "Cavalry Mana Charge +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "498": {
+      "id": 498,
+      "name": "Carga de maná de la artillería +",
+      "nameEn": "Ranged Mana Charge +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "499": {
+      "id": 499,
+      "name": "Producción de mineral de maná / hora +",
+      "nameEn": "Mana Ore Production / Hour +",
+      "unit": "",
+      "scope": "local"
+    },
+    "500": {
+      "id": 500,
+      "name": "Almacenamiento de mineral de maná máx. +",
+      "nameEn": "Max Mana Ore Storage +",
+      "unit": "",
+      "scope": "local"
+    },
+    "501": {
+      "id": 501,
+      "name": "Producción de mineral de maná +",
+      "nameEn": "Mana Ore Production +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "502": {
+      "id": 502,
+      "name": "Almacenamiento de mineral de maná máx. +",
+      "nameEn": "Max Mana Ore Storage +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "503": {
+      "id": 503,
+      "name": "Límite de perfeccionamiento diario de cristal de maná +",
+      "nameEn": "Daily Mana Crystal Refinement Limit +",
+      "unit": "",
+      "scope": "global"
+    },
+    "504": {
+      "id": 504,
+      "name": "Bonificación de perfeccionamiento de cristal de maná +",
+      "nameEn": "Mana Crystal Refinement Bonus +",
+      "unit": "",
+      "scope": "global"
+    },
+    "505": {
+      "id": 505,
+      "name": "Bonificación de perfeccionamiento de acero de maná +",
+      "nameEn": "Manasteel Refinement Bonus +",
+      "unit": "",
+      "scope": "global"
+    },
+    "506": {
+      "id": 506,
+      "name": "",
+      "nameEn": "",
+      "unit": "",
+      "scope": "global"
+    },
+    "507": {
+      "id": 507,
+      "name": "Nivel de tropa",
+      "nameEn": "Troop Level",
+      "unit": "",
+      "scope": "global"
+    },
+    "508": {
+      "id": 508,
+      "name": "ATQ del escuadrón",
+      "nameEn": "Squad ATK",
+      "unit": "%",
+      "scope": "global"
+    },
+    "509": {
+      "id": 509,
+      "name": "DEF del escuadrón",
+      "nameEn": "Squad DEF",
+      "unit": "%",
+      "scope": "global"
+    },
+    "510": {
+      "id": 510,
+      "name": "PS del escuadrón",
+      "nameEn": "Squad HP",
+      "unit": "%",
+      "scope": "global"
+    },
+    "511": {
+      "id": 511,
+      "name": "ATQ del ejército del coliseo +",
+      "nameEn": "Colosseum Army ATK+",
+      "unit": "%",
+      "scope": "global"
+    },
+    "512": {
+      "id": 512,
+      "name": "DEF del ejército del coliseo +",
+      "nameEn": "Colosseum Army DEF+",
+      "unit": "%",
+      "scope": "global"
+    },
+    "513": {
+      "id": 513,
+      "name": "PS del ejército del coliseo +",
+      "nameEn": "Colosseum Army HP+",
+      "unit": "%",
+      "scope": "global"
+    },
+    "514": {
+      "id": 514,
+      "name": "Estado de ánimo",
+      "nameEn": "Mood",
+      "unit": "",
+      "scope": "global"
+    },
+    "515": {
+      "id": 515,
+      "name": "Sueño",
+      "nameEn": "Sleep",
+      "unit": "",
+      "scope": "global"
+    },
+    "516": {
+      "id": 516,
+      "name": "Saciedad",
+      "nameEn": "Satiety",
+      "unit": "",
+      "scope": "global"
+    },
+    "517": {
+      "id": 517,
+      "name": "Límite de residentes",
+      "nameEn": "Resident Limit",
+      "unit": "",
+      "scope": "global"
+    },
+    "518": {
+      "id": 518,
+      "name": "",
+      "nameEn": "",
+      "unit": "",
+      "scope": "global"
+    },
+    "519": {
+      "id": 519,
+      "name": "",
+      "nameEn": "",
+      "unit": "",
+      "scope": "global"
+    },
+    "520": {
+      "id": 520,
+      "name": "Puntos de decoración",
+      "nameEn": "Decoration Points",
+      "unit": "",
+      "scope": "global"
+    },
+    "521": {
+      "id": 521,
+      "name": "Puntos de duelo de recolección+",
+      "nameEn": "Gathering Duel Points+",
+      "unit": "%",
+      "scope": "global"
+    },
+    "522": {
+      "id": 522,
+      "name": "Puntos de duelo de construcción+",
+      "nameEn": "Construction Duel Points+",
+      "unit": "%",
+      "scope": "global"
+    },
+    "523": {
+      "id": 523,
+      "name": "Puntos de duelo de investigación+",
+      "nameEn": "Research Duel Points+",
+      "unit": "%",
+      "scope": "global"
+    },
+    "524": {
+      "id": 524,
+      "name": "Puntos de duelo de entrenamiento+",
+      "nameEn": "Training Duel Points+",
+      "unit": "%",
+      "scope": "global"
+    },
+    "525": {
+      "id": 525,
+      "name": "Puntos de duelo de fabricación+",
+      "nameEn": "Crafting Duel Points+",
+      "unit": "%",
+      "scope": "global"
+    },
+    "526": {
+      "id": 526,
+      "name": "Puntos de duelo de héroe+",
+      "nameEn": "Hero Duel Points+",
+      "unit": "%",
+      "scope": "global"
+    },
+    "527": {
+      "id": 527,
+      "name": "Puntos de duelo de monstruito+",
+      "nameEn": "Familiar Duel Points+",
+      "unit": "%",
+      "scope": "global"
+    },
+    "528": {
+      "id": 528,
+      "name": "Puntos de duelo de artefacto+",
+      "nameEn": "Artifact Duel Points+",
+      "unit": "%",
+      "scope": "global"
+    },
+    "529": {
+      "id": 529,
+      "name": "Puntos de duelo de consumo de resistencia+",
+      "nameEn": "Stamina Consumption Duel Points+",
+      "unit": "%",
+      "scope": "global"
+    },
+    "530": {
+      "id": 530,
+      "name": "Puntos de duelo de consumo de energía+",
+      "nameEn": "Energy Consumption Duel Points+",
+      "unit": "%",
+      "scope": "global"
+    },
+    "531": {
+      "id": 531,
+      "name": "Puntos de duelo de acelerador+",
+      "nameEn": "Speed Up Duel Points+",
+      "unit": "%",
+      "scope": "global"
+    },
+    "532": {
+      "id": 532,
+      "name": "Todos los puntos de duelo+",
+      "nameEn": "All Duel Points+",
+      "unit": "%",
+      "scope": "global"
+    },
+    "533": {
+      "id": 533,
+      "name": "",
+      "nameEn": "",
+      "unit": "",
+      "scope": "global"
+    },
+    "534": {
+      "id": 534,
+      "name": "",
+      "nameEn": "",
+      "unit": "",
+      "scope": "global"
+    },
+    "535": {
+      "id": 535,
+      "name": "",
+      "nameEn": "",
+      "unit": "",
+      "scope": "global"
+    },
+    "536": {
+      "id": 536,
+      "name": "",
+      "nameEn": "",
+      "unit": "",
+      "scope": "global"
+    },
+    "537": {
+      "id": 537,
+      "name": "",
+      "nameEn": "",
+      "unit": "",
+      "scope": "global"
+    },
+    "538": {
+      "id": 538,
+      "name": "",
+      "nameEn": "",
+      "unit": "",
+      "scope": "global"
+    },
+    "539": {
+      "id": 539,
+      "name": "",
+      "nameEn": "",
+      "unit": "",
+      "scope": "global"
+    },
+    "540": {
+      "id": 540,
+      "name": "",
+      "nameEn": "",
+      "unit": "",
+      "scope": "global"
+    },
+    "541": {
+      "id": 541,
+      "name": "+ATQ de ejército de campo de batalla",
+      "nameEn": "Battlefield Army ATK+",
+      "unit": "%",
+      "scope": "global"
+    },
+    "542": {
+      "id": 542,
+      "name": "+DEF de ejército de campo de batalla",
+      "nameEn": "Battlefield Army DEF+",
+      "unit": "%",
+      "scope": "global"
+    },
+    "543": {
+      "id": 543,
+      "name": "+PS de ejército de campo de batalla",
+      "nameEn": "Battlefield Army HP+",
+      "unit": "%",
+      "scope": "global"
+    },
+    "544": {
+      "id": 544,
+      "name": "Velocidad de recolección del yacimiento de energón +",
+      "nameEn": "Energon Lode Gathering Speed +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "545": {
+      "id": 545,
+      "name": "Aumenta la cantidad obtenida de los yacimientos de energón.",
+      "nameEn": "Increases amount gathered from Energon Lodes +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "546": {
+      "id": 546,
+      "name": "Reduce el consumo de energón durante la fundición.",
+      "nameEn": "Reduces Energon consumed during smelting",
+      "unit": "%",
+      "scope": "global"
+    },
+    "547": {
+      "id": 547,
+      "name": "Reduce el consumo de mineral de energón durante la fundición.",
+      "nameEn": "Reduces Energon Ore consumed during smelting",
+      "unit": "%",
+      "scope": "global"
+    },
+    "548": {
+      "id": 548,
+      "name": "Estrellas de energón fundidas +",
+      "nameEn": "Smelted Energon Stars +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "549": {
+      "id": 549,
+      "name": "Probabilidad de fundición de fragmentos de Chispa Suprema +",
+      "nameEn": "AllSpark Shard Smelt Chance +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "550": {
+      "id": 550,
+      "name": "Fragmentos de Chispa Suprema fundidos +",
+      "nameEn": "Smelted AllSpark Shards +",
+      "unit": "",
+      "scope": "global"
+    },
+    "551": {
+      "id": 551,
+      "name": "",
+      "nameEn": "",
+      "unit": "",
+      "scope": "global"
+    },
+    "552": {
+      "id": 552,
+      "name": "",
+      "nameEn": "",
+      "unit": "",
+      "scope": "global"
+    },
+    "553": {
+      "id": 553,
+      "name": "",
+      "nameEn": "",
+      "unit": "",
+      "scope": "global"
+    },
+    "554": {
+      "id": 554,
+      "name": "",
+      "nameEn": "",
+      "unit": "",
+      "scope": "global"
+    },
+    "555": {
+      "id": 555,
+      "name": "",
+      "nameEn": "",
+      "unit": "",
+      "scope": "global"
+    },
+    "556": {
+      "id": 556,
+      "name": "",
+      "nameEn": "",
+      "unit": "",
+      "scope": "global"
+    },
+    "557": {
+      "id": 557,
+      "name": "",
+      "nameEn": "",
+      "unit": "",
+      "scope": "global"
+    },
+    "558": {
+      "id": 558,
+      "name": "",
+      "nameEn": "",
+      "unit": "",
+      "scope": "global"
+    },
+    "559": {
+      "id": 559,
+      "name": "",
+      "nameEn": "",
+      "unit": "",
+      "scope": "global"
+    },
+    "560": {
+      "id": 560,
+      "name": "",
+      "nameEn": "",
+      "unit": "",
+      "scope": "global"
+    },
+    "996": {
+      "id": 996,
+      "name": "Prestigio +",
+      "nameEn": "Prestige +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "997": {
+      "id": 997,
+      "name": "Obediencia +",
+      "nameEn": "Obedience +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "998": {
+      "id": 998,
+      "name": "Humor +",
+      "nameEn": "Humor +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "999": {
+      "id": 999,
+      "name": "Notoriedad +",
+      "nameEn": "Notoriety +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "1000": {
+      "id": 1000,
+      "name": "Infamia +",
+      "nameEn": "Infamy +",
+      "unit": "%",
+      "scope": "global"
+    },
+    "1001": {
+      "id": 1001,
+      "name": "Permite almacenar oro en la cámara",
+      "nameEn": "Allows Gold storage in Vault",
+      "unit": "",
+      "scope": "local"
+    },
+    "1002": {
+      "id": 1002,
+      "name": "Te advierte de tropas que se acercan. Revela la misión y el objetivo de las tropas enemigas que se acercan a tu territorio o a tus campamentos.",
+      "nameEn": "Alerts you to incoming armies! Reveals mission and objective of enemy Armies approaching your Turf or Camps.",
+      "unit": "",
+      "scope": "local"
+    },
+    "1003": {
+      "id": 1003,
+      "name": "Revela el nombre de jugador y las coordenadas de las tropas enemigas que se acercan a tu territorio o a tus campamentos.",
+      "nameEn": "Reveals the player name and coordinates of enemy Armies approaching your Turf or Camps.",
+      "unit": "",
+      "scope": "local"
+    },
+    "1004": {
+      "id": 1004,
+      "name": "Revela el tiempo de viaje restante de las tropas enemigas que se acercan a tu territorio o a tus campamentos.",
+      "nameEn": "Reveals remaining travel time of enemy Armies approaching your Turf or Camps.",
+      "unit": "",
+      "scope": "local"
+    },
+    "1005": {
+      "id": 1005,
+      "name": "Revela el gremio de las tropas enemigas que se acercan a tu territorio o a tus campamentos.",
+      "nameEn": "Reveals the Guild of enemy Armies approaching your Turf or Camps.",
+      "unit": "",
+      "scope": "local"
+    },
+    "1006": {
+      "id": 1006,
+      "name": "Revela el tamaño aproximado del ejército enemigo que se acerca a tu Territorio, Campos o Tropas, y la cantidad de Héroes y Monstruitos que forman parte de él.",
+      "nameEn": "Reveals the estimated size of enemy Army(s) approaching your Turf, Camps, or Garrisoned Troops, and the number of Heroes and Familiars in them.",
+      "unit": "",
+      "scope": "local"
+    },
+    "1007": {
+      "id": 1007,
+      "name": "Indica si un enemigo se acerque a su Ejército Turf, campamentos, o tropas acuarteladas, está dirigida por el Líder y revela su composición.",
+      "nameEn": "Indicates if an enemy Army approaching your Turf, Camps, or Garrisoned Troops, is led by the Leader and reveals its composition.",
+      "unit": "",
+      "scope": "local"
+    },
+    "1008": {
+      "id": 1008,
+      "name": "Revela el tamaño estimado del ejército(s) y tipos de tropas del enemigo que se acerca a su territorio, campamentos, o tropas acuarteladas.",
+      "nameEn": "Reveals the estimated size of each Squad and Soldier Class of enemy Army(s) approaching your Turf, Camps, or Garrisoned Troops.",
+      "unit": "",
+      "scope": "local"
+    },
+    "1009": {
+      "id": 1009,
+      "name": "Revela la formación de los Héroes y Monstruitos (incluida información sobre las habilidades de los Monstruitos) de los ejércitos enemigos que se acercan a tu Territorio, Campos o Tropas Acuarteladas.",
+      "nameEn": "Reveals the Hero and Familiar lineup (including Familiar skill info) of enemy Army(s) approaching your Turf, Camps, or Garrisoned Troops.",
+      "unit": "",
+      "scope": "local"
+    },
+    "1010": {
+      "id": 1010,
+      "name": "Revela el tamaño real de cada ejército enemigo que se acerque a su Territorio, campamentos, o tropas acuarteladas.",
+      "nameEn": "Reveals the actual size of each Squad for enemy Army(s) approaching your Turf, Camps, or Garrisoned Troops.",
+      "unit": "",
+      "scope": "local"
+    },
+    "1011": {
+      "id": 1011,
+      "name": "Revela el Rango y Grado de los Héroes, y la Etapa y Rareza de los Monstruitos de los ejércitos enemigos que se acercan a tu Territorio y Campos.",
+      "nameEn": "Reveals the Rank and Grade of Heroes and Stage and Rarity of Familiars in enemy Armies approaching your Turf and Camps.",
+      "unit": "",
+      "scope": "local"
+    },
+    "1012": {
+      "id": 1012,
+      "name": "Desbloquea el botón [Fortificar]. ¡Refuerza rápidamente tus defensas ante una batalla de asedio inminente y reduce la fuerza de tus enemigos!",
+      "nameEn": "Unlocks [Fortify] button. Quickly bolster your defenses for an impending Siege Battle and lower your enemies' power!",
+      "unit": "",
+      "scope": "local"
+    },
+    "1013": {
+      "id": 1013,
+      "name": "Informe de inteligencia I",
+      "nameEn": "Intelligence Report I",
+      "unit": "",
+      "scope": "global"
+    },
+    "1014": {
+      "id": 1014,
+      "name": "Informe de inteligencia II",
+      "nameEn": "Intelligence Report II",
+      "unit": "",
+      "scope": "global"
+    },
+    "1015": {
+      "id": 1015,
+      "name": "Informe de inteligencia III",
+      "nameEn": "Intelligence Report III",
+      "unit": "",
+      "scope": "global"
+    },
+    "1016": {
+      "id": 1016,
+      "name": "Informe de inteligencia IV",
+      "nameEn": "Intelligence Report IV",
+      "unit": "",
+      "scope": "global"
+    },
+    "1017": {
+      "id": 1017,
+      "name": "Informe de inteligencia V",
+      "nameEn": "Intelligence Report V",
+      "unit": "",
+      "scope": "global"
+    },
+    "1018": {
+      "id": 1018,
+      "name": "Informe de inteligencia VI",
+      "nameEn": "Intelligence Report VI",
+      "unit": "",
+      "scope": "global"
+    },
+    "1019": {
+      "id": 1019,
+      "name": "Informe de inteligencia VII",
+      "nameEn": "Intelligence Report VII",
+      "unit": "",
+      "scope": "global"
+    },
+    "1020": {
+      "id": 1020,
+      "name": "Informe de inteligencia VIII",
+      "nameEn": "Intelligence Report VIII",
+      "unit": "",
+      "scope": "global"
+    },
+    "1021": {
+      "id": 1021,
+      "name": "Informe de inteligencia IX",
+      "nameEn": "Intelligence Report IX",
+      "unit": "",
+      "scope": "global"
+    },
+    "1022": {
+      "id": 1022,
+      "name": "Informe de inteligencia X",
+      "nameEn": "Intelligence Report X",
+      "unit": "",
+      "scope": "global"
+    },
+    "1023": {
+      "id": 1023,
+      "name": "Desbloquea el gladiador",
+      "nameEn": "Unlocks Gladiator",
+      "unit": "",
+      "scope": "global"
+    },
+    "1024": {
+      "id": 1024,
+      "name": "Desbloquea la guardia real",
+      "nameEn": "Unlocks Royal Guard",
+      "unit": "",
+      "scope": "global"
+    },
+    "1025": {
+      "id": 1025,
+      "name": "Desbloquea el guerrero heroico",
+      "nameEn": "Unlocks Heroic Fighter",
+      "unit": "",
+      "scope": "global"
+    },
+    "1026": {
+      "id": 1026,
+      "name": "Desbloquea el tirador",
+      "nameEn": "Unlocks Sharpshooter",
+      "unit": "",
+      "scope": "global"
+    },
+    "1027": {
+      "id": 1027,
+      "name": "Desbloquea el francotirador",
+      "nameEn": "Unlocks Stealth Sniper",
+      "unit": "",
+      "scope": "global"
+    },
+    "1028": {
+      "id": 1028,
+      "name": "Desbloquea el cañonero heroico",
+      "nameEn": "Unlocks Heroic Cannoneer",
+      "unit": "",
+      "scope": "global"
+    },
+    "1029": {
+      "id": 1029,
+      "name": "Desbloquea el jinete reptiliano",
+      "nameEn": "Unlocks Reptilian Rider",
+      "unit": "",
+      "scope": "global"
+    },
+    "1030": {
+      "id": 1030,
+      "name": "Desbloquea la caballería real",
+      "nameEn": "Unlocks Royal Cavalry",
+      "unit": "",
+      "scope": "global"
+    },
+    "1031": {
+      "id": 1031,
+      "name": "Desbloquea el Jinete Dragón Ancestral",
+      "nameEn": "Unlocks Ancient Drake Rider",
+      "unit": "",
+      "scope": "global"
+    },
+    "1032": {
+      "id": 1032,
+      "name": "Desbloquea la catapulta",
+      "nameEn": "Unlocks Catapult",
+      "unit": "",
+      "scope": "global"
+    },
+    "1033": {
+      "id": 1033,
+      "name": "Desbloquea el lanzapiedras",
+      "nameEn": "Unlocks Fire Trebuchet",
+      "unit": "",
+      "scope": "global"
+    },
+    "1034": {
+      "id": 1034,
+      "name": "Desbloquea el destructor",
+      "nameEn": "Unlocks Destroyer",
+      "unit": "",
+      "scope": "global"
+    },
+    "1035": {
+      "id": 1035,
+      "name": "Desbloquea rocas con púas",
+      "nameEn": "Unlocks Spike Boulders",
+      "unit": "",
+      "scope": "global"
+    },
+    "1036": {
+      "id": 1036,
+      "name": "Desbloquea troncos rodantes",
+      "nameEn": "Unlocks Rolling Logs",
+      "unit": "",
+      "scope": "global"
+    },
+    "1037": {
+      "id": 1037,
+      "name": "Desbloquea rocas en llamas",
+      "nameEn": "Unlocks Flame Boulders",
+      "unit": "",
+      "scope": "global"
+    },
+    "1038": {
+      "id": 1038,
+      "name": "Desbloquea troncos ardientes",
+      "nameEn": "Unlocks Burning Logs",
+      "unit": "",
+      "scope": "global"
+    },
+    "1039": {
+      "id": 1039,
+      "name": "Desbloquea la torre de arquero",
+      "nameEn": "Unlocks Archer Tower",
+      "unit": "",
+      "scope": "global"
+    },
+    "1040": {
+      "id": 1040,
+      "name": "Desbloquea torre francotirador",
+      "nameEn": "Unlocks Sniper Tower",
+      "unit": "",
+      "scope": "global"
+    },
+    "1041": {
+      "id": 1041,
+      "name": "Desbloquea la torre fortificada",
+      "nameEn": "Unlocks Fortified Tower",
+      "unit": "",
+      "scope": "global"
+    },
+    "1042": {
+      "id": 1042,
+      "name": "Desbloquea el rascacielos",
+      "nameEn": "Unlocks Skyscraper",
+      "unit": "",
+      "scope": "global"
+    },
+    "1043": {
+      "id": 1043,
+      "name": "Desbloquea púas",
+      "nameEn": "Unlocks Spikes",
+      "unit": "",
+      "scope": "global"
+    },
+    "1044": {
+      "id": 1044,
+      "name": "Desbloquea púas de metal",
+      "nameEn": "Unlocks Metal Spikes",
+      "unit": "",
+      "scope": "global"
+    },
+    "1045": {
+      "id": 1045,
+      "name": "Desbloquea púas de hierro candente",
+      "nameEn": "Unlocks Hot Iron Spikes",
+      "unit": "",
+      "scope": "global"
+    },
+    "1046": {
+      "id": 1046,
+      "name": "Desbloquea púas ardientes",
+      "nameEn": "Unlocks Burning Spikes",
+      "unit": "",
+      "scope": "global"
+    },
+    "1047": {
+      "id": 1047,
+      "name": "Desbloquea 2.ª ranura accesorios líder",
+      "nameEn": "Unlocks Leader's 2nd Accessory slot",
+      "unit": "",
+      "scope": "local"
+    },
+    "1048": {
+      "id": 1048,
+      "name": "Desbloquea 3.ª ranura accesorios líder",
+      "nameEn": "Unlocks Leader's 3rd Accessory slot",
+      "unit": "",
+      "scope": "local"
+    },
+    "1049": {
+      "id": 1049,
+      "name": "Potenciador ATQ para tus tropas al encarcelar al líder enemigo.",
+      "nameEn": "Your troops gain an ATK boost if an Enemy Leader is imprisoned.",
+      "unit": "",
+      "scope": "local"
+    },
+    "1050": {
+      "id": 1050,
+      "name": "Desbloquea la academia",
+      "nameEn": "Unlocks Academy",
+      "unit": "",
+      "scope": "global"
+    },
+    "1051": {
+      "id": 1051,
+      "name": "Desbloquea el puesto comercial",
+      "nameEn": "Unlocks Trading Post",
+      "unit": "",
+      "scope": "global"
+    },
+    "1052": {
+      "id": 1052,
+      "name": "Desbloquea la cámara del tesoro",
+      "nameEn": "Unlocks Treasure Trove",
+      "unit": "",
+      "scope": "global"
+    },
+    "1053": {
+      "id": 1053,
+      "name": "Inflige un {0} % del ATQ del escuadrón como daño a tropas enemigas.",
+      "nameEn": "Deals {0}% Squad ATK as DMG to enemy Troops.",
+      "unit": "%",
+      "scope": "global"
+    },
+    "1054": {
+      "id": 1054,
+      "name": "Desbloquea para cazar monstruos de nvl. 1",
+      "nameEn": "Unlock to hunt Level 1 monsters",
+      "unit": "",
+      "scope": "global"
+    },
+    "1055": {
+      "id": 1055,
+      "name": "Desbloquea para cazar monstruos de nvl. 2",
+      "nameEn": "Unlock to hunt Level 2 monsters",
+      "unit": "",
+      "scope": "global"
+    },
+    "1056": {
+      "id": 1056,
+      "name": "Desbloquea para cazar monstruos de nvl. 3",
+      "nameEn": "Unlock to hunt Level 3 monsters",
+      "unit": "",
+      "scope": "global"
+    },
+    "1057": {
+      "id": 1057,
+      "name": "Desbloquea para cazar monstruos de nvl. 4",
+      "nameEn": "Unlock to hunt Level 4 monsters",
+      "unit": "",
+      "scope": "global"
+    },
+    "1058": {
+      "id": 1058,
+      "name": "Desbloquea para cazar monstruos de nvl. 5",
+      "nameEn": "Unlock to hunt Level 5 monsters",
+      "unit": "",
+      "scope": "global"
+    },
+    "1059": {
+      "id": 1059,
+      "name": "",
+      "nameEn": "",
+      "unit": "",
+      "scope": "global"
+    },
+    "1060": {
+      "id": 1060,
+      "name": "Desbloquea Prioridad de Recol.",
+      "nameEn": "Unlocks Gathering Priority",
+      "unit": "",
+      "scope": "global"
+    },
+    "1061": {
+      "id": 1061,
+      "name": "Activa monto fijo de tropas a entrenar",
+      "nameEn": "Enables fixed troop training amount",
+      "unit": "",
+      "scope": "global"
+    },
+    "1062": {
+      "id": 1062,
+      "name": "Desbloquea a Falange de Rango",
+      "nameEn": "Unlocks Ranged Phalanx",
+      "unit": "",
+      "scope": "global"
+    },
+    "1063": {
+      "id": 1063,
+      "name": "Desbloquea Falange de Caballería",
+      "nameEn": "Unlocks Cavalry Phalanx",
+      "unit": "",
+      "scope": "global"
+    },
+    "1064": {
+      "id": 1064,
+      "name": "Desbloquea Cuña de Infantería",
+      "nameEn": "Unlocks Infantry Wedge",
+      "unit": "",
+      "scope": "global"
+    },
+    "1065": {
+      "id": 1065,
+      "name": "Desbloquea Cuña de Rango",
+      "nameEn": "Unlocks Ranged Wedge",
+      "unit": "",
+      "scope": "global"
+    },
+    "1066": {
+      "id": 1066,
+      "name": "Desbloquea Cuña de Caballería",
+      "nameEn": "Unlocks Cavalry Wedge",
+      "unit": "",
+      "scope": "global"
+    },
+    "1067": {
+      "id": 1067,
+      "name": "Desbloquea el Pacto 2",
+      "nameEn": "Unlocks Pact 2",
+      "unit": "",
+      "scope": "global"
+    },
+    "1068": {
+      "id": 1068,
+      "name": "Desbloquea el Pacto 3",
+      "nameEn": "Unlocks Pact 3",
+      "unit": "",
+      "scope": "global"
+    },
+    "1069": {
+      "id": 1069,
+      "name": "Desbloquea el Pacto 4",
+      "nameEn": "Unlocks Pact 4",
+      "unit": "",
+      "scope": "global"
+    },
+    "1070": {
+      "id": 1070,
+      "name": "Puede ayudar a asignar Títulos de Vasallo",
+      "nameEn": "Can help assign Vassal Titles",
+      "unit": "",
+      "scope": "global"
+    },
+    "1071": {
+      "id": 1071,
+      "name": "Puede ayudar a asignar Títulos del Distrito",
+      "nameEn": "Can help assign District Titles",
+      "unit": "",
+      "scope": "global"
+    },
+    "1072": {
+      "id": 1072,
+      "name": "Puede ayudar a asignar Títulos Imperiales",
+      "nameEn": "Can help assign Imperial Titles",
+      "unit": "",
+      "scope": "global"
+    },
+    "1073": {
+      "id": 1073,
+      "name": "Desbloquea Prioridad de Agrupación",
+      "nameEn": "Unlocks Rally Priority",
+      "unit": "",
+      "scope": "global"
+    },
+    "1074": {
+      "id": 1074,
+      "name": "Desbloquea Ranura Sigilo para Equipo de Mano dominante",
+      "nameEn": "Unlocks Sigil Slot for [Main-Hand] Equipment",
+      "unit": "",
+      "scope": "global"
+    },
+    "1075": {
+      "id": 1075,
+      "name": "Desbloquea Ranura Sigilo de Equipo de Yelmo",
+      "nameEn": "Unlocks Sigil Slot for [Helmet] Equipment",
+      "unit": "",
+      "scope": "global"
+    },
+    "1076": {
+      "id": 1076,
+      "name": "Desbloquea Ranura Sigilo Equipo de Armadura",
+      "nameEn": "Unlocks Sigil Slot for [Armor] Equipment",
+      "unit": "",
+      "scope": "global"
+    },
+    "1077": {
+      "id": 1077,
+      "name": "Desbloquea Ranura Sigilo para Equipo de Piernas",
+      "nameEn": "Unlocks Sigil Slot for [Legs] Equipment",
+      "unit": "",
+      "scope": "global"
+    },
+    "1078": {
+      "id": 1078,
+      "name": "Desbloquea Ranura Sigilo para Equipo de Mano secundaria",
+      "nameEn": "Unlocks Sigil Slot for [Off-hand] Equipment",
+      "unit": "",
+      "scope": "global"
+    },
+    "1079": {
+      "id": 1079,
+      "name": "Desbloquea Ranura Sigilo para Equipo de Accesorio",
+      "nameEn": "Unlocks Sigil Slot for [Accessory] Equipment",
+      "unit": "",
+      "scope": "global"
+    },
+    "1080": {
+      "id": 1080,
+      "name": "Desbloquea Equipo Mítico",
+      "nameEn": "Unlocks [Mythic] Equipment",
+      "unit": "",
+      "scope": "global"
+    },
+    "1081": {
+      "id": 1081,
+      "name": "Autocompleta las Misiones de Admin. y permite reclamar las recompensas con un toque",
+      "nameEn": "Auto-completes Admin Quests and allows one-tap collection of rewards",
+      "unit": "",
+      "scope": "global"
+    },
+    "1082": {
+      "id": 1082,
+      "name": "Autocompleta las Misiones Gremiales. y permite reclamar las recompensas con un toque",
+      "nameEn": "Auto-completes Guild Quests and allows one-tap collection of rewards",
+      "unit": "",
+      "scope": "global"
+    },
+    "1083": {
+      "id": 1083,
+      "name": "Desbloquea el Espacio de Combate de Monstruito número 1",
+      "nameEn": "Unlocks 1st Familiar Battle Slot",
+      "unit": "",
+      "scope": "global"
+    },
+    "1084": {
+      "id": 1084,
+      "name": "Desbloquea el Espacio de Combate de Monstruito número 2",
+      "nameEn": "Unlocks 2nd Familiar Battle Slot",
+      "unit": "",
+      "scope": "global"
+    },
+    "1085": {
+      "id": 1085,
+      "name": "Desbloquea el Espacio de Combate de Monstruito número 3",
+      "nameEn": "Unlocks 3rd Familiar Battle Slot",
+      "unit": "",
+      "scope": "global"
+    },
+    "1086": {
+      "id": 1086,
+      "name": "Desbloquea el Espacio de Combate de Monstruito número 4",
+      "nameEn": "Unlocks 4th Familiar Battle Slot",
+      "unit": "",
+      "scope": "global"
+    },
+    "1087": {
+      "id": 1087,
+      "name": "Desbloquea el Espacio de Combate de Monstruito número 5",
+      "nameEn": "Unlocks 5th Familiar Battle Slot",
+      "unit": "",
+      "scope": "global"
+    },
+    "1088": {
+      "id": 1088,
+      "name": "Desbloquea el taller lunar",
+      "nameEn": "Unlocks Lunar Foundry",
+      "unit": "",
+      "scope": "global"
+    },
+    "1089": {
+      "id": 1089,
+      "name": "Desbloquea el guardián luminario",
+      "nameEn": "Unlocks Luminary Guard",
+      "unit": "",
+      "scope": "global"
+    },
+    "1090": {
+      "id": 1090,
+      "name": "Desbloquea tirador luminario",
+      "nameEn": "Unlocks Luminary Marksman",
+      "unit": "",
+      "scope": "global"
+    },
+    "1091": {
+      "id": 1091,
+      "name": "Desbloquea león luminario",
+      "nameEn": "Unlocks Luminary Lion Force",
+      "unit": "",
+      "scope": "global"
+    },
+    "1092": {
+      "id": 1092,
+      "name": "Desbloquea vengador luminario",
+      "nameEn": "Unlocks Luminary Avenger",
+      "unit": "",
+      "scope": "global"
+    },
+    "1093": {
+      "id": 1093,
+      "name": "Recoge lunite ilimitada en la caverna",
+      "nameEn": "Unlimited Lunite Cavern gathering",
+      "unit": "",
+      "scope": "global"
+    },
+    "1094": {
+      "id": 1094,
+      "name": "Caza automática de cualquier monstruo",
+      "nameEn": "Auto Hunt any Monster",
+      "unit": "",
+      "scope": "global"
+    },
+    "1095": {
+      "id": 1095,
+      "name": "Recoge casillas de recursos sin fin",
+      "nameEn": "Unlimited Resource Tile gathering",
+      "unit": "",
+      "scope": "global"
+    },
+    "1096": {
+      "id": 1096,
+      "name": "Aumenta el nv. de maná máx.",
+      "nameEn": "Increases Max Mana Lv",
+      "unit": "",
+      "scope": "global"
+    },
+    "1097": {
+      "id": 1097,
+      "name": "Desbloquea el perfeccionamiento de acero de maná",
+      "nameEn": "Unlocks Manasteel Refinement",
+      "unit": "",
+      "scope": "global"
+    },
+    "1098": {
+      "id": 1098,
+      "name": "Desbloquea recompensas intermedias de Duelo de gremios.",
+      "nameEn": "Unlocks Intermediate Guild Duel Rewards",
+      "unit": "",
+      "scope": "global"
+    },
+    "1099": {
+      "id": 1099,
+      "name": "Desbloquea recompensas avanzadas de Duelo de gremios.",
+      "nameEn": "Unlocks Advanced Guild Duel Rewards",
+      "unit": "",
+      "scope": "global"
+    }
+  }
+}

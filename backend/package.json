@@ -11,7 +11,9 @@
       "migrate:hunt": "npx ts-node scripts/migrate-hunt-enable.ts",
       "migrate:hunt-payload": "npx ts-node scripts/migrate-hunt-payload.ts",
       "migrate:lucky-cards": "npx ts-node scripts/migrate-lucky-cards.ts",
-      "migrate:lucky-exchange": "npx ts-node scripts/migrate-lucky-exchange.ts"
+      "migrate:lucky-exchange": "npx ts-node scripts/migrate-lucky-exchange.ts",
+    "migrate:eventos-diarios": "npx ts-node scripts/migrate-eventos-diarios.ts",
+    "migrate:supply": "npx ts-node scripts/migrate-supply-capacity.ts"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.0",

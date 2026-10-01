@@ -1,6 +1,7 @@
 import type { BotInstance } from '../core/bot-instance';
 import { setFormation, setCostume, openCharacterSection, openFormationSection, UI_SECTION_CHARACTER, UI_SECTION_FORMATION } from '../commands/formation.commands';
 import { serverNow } from '../../utils/clock-sync';
+import { lineTypeLabel } from '../parsers/march.parser';
 
 const COUNTER_FORMATION: Record<number, number> = {
   0: 5,
@@ -15,6 +16,18 @@ export function armCounter(bot: BotInstance, march: any): void {
   if (!bot.config.warMode) return;
   if (march.arrived || march.evaluated) return;
   if (!march.packet) return;
+
+  // Sólo los ATAQUES (lineType 5) son contrarrestables: un refuerzo (10),
+  // un explorador (8) o un rally (12) no son amenaza aunque traigan tropas.
+  const lineType = march.packet.lineType;
+  if (lineType !== undefined && lineType !== 5) {
+    march.evaluated = true;
+    bot.bot.log(
+      `[CONTRA] Marcha ${march.marchId}: ${lineTypeLabel(lineType) ?? `lineType=${lineType}`} (lineType=${lineType}) — no es ataque, no se counterea`,
+    );
+    bot.emit('marchesUpdated');
+    return;
+  }
 
   const allTroops = [...(march.packet.troops || []), ...(march.packet.t5Troops || [])];
   const weightByTier: Record<number, number> = { 1: 0, 2: 0, 3: 0.3, 4: 1, 5: 1.5 };

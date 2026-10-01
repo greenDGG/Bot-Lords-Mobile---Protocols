@@ -12,27 +12,66 @@ import { AccountManager, AccountInfo } from '../bot/core/account-manager';
 import { BotInstance } from '../bot/core/bot-instance';
 import { configService, normalizeKeys } from '../config/config.service';
 import { databaseService } from '../database/database.service';
-import { defaultBotConfig } from '../models/bot-config';
+import { defaultBotConfig, stripLegacyConfig } from '../models/bot-config';
 import { notifyBotConnectionFailed } from '../bot/features/notification.service';
 import { calculateMask } from '../models/troop-masks';
 import { TroopType, TroopTier } from '../models/troop-state';
 import { ProxyAuthBytes, loadProxyAuthBytes, saveProxyAuthBytes } from '../bot/features/proxy-auth-config';
-import { BUFF_DEFS } from '../bot/data/costume-buffs';
 import { getMissionName } from '../bot/data/mission-names';
 import itemsData from '../bot/data/items.json';
+import '../bot/data/techs.json';
 import { COSTUME_DB } from '../bot/data/costume-db';
+import { TALENT_DB, BRANCHES } from '../bot/data/talent-db';
+import { BUILDING_DB } from '../bot/data/building-db';
+import { EFFECT_DEFS } from '../bot/data/effect-db';
 import { acceptGuildApplication, rejectGuildApplication } from '../bot/commands/guild-accept-reject.commands';
 import { DiscordNotificationService } from '../discord/discord-notification.service';
 import { EventRewardData } from '../bot/models/event-rewards.types';
 import { huntCoordinator } from '../bot/models/hunt-coordinator';
+import { distributeTotal } from '../bot/features/supply-distribute';
+import { getBagTotalValue } from '../bot/features/bag-helper';
+import { computePlayerStats } from '../bot/features/player-stats';
+import { serializeHeroes } from '../bot/models/heroes.types';
+
+/** Nombre de recurso del supply → clave de BAG_ITEMS / getBagTotalValue */
+const SUPPLY_BAG_KEY: Record<string, string> = { trigo: 'wheat', piedra: 'stone', madera: 'wood', mineral: 'mineral', oro: 'gold' };
 
 const ITEMS_DATA = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'bot', 'data', 'items.json'), 'utf-8'));
 const ITEMS_DB: Record<string, { name: string }> = ITEMS_DATA.ITEMS_DB || {};
+
+/** Catálogo de investigaciones (sólo lo que necesita el frontend; sin costos por nivel). */
+const TECHS_DATA = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'bot', 'data', 'techs.json'), 'utf-8'));
+const TECHS_CATALOG = {
+  kinds: TECHS_DATA.kinds,
+  techs: Object.fromEntries(
+    Object.entries<any>(TECHS_DATA.techs || {}).map(([id, t]) => [
+      id,
+      { id: t.id, kind: t.kind, name: t.name, nameEn: t.nameEn, levelMax: t.levelMax, effect: t.effect, effectIds: t.effectIds, times: (t.levels || []).map((l: any) => l.time) },
+    ]),
+  ),
+};
 
 function getItemName(itemId: number): string {
   const item = ITEMS_DB[String(itemId)];
   return item?.name || `Item ${itemId}`;
 }
+
+/** Catálogo de construcciones (sólo lo que necesita el frontend; sin efectos por nivel: van en `effects`). */
+const BUILDING_CATALOG = Object.fromEntries(
+  Object.entries(BUILDING_DB).map(([id, b]) => [
+    id,
+    {
+      id: b.id,
+      name: b.name,
+      nameTable: b.nameTable,
+      maxLevel: b.maxLevel,
+      temporal: b.temporal || false,
+      levels: Object.fromEntries(
+        Object.entries(b.levels).map(([lv, l]) => [lv, { time: l.time, costs: l.costs, might: l.might }]),
+      ),
+    },
+  ]),
+);
 
 // Serializar tiles sin rawData (Buffer) para evitar binarios en socket.io
 function serializeMapTiles(tiles: any[]): any[] {
@@ -67,6 +106,8 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   private capturing = false;
   private startingBots = new Set<number>();
+  /** captura en curso (upsert en Mongo) — `listAccounts` espera a que termine */
+  private pendingCapture: Promise<void> | null = null;
 
   private clients = new Map<string, ClientState>();
 
@@ -112,30 +153,21 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @SubscribeMessage('listAccounts')
   async handleListAccounts(client: Socket): Promise<void> {
-    const accounts = configService.listAccounts();
-    // Si hay MongoDB, agregar cuentas de la DB que no estén ya en files
-    if (databaseService.isConnected()) {
-      try {
-        const dbTokens = await databaseService.TokenModel.find({ accessToken: { $ne: '' } }).lean();
-        const fileIds = new Set(accounts.map(a => a.iggId));
-        for (const t of dbTokens) {
-          if (!fileIds.has(String(t.iggId))) {
-            const configDoc = await databaseService.ConfigModel.findOne({ iggId: t.iggId }).lean();
-            accounts.push({
-              iggId: String(t.iggId),
-              token: { data: { access_token: t.accessToken }, proxy: t.proxy },
-              config: configDoc || null,
-            });
-          }
-        }
-      } catch {}
-    }
-    client.emit('accounts', accounts);
+    // Si hay una captura escribiendo en Mongo, esperarla: si no, el cliente que
+    // se reconecta justo entonces recibe la lista vieja (sin la cuenta nueva)
+    if (this.pendingCapture) await this.pendingCapture.catch(() => {});
+    // Archivos + Mongo (cuentas capturadas que nunca tuvieron token.json)
+    client.emit('accounts', await this.buildAccounts());
   }
 
   @SubscribeMessage('getItems')
   handleGetItems(client: Socket): void {
     client.emit('items', ITEMS_DATA);
+  }
+
+  @SubscribeMessage('getTechs')
+  handleGetTechs(client: Socket): void {
+    client.emit('techs', TECHS_CATALOG);
   }
 
   @SubscribeMessage('getRunningBots')
@@ -174,23 +206,62 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
       return;
     }
     try {
-      await databaseService.TokenModel.updateOne(
-        { iggId: payload.iggId },
-        { $set: { iggId: payload.iggId, accessToken: payload.accessToken, proxy: payload.proxy || '' } },
-        { upsert: true }
-      );
-      await databaseService.ConfigModel.updateOne(
-        { iggId: payload.iggId },
-        {
-          $setOnInsert: { iggId: payload.iggId, ...defaultBotConfig(payload.proxy) },
-          $set: { proxy: payload.proxy || '' },
-        },
-        { upsert: true }
-      );
+      await this.upsertToken(payload.iggId, payload.accessToken, payload.proxy || '');
+      await this.upsertConfigDefaults(payload.iggId, payload.proxy || '');
       client.emit('accountCreated', { iggId: payload.iggId });
+      // El resto de clientes también deben ver la cuenta nueva en la lista
+      this.server.emit('accounts', await this.buildAccounts());
     } catch (e: any) {
       client.emit('error', { message: `Error al crear cuenta: ${e.message}` });
     }
+  }
+
+  /** Token de acceso de la cuenta (upsert). */
+  private async upsertToken(iggId: number, accessToken: string, proxy: string): Promise<void> {
+    await databaseService.TokenModel.updateOne(
+      { iggId },
+      { $set: { iggId, accessToken, proxy } },
+      { upsert: true },
+    );
+  }
+
+  /**
+   * Config por defecto de la cuenta (sólo al insertar) + proxy.
+   *
+   * `proxy` va SOLO en `$set`: si además está en `$setOnInsert` (dentro de
+   * `defaultBotConfig(proxy)`) Mongo revienta con
+   * `Updating the path 'proxy' would create a conflict at 'proxy'` y el upsert
+   * entero se cae. `$set` también se aplica en el insert, así que no hace
+   * falta duplicarlo.
+   */
+  private async upsertConfigDefaults(iggId: number, proxy: string): Promise<void> {
+    const { proxy: _proxy, ...defaults } = defaultBotConfig(proxy);
+    await databaseService.ConfigModel.updateOne(
+      { iggId },
+      { $setOnInsert: { iggId, ...defaults }, $set: { proxy } },
+      { upsert: true },
+    );
+  }
+
+  /** Lista de cuentas (archivos + Mongo), la misma que responde `listAccounts`. */
+  private async buildAccounts(): Promise<any[]> {
+    const accounts = configService.listAccounts();
+    if (!databaseService.isConnected()) return accounts;
+    try {
+      const dbTokens = await databaseService.TokenModel.find({ accessToken: { $ne: '' } }).lean();
+      const fileIds = new Set(accounts.map(a => a.iggId));
+      for (const t of dbTokens) {
+        if (!fileIds.has(String(t.iggId))) {
+          const configDoc = await databaseService.ConfigModel.findOne({ iggId: t.iggId }).lean();
+          accounts.push({
+            iggId: String(t.iggId),
+            token: { data: { access_token: t.accessToken }, proxy: t.proxy },
+            config: configDoc || null,
+          });
+        }
+      }
+    } catch {}
+    return accounts;
   }
 
   /** Lógica compartida de arranque (usada por startBot y por el auto-arranque al iniciar el servidor). */
@@ -254,7 +325,14 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
       instance.runAutoHelp();
     });
     instance.on('playerInfoUpdated', () => {
-      const info = instance.playerInfo ? { ...instance.playerInfo, currentResistencia: instance.getCurrentResistencia() } : null;
+      const info = instance.playerInfo
+        ? {
+            ...instance.playerInfo,
+            currentResistencia: instance.getCurrentResistencia(),
+            resistenciaMax: instance.getResistenciaMax(),
+            energyRegen: instance.getEnergyRegen(),
+          }
+        : null;
       this.server.emit('playerInfo', { iggId, info });
     });
     instance.on('resourcesUpdated', () => {
@@ -275,10 +353,28 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
       this.server.emit('inventory', { iggId, inventory: inv });
     });
     instance.on('buildingStateUpdated', () => {
-      this.server.emit('buildingState', { iggId, buildingState: { buildings: instance.buildingState.buildings } });
+      this.server.emit('buildingState', {
+        iggId,
+        buildingState: { buildings: instance.buildingState.buildings },
+        playerStats: instance.playerStats || computePlayerStats(instance),
+      });
     });
     instance.on('constructionsUpdated', () => {
       this.server.emit('constructions', { iggId, constructions: instance.constructions || null });
+    });
+    instance.on('researchUpdated', () => {
+      this.server.emit('research', {
+        iggId,
+        research: instance.research || null,
+        playerStats: instance.playerStats || computePlayerStats(instance),
+      });
+    });
+    instance.on('talentsUpdated', () => {
+      this.server.emit('talents', {
+        iggId,
+        talents: instance.talents || null,
+        playerStats: instance.playerStats || computePlayerStats(instance),
+      });
     });
     instance.on('essenceUpdated', () => {
       this.server.emit('essence', { iggId, essenceState: instance.essenceState || null });
@@ -291,6 +387,9 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
     });
     instance.on('marchesUpdated', () => {
       this.server.emit('incomingMarches', { iggId, marches: instance.serializableMarches() });
+    });
+    instance.on('ownMarchesUpdated', () => {
+      this.server.emit('ownMarches', { iggId, marches: instance.ownMarches || null });
     });
     instance.marchQueue.on('enqueued', () => {
       this.server.emit('marchQueueUpdated', { iggId, queue: instance.marchQueue.all.map(e => ({ id: e.id, type: e.type, status: e.status, createdAt: e.createdAt, sentAt: e.sentAt, ackedAt: e.ackedAt, completedAt: e.completedAt, error: e.error, meta: e.meta })) });
@@ -320,6 +419,9 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
     instance.on('coliseumUpdated', () => {
       this.server.emit('coliseum', { iggId, state: instance.coliseumState || null });
     });
+    instance.on('heroListUpdated', (heroes) => {
+      this.server.emit('heroes', { iggId, heroes: serializeHeroes(heroes) });
+    });
     instance.on('missionsUpdated', () => {
       this.server.emit('missions', { iggId, missions: instance.missions || null });
     });
@@ -346,7 +448,11 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
       this.server.emit('costumes', { iggId, costumes });
     });
     instance.on('equippedCostumesUpdated', (equippedCostumes) => {
-      this.server.emit('equippedCostumes', { iggId, equippedCostumes });
+      this.server.emit('equippedCostumes', {
+        iggId,
+        equippedCostumes,
+        playerStats: instance.playerStats || computePlayerStats(instance),
+      });
     });
     instance.on('mapDataUpdated', () => {
       this.server.emit('mapDataUpdated', {
@@ -449,7 +555,9 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const shield = instance.buffs.shield;
     client.emit('botData', {
       iggId: payload.iggId,
-      playerInfo: instance.playerInfo ? { ...instance.playerInfo, currentResistencia: instance.getCurrentResistencia() } : null,
+      playerInfo: instance.playerInfo
+        ? { ...instance.playerInfo, currentResistencia: instance.getCurrentResistencia(), resistenciaMax: instance.getResistenciaMax() }
+        : null,
       resources: instance.resources,
       shield: shield ? { remaining: shield.remaining, name: shield.def.name } : null,
       guildInfo: instance.guildInfo,
@@ -457,6 +565,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
       troopState: { troops: instance.troopState.troops },
       hospitalState: instance.hospitalState || null,
       incomingMarches: instance.serializableMarches(),
+      ownMarches: instance.ownMarches || null,
       marchHistory: instance.marchHistory || [],
       eventDefs: instance.eventDefs || [],
       eventClaims: Array.from(instance.eventClaims.values()),
@@ -466,6 +575,9 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
       essenceState: instance.essenceState || null,
       buildingState: { buildings: instance.buildingState.buildings },
       constructions: instance.constructions || null,
+      research: instance.research || null,
+      talents: instance.talents || null,
+      playerStats: instance.playerStats || computePlayerStats(instance),
       online: instance.bot.isOnline,
       launched: instance.launched,
       isLeaderCaptured: instance.isLeaderCaptured,
@@ -473,6 +585,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
       leaderFreeRevivalAt: instance.leaderFreeRevivalAt,
       captiveData: instance.captiveData || null,
       coliseum: instance.coliseumState || null,
+      heroes: serializeHeroes(instance.heroes || []),
       missions: instance.missions || null,
       missionRecords: instance.missionRecords || null,
       fdgExtension: instance.fdgExtension || null,
@@ -484,7 +597,10 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
       costumes: instance.costumes || [],
       equippedCostumes: instance.equippedCostumes || [],
       costumeDB: COSTUME_DB,
-      buffDefs: BUFF_DEFS,
+      effects: EFFECT_DEFS,
+      buildingDB: BUILDING_CATALOG,
+      talentDB: TALENT_DB,
+      talentBranches: BRANCHES,
       logs: instance.recentLogs.slice(-200),
       autoActionsRunning: instance.actions.isRunning,
     });
@@ -643,7 +759,10 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   @SubscribeMessage('sendManualSupply')
-  async handleSendManualSupply(client: Socket, payload: { iggId?: number; iggIds?: number[]; targetPlayer: string; resources?: string[] }): Promise<void> {
+  async handleSendManualSupply(
+    client: Socket,
+    payload: { iggId?: number; iggIds?: number[]; targetPlayer: string; resources?: string[]; amounts?: Record<string, number>; useBag?: boolean },
+  ): Promise<void> {
     const ids: number[] = [];
     if (payload.iggId) ids.push(payload.iggId);
     if (payload.iggIds?.length) ids.push(...payload.iggIds);
@@ -654,6 +773,50 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
     let sent = 0;
     let failed = 0;
     const target = payload.targetPlayer.trim();
+
+    // Modo batch: montos TOTALES por recurso → se reparte entre las cuentas
+    // (parte justa + reasignación a las que sí tienen capacidad).
+    const amounts: Record<string, number> = {};
+    if (payload.amounts) {
+      for (const name of Object.keys(SUPPLY_BAG_KEY)) {
+        const v = Math.floor(Number(payload.amounts[name]) || 0);
+        if (v > 0) amounts[name] = v;
+      }
+    }
+    const batchMode = Object.keys(amounts).length > 0;
+
+    const slices = new Map<number, Record<string, number>>();
+    const shortfall: Record<string, number> = {};
+    if (batchMode) {
+      const storeOf = (inst: BotInstance, name: string): number => {
+        const r = inst.resources;
+        if (!r) return 0;
+        return name === 'trigo' ? r.wheat : name === 'piedra' ? r.stone : name === 'madera' ? r.wood : name === 'mineral' ? r.mineral : r.gold;
+      };
+      const instances = unique.map(id => ({ id, inst: this.accountManager.instances.get(id) }));
+      for (const name of Object.keys(amounts)) {
+        const caps = instances.map(({ inst }) => {
+          if (!inst || !inst.bot.isOnline || !inst.resources) return 0;
+          let cap = storeOf(inst, name);
+          if (payload.useBag) cap += getBagTotalValue(inst.inventory, SUPPLY_BAG_KEY[name]);
+          return cap;
+        });
+        const parts = distributeTotal(amounts[name], caps);
+        const assigned = parts.reduce((a, b) => a + b, 0);
+        if (assigned < amounts[name]) shortfall[name] = amounts[name] - assigned;
+        instances.forEach(({ id }, i) => {
+          if (parts[i] <= 0) return;
+          const m = slices.get(id) || {};
+          m[name] = parts[i];
+          slices.set(id, m);
+        });
+      }
+      if (Object.keys(shortfall).length > 0) {
+        const detail = Object.entries(shortfall).map(([n, v]) => `${n} ${v}`).join(', ');
+        client.emit('error', { message: `Capacidad total insuficiente: falta enviar ${detail} (almacén + bolsa de las cuentas seleccionadas)` });
+      }
+    }
+
     const results = await Promise.all(unique.map(async (id) => {
       try {
         const instance = this.accountManager.instances.get(id);
@@ -661,8 +824,13 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
           client.emit('supplyResult', { iggId: id, ok: false, message: instance ? 'Bot no conectado' : 'Bot no encontrado' });
           return false;
         }
+        const mySlice = batchMode ? slices.get(id) : undefined;
+        if (batchMode && !mySlice) {
+          client.emit('supplyResult', { iggId: id, ok: true, message: 'Parte 0: sin recursos disponibles (nada que enviar)' });
+          return true;
+        }
         client.emit('supplyStarted', { iggId: id });
-        const result = await instance.manualSupply(target, payload.resources);
+        const result = await instance.manualSupply(target, payload.resources, mySlice, payload.useBag);
         client.emit('supplyResult', { iggId: id, ok: result.ok, message: result.message });
         return result.ok;
       } catch (err: any) {
@@ -671,7 +839,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
       }
     }));
     for (const ok of results) { if (ok) sent++; else failed++; }
-    client.emit('supplyBatchResult', { total: unique.length, sent, failed, targetPlayer: payload.targetPlayer });
+    client.emit('supplyBatchResult', { total: unique.length, sent, failed, targetPlayer: payload.targetPlayer, shortfall: batchMode ? shortfall : undefined });
   }
 
   @SubscribeMessage('stopManualSupply')
@@ -1041,6 +1209,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @SubscribeMessage('saveConfig')
   async handleSaveConfig(client: Socket, payload: { iggId: number; config: any }): Promise<void> {
+    stripLegacyConfig(payload.config);
     const instance = this.accountManager.instances.get(payload.iggId);
     if (!instance) {
       // Sin instancia corriendo: guardar offline (archivo + DB)
@@ -1048,6 +1217,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
       let existing: any = {};
       try { existing = normalizeKeys(JSON.parse(fs.readFileSync(configPath, 'utf-8'))); } catch {}
       deepMerge(existing, payload.config);
+      stripLegacyConfig(existing);
       try {
         fs.mkdirSync(path.dirname(configPath), { recursive: true });
         fs.writeFileSync(configPath, JSON.stringify(existing, null, 2), 'utf-8');
@@ -1120,29 +1290,46 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
         }
       } catch {}
     }
+    stripLegacyConfig(config);
     client.emit('configData', { iggId: payload.iggId, config, online: false });
   }
 
   // ─── Importar captura (frontend maneja mitm, solo guardamos en DB) ───
 
   @SubscribeMessage('importCapture')
-  async handleImportCapture(client: Socket, payload: { json: string }): Promise<void> {
-    try {
-      console.log('[CAPTURE] JSON recibido, length:', payload.json.length);
-      console.log('[CAPTURE] Primeros 500 chars:', payload.json.substring(0, 500));
+  async handleImportCapture(_client: Socket, payload: { json: string }): Promise<void> {
+    const pending = this.persistCapture(payload.json).finally(() => {
+      if (this.pendingCapture === pending) this.pendingCapture = null;
+    });
+    this.pendingCapture = pending;
+    return pending;
+  }
 
-      const root = JSON.parse(payload.json);
+  /**
+   * Guarda la captura en Mongo y avisa a TODOS los clientes.
+   *
+   * El aviso va por `server.emit`, nunca por `client`: el socket que manda el
+   * `importCapture` es el del watcher de vite, no el del navegador — si el
+   * aviso sale por ese socket el frontend no se entera y la cuenta nueva no
+   * aparece hasta recargar a mano.
+   */
+  private async persistCapture(json: string): Promise<void> {
+    try {
+      console.log('[CAPTURE] JSON recibido, length:', json.length);
+      console.log('[CAPTURE] Primeros 500 chars:', json.substring(0, 500));
+
+      const root = JSON.parse(json);
       const iggId = root?.data?.iggid;
       console.log('[CAPTURE] iggId extraído:', iggId);
 
-      if (!iggId) { client.emit('captureError', 'JSON no contiene iggid válido'); return; }
+      if (!iggId) { this.server.emit('captureError', 'JSON no contiene iggid válido'); return; }
 
       const proxy = root?.proxy || '';
       console.log('[CAPTURE] proxy extraído:', proxy || '(vacio)');
 
       // Guardar en MongoDB
       if (!databaseService.isConnected()) {
-        client.emit('captureError', 'MongoDB no conectado');
+        this.server.emit('captureError', 'MongoDB no conectado');
         return;
       }
 
@@ -1156,44 +1343,25 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
       );
       console.log('[CAPTURE] TokenModel resultado:', JSON.stringify(tokenResult));
 
-      const configResult = await databaseService.ConfigModel.updateOne(
-        { iggId: Number(iggId) },
-        {
-          $setOnInsert: { iggId: Number(iggId), ...defaultBotConfig(proxy) },
-          $set: { proxy },
-        },
-        { upsert: true }
-      );
-      console.log('[CAPTURE] ConfigModel resultado:', JSON.stringify(configResult));
+      // La config no debe cortar el aviso: el token ya quedó guardado
+      try {
+        await this.upsertConfigDefaults(Number(iggId), proxy);
+        console.log('[CAPTURE] ConfigModel OK (defaults + proxy)');
+      } catch (e: any) {
+        console.error('[CAPTURE] ConfigModel error (token ya guardado):', e.message);
+      }
 
       // Verificar lo guardado
       const savedToken = await databaseService.TokenModel.findOne({ iggId: Number(iggId) }).lean();
       console.log('[CAPTURE] Token en DB después de guardar:', JSON.stringify({ iggId: savedToken?.iggId, proxy: savedToken?.proxy, accessTokenLength: savedToken?.accessToken?.length }));
 
-      // Avisar a todos los clientes (incluyendo el que capturó)
+      // Avisar a todos los clientes (el navegador escucha en OTRO socket)
       this.server.emit('accountCaptured', { iggId: Number(iggId) });
 
       // Refrescar lista de cuentas en todos los clientes
-      const accounts = configService.listAccounts();
-      if (databaseService.isConnected()) {
-        try {
-          const dbTokens = await databaseService.TokenModel.find({ accessToken: { $ne: '' } }).lean();
-          const fileIds = new Set(accounts.map(a => a.iggId));
-          for (const t of dbTokens) {
-            if (!fileIds.has(String(t.iggId))) {
-              const configDoc = await databaseService.ConfigModel.findOne({ iggId: t.iggId }).lean();
-              accounts.push({
-                iggId: String(t.iggId),
-                token: { data: { access_token: t.accessToken }, proxy: t.proxy },
-                config: configDoc || null,
-              });
-            }
-          }
-        } catch {}
-      }
-      this.server.emit('accounts', accounts);
+      this.server.emit('accounts', await this.buildAccounts());
     } catch (err: any) {
-      client.emit('captureError', `Error importando captura: ${err.message}`);
+      this.server.emit('captureError', `Error importando captura: ${err.message}`);
     }
   }
 }
