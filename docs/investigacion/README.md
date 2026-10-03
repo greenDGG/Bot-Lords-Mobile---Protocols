@@ -18,7 +18,9 @@ Documentación de la ingeniería inversa del protocolo de red de Lords Mobile (I
 | Códigos de eventos | [`codigos-eventos.md`](codigos-eventos.md) | Protos para abrir/reclamar eventos (tienda, cofres, etc.) |
 | Cofre de la Feria de Artefactos | [`cofre-artefactos.md`](cofre-artefactos.md) | Secuencia 9794 → 9778 → 9794 |
 | Cámara del tesoro (proto 4201) | [`camara-tesoro.md`](camara-tesoro.md) | Nivel, gemas invertidas, duración |
-| Subsidios (investigaciones) | [`subsidios.md`](subsidios.md) | Porcentajes de subsidio por nivel (ids 95-98) |
+| Subsidios (investigaciones) | [`subsidios.md`](subsidios.md) | 16 techs (95-114): subsidio por unidad, T1-T4 × 4 ramas |
+| Monstruitos / familiars | [`monstruitos.md`](monstruitos.md) | Protos 8210/8245, `PetTbl`, talentos de ejército y etapas |
+| Artefactos (Artifacts) | [`artefactos.md`](artefactos.md) | Proto 9771, tablas `RelicsUpgrade`/`RelicsCombination`/`RelicsEnhance`, estrellas y sets |
 | Notas administrativas (raw) | [`admin.md`](admin.md) | Dump de bytes sin descifrar (proto 1144, sin interpretar) |
 
 ## Notas sobre dumps crudos

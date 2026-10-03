@@ -12,13 +12,14 @@ El frontend se comunica con el backend vía Socket.IO en `http://localhost:3000`
 | `createAccount` | `{ iggId, accessToken, proxy? }` | Crea cuenta en MongoDB (requiere DB). Respuesta: `accountCreated` |
 | `startBot` | `{ iggId }` | Inicia el bot de una cuenta. Respuesta: `botStarted` / `connectionFailed` / `error` (con `iggId` si la cuenta ya está iniciada o iniciando) |
 | `stopBot` | `{ iggId }` | Detiene el bot. Respuesta: `botStopped` |
-| `getBotData` | `{ iggId }` | Snapshot completo de una cuenta. Respuesta: `botData` |
+| `getBotData` | `{ iggId }` | Snapshot completo de una cuenta. Respuesta: `botData` (incluye `familiars` + `familiarCooldowns` / `familiarFatigue` / `familiarBuffs`) |
 | `sendCommand` | `{ iggId, command }` | Comando de texto: `help`/`ayuda`, `chat <texto>`, `disconnect`/`desconectar`, `shield`/`escudo` |
 | `requestMapData` | `{ iggId }` | Solicita datos del mapa (2227) |
 | `requestWarData` | `{ iggId }` | Abre la ventana de guerra y pide datos (2476) |
 | `setWarViewing` | `{ iggId, viewing }` | Activa/desactiva la vista de guerra (notificaciones vs. refresco) |
 | `buyFruit` | `{ iggId }` | Compra fruta de reanimación (1408) |
 | `useFruit` | `{ iggId }` | Usa fruta de reanimación (1406) |
+| `useFamiliarSkill` | `{ iggId, petId, skillId, force? }` | Usa una skill activa de un monstruito (8226). Chequea el cooldown del 8231 (`availableAt <= serverNowSec()`) salvo `force`. Respuesta: `familiarSkillResult` |
 | `openChest` | `{ iggId, itemId, quantity }` | Abre cofres en lotes de 100 (1406). Progreso: `chestProgress` |
 | `globalCommand` | `{ proto, body }` | Envía un packet crudo (body hex) a **todas** las cuentas online. Respuesta: `globalCommandResult` |
 | `sendWarTroops` | `{ iggId, warIndex, enemyName, tier, infantry, artillery, cavalry, infantryCount, artilleryCount, cavalryCount }` | Envía tropas a una guerra (2476 → 1144 → 2472). Progreso: `warStatus` |
@@ -41,6 +42,9 @@ El frontend se comunica con el backend vía Socket.IO en `http://localhost:3000`
 | `wars` | `{ iggId, wars }` | Guerras activas |
 | `warNotification` | `{ iggId, count }` | Notificación de guerra pendiente |
 | `questsUpdated` | `{ iggId }` | Misiones actualizadas |
+| `artifacts` | `{ iggId, artifacts: { list, sets }, playerStats }` | Artefactos poseídos (vistas con efectos × estrella + tiers de los sets); push en `artifactsUpdated` (login 9771 y cambios) |
+| `familiars` | `{ iggId, list, playerStats, cooldowns, fatigue, buffs }` | Monstruitos; `cooldowns: [{ skillId, availableAt }]` (epoch s), `fatigue: { fatigue, max, resetAt }`, `buffs: [{ skillId, level, startTs, durationSec }]`; push en `familiarsUpdated` (8210/8245/8231/8230/8232) |
+| `familiarSkillResult` | `{ iggId, petId, skillId, sent, reason?, availableAt?, remainingSec? }` | Resultado de `useFamiliarSkill`; `sent:false, reason:'cooldown'` si aún no está lista |
 | `chestProgress` | `{ iggId, opened, total, done }` | Progreso de apertura de cofres |
 | `warStatus` | `{ iggId, status }` | Progreso del envío de tropas |
 | `accountCaptured` | `{ iggId }` | Captura importada correctamente |

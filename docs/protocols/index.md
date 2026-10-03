@@ -23,6 +23,7 @@
 
 ## Paquetes del servidor (respuestas / notificaciones)
 
+- [`1008`](1008.md) — Info del rol en el login (705 B): jugador, poder, energía y fecha de creación (offset 210 = reset diario de la cuenta)
 - [`1201`](1201.md) — Lista de héroes del jugador (nivel, rango, grado)
 - [`1401`](1401.md) — Inventario / items (respuesta del servidor)
 - [`2002`](2002.md) — Construcciones / edificios (respuesta del servidor)
@@ -46,10 +47,20 @@
 - [`1805`](1805.md) — Barrido / Sweep (comando cliente → servidor, 5 bytes)
 - [`6302`](6302.md) — Barco de carga / Cargo Ship (respuesta del servidor, estado del barco)
 - [`6305`](6305.md) — Intercambiar slot del barco (comando cliente → servidor)
+- [`8210`](8210.md) — Lista de monstruitos (S→C, sin request: tag + u16 count + registros de 28 B con petId, nivel, exp, etapa y nivel/exp de sus 4 habilidades)
+- [`8231`](8231.md) — Cooldown de habilidades activas de monstruitos (S→C: `u8 count` + entries de 10 B con skillId y `availableAt` epoch; `availableAt = últimoUso + CD[nivel]` con CD de `PetSkillCD.txt` en **minutos**)
+- `8230` — Fatiga de skills ofensivas (S→C, 12 B: `u16 fatigue`, `u16 max=45`, `u32 epoch`, `u32 0`; solo relevante para skills subj=2)
+- `8232` — Buffs activos de monstruitos (S→C: 12 B de cabecera + `u8 count` + entries de 15 B con skillId, nivel, inicio, duración)
+- `8244` — Estado de skill (S→C, 10400 capturas, 5 B: `u16` + `u16` + `u8`; semántica pendiente)
+- [`8245`](8245.md) — Talentos de ejército desbloqueados (S→C, sin request: u16 count + pares {u16 petId, u8 nivel 1..10})
+- [`9771`](9771.md) — Lista de artefactos poseídos (S→C, sin request: u16 count + registros de 4 B con u16 artifactId 7001..7250, u8 nivel 1..12 y u8 estrellas 0..6 — 6 = Bendecido)
+- [`1111`](1111.md) — Buffs activos del jugador (S→C, sin request: `u8 count` + entries de 16 B con buffId, itemId, inicio y duración; snapshot completo, periódico ~37 s)
 
 ## Solicitudes de datos (cliente → servidor)
 
 - [`3111`](3111.md) — Solicitar datos: `01` = barco, `02` = misiones admin/guild
+- [`8226`](8226.md) — Usar habilidad activa de monstruito (C→S: `u32 seq` + coord del castillo emisor 3 B (`encodeCoord`) + `u16 petId` + `u16 skillId`; sin la coord el server rechaza con `8227 result=6`)
+- `8227` — Respuesta del uso de skill (S→C, 17 B: `u8 result` — 0 = usada con el `availableAt` nuevo, 6 = rechazada — + eco de petId/skillId)
 
 ## Perfil de jugador
 
@@ -124,13 +135,24 @@ de la bendición divina: byte `[20]` del `7004`.
 ## Guerra / Agrupaciones
 
 - [`2472`](2472.md) — Enviar tropas a agrupación (C→S, 13B nombre + mask + cantidades)
+- [`2473`](2473.md) — Confirmación del 2472 (S→C, inicio + duración de la marcha propia y líder de la agrupación; `Len=5 body=03` = rechazo)
 - [`2476`](2476.md) — Abrir pantalla de agrupaciones (C→S, payload vacío)
-- [`2477`](2477.md) — Contadores de agrupación (S→C, 8B: u32[0]=propias del gremio 0..7, u32[1]=en contra del gremio 0|1)
+- [`2477`](2477.md) — Contadores de agrupación (S→C, 8B: u32[0]=propias del gremio 0..4, u32[1]=en contra del gremio 0..3)
 - [`2478`](2478.md) — Lista de agrupaciones activas (S→C, ~58B por entrada: timestamp, coord, rallyType, names)
 - [`2483`](2483.md) — Participantes de una agrupación (S→C, nombre + mask + tropas por participante)
 - [`2485`](2485.md) — Notificación de actualización (S→C)
-- [`6611`](7315.md) — Guerras a torres (S→C)
+- [`6611`](6611.md) — Guerras a torres (S→C, **1 paquete = 1 torre**, 87B: lado + slot + timestamp + coord + líder + tropas)
 - [`7315`](7315.md) — Guerras a fortalezas (S→C)
+
+## Items / Aceleración de marchas
+
+Flujo completo documentado en [`acelerar-marchas`](../teories/acelerar-marchas.md)
+(cuándo dispara, qué campo es cada u16, cómo se elige el ítem y cómo se
+verifica con el `1407`).
+
+- [`1144`](1144.md) — Selección de sección/acción de UI (C→S, 6 B: `action` + `fieldA` + `fieldB`; acciones 02/03/05 personaje-formación-guerra, 0b agrupaciones, 06 destino del acelerador, 04 Army Status)
+- [`1406`](1406.md) — Usar item (C→S, 14 B: `itemId` + `quantity` + `fieldA` + `fieldB` + 8 B ceros; cofres ×100, escudos, botas, aceleradores)
+- [`1407`](1407.md) — Respuesta de "usar item" (S→C: `status` + `itemId` + `qtyLeft` u16 + eco de `fieldA`; con `ts` a offset 7 u 11 según layout → `arrival = ts + newTimeSec`)
 
 ## Ataque / Batalla
 
@@ -140,7 +162,7 @@ de la bendición divina: byte `[20]` del `7004`.
 
 ## Chat
 
-- [`3001`](3001.md) — Enviar mensaje de chat (C→S, canal 1B + `00` + `05` + len u16 + texto)
+- [`3001`](3001.md) — Enviar mensaje de chat (C→S, canal 1B + `00` + `05` + len u16 + texto; variante `6D` = enviar emoticono con `[u16 emojiId][u16 idx]`)
 - [`3002`](3002.md) — Abrir la vista de chat (init #5, plano)
 - [`3003`](3003.md) — Chat entrante (S→C, lista de mensajes)
 

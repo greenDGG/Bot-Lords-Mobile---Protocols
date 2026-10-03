@@ -6,8 +6,6 @@ La configuración de cada cuenta se guarda en `access/{iggId}/config.json` y en 
 
 | Campo | Tipo | Default | Descripción |
 |-------|------|---------|-------------|
-| `dailyResetTime` | string | `'00:00'` | Hora UTC del reset diario (para daily/forge gift) |
-| `limitTrain` | number | `0` | Cantidad de tropas a entrenar por ciclo (0 = no entrenar) |
 | `reconnectTime` | number | `30` | Segundos de espera antes de reconectar (mín 5) |
 | `sendHelp` | boolean | `true` | Enviar ayuda automática (proto 2855) |
 | `proxy` | string | `''` | Dirección del proxy IGG `ip:port` |
@@ -31,11 +29,12 @@ La configuración de cada cuenta se guarda en `access/{iggId}/config.json` y en 
 
 ### `train`
 ```json
-{ "enable": false, "type": "40", "velTrain": 0, "subsidiosPorcentaje": 0 }
+{ "enable": false, "type": "40" }
 ```
 - `type`: 2 dígitos — primero tipo (0=inf, 1=art, 2=cab, 3=asedio), segundo tier (0-3 = T1-T4)
-- `velTrain`: nivel de velocidad de entrenamiento (para calcular tiempo)
-- `subsidiosPorcentaje`: % de subsidio (ver [`investigacion/subsidios.md`](investigacion/subsidios.md))
+- Lote, velocidad y subsidios **no son config**: se derivan de `playerStats`
+  (capacidad del cuartel, `Vel. entrenamiento +` y subsidio de la unidad vía
+  [`investigacion/subsidios.md`](investigacion/subsidios.md)).
 
 ### `shield`
 ```json
@@ -48,7 +47,7 @@ La configuración de cada cuenta se guarda en `access/{iggId}/config.json` y en 
 ```json
 { "autoreclaim": true, "next": 0, "index": 0 }
 ```
-- Reclama el regalo diario (proto 3605 + 3130). `index` rota 0-20, `next` = próxima hora de reset.
+- Reclama el regalo diario (proto 3605 + 3130). `index` rota 0-20, `next` = próximo reset de la cuenta, calculado con la fecha de creación del proto [`1008`](protocols/1008.md) (sin config: si aún no hay 1008, 00:00 UTC).
 
 ### `mysteryBox`
 ```json
@@ -66,7 +65,7 @@ La configuración de cada cuenta se guarda en `access/{iggId}/config.json` y en 
 ```json
 { "enable": true, "next": 0 }
 ```
-- Reclama el regalo de la forja (9903) una vez al día.
+- Reclama el regalo de la forja (9903) una vez al día. `next` se calcula igual que en `giftDaily` (reset de la cuenta vía [`1008`](protocols/1008.md)).
 
 ### `chestVip`
 ```json
@@ -98,6 +97,16 @@ La configuración de cada cuenta se guarda en `access/{iggId}/config.json` y en 
 ```
 - Reclama misiones completadas (3117) de admin/guild.
 
+### `sendEmoji`
+```json
+{ "enable": true, "next": 0 }
+```
+- Misión diaria "enviar 1 emoticono": manda un emoji aleatorio (3001 tipo
+  `0x6D`) **una vez por reset diario**, luego pide 3111 `02` para que
+  `adminQuest`/`guildQuest` reclame. Panel: sección *Emoticonos*.
+- Datos/nombres: `backend/src/bot/data/emojis-db.ts` (ver
+  [`teories/emojis.md`](teories/emojis.md)).
+
 ### `resourceLimit`
 ```json
 { "wheat": 1000000000, "wood": 1000000000, "stone": 1000000000, "ore": 1000000000, "gold": 1000000000 }
@@ -118,8 +127,22 @@ La configuración de cada cuenta se guarda en `access/{iggId}/config.json` y en 
   descartan igual, así que una config sin migrar no rompe nada).
 - Al recibir 2455 (lote completado) reanuda.
 
+### `familiarSkills`
+```json
+{ "enable": false, "pets": [] }
+```
+- Uso automático de skills activas de monstruitos (proto 8226), acción
+  `FamiliarSkillsAction` (`backend/src/bot/actions/familiar.action.ts`).
+- `pets`: ids de `PetTbl` cuyas skills activas dispara el bot cuando no tienen
+  cooldown (8231) y, si son ofensivas (subject 2), cuando el pool de fatiga
+  (8230) alcanza. Un intento rechazado no se repite en 10 min.
+- Panel: Config → *Monstruitos (skills activas)*.
+- El body lleva la coord del castillo de la cuenta (`encodeCoord(castleX,
+  castleY)`) igual que el cliente real; server responde `8227`
+  ([8226](protocols/8226.md)).
+
 ## Persistencia
 
 - Al iniciar, se lee `config.json` (o MongoDB si no hay file) y se fusiona con los defaults (`mergeConfig`).
-- `saveConfig()` escribe solo los campos temporales (next, index, reclaim, reset) preservando el resto del archivo original.
+- `saveConfig()` escribe solo los campos temporales (next, index, reclaim, reset: `giftDaily`, `artifactFair`, `mysteryBox`, `ship`, `forgeGift`, `sendEmoji`) preservando el resto del archivo original.
 - La UI guarda el config completo vía evento `saveConfig` (deep merge + upsert en MongoDB).

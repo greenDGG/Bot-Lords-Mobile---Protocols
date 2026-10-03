@@ -69,24 +69,41 @@ Header: cantidad=2, padding=0
 
 ### Payload (S → C)
 
-Misma estructura que 2478 pero sin el segundo nombre:
+**UN paquete = UNA agrupación** (body de 87 B, `Len=91`). Si hay N torres el
+servidor manda N paquetes separados en ráfaga. Spec completa en
+[`../protocols/6611.md`](../protocols/6611.md).
 
 ```
 Header (6 bytes):
-  [0-1] uint16  = cantidad de entradas
-  [2-5] padding
+  [0]    uint8 = lado: 0 = propias del gremio, 1 = en contra
+  [1]    uint8 = slot: índice dentro de la lista de ese lado (0..N-1)
+  [2-4]  uint8 = 00
+  [5]    uint8 = 00|01
 
-Cada entrada:
-  [0-3]  uint32  = timestamp de inicio (unix seconds)
-  [4-7]  uint32  = padding
-  [8-11] int32   = tiempo restante (segundos)
-  [12-13] uint16 = coordenada X
-  [14-15] uint16 = coordenada Y
-  [16]    uint8  = padding
-  [17-N]  string = nombre del enemigo (null-terminated)
-  [N+1]   uint8  = separador
-  [N+2+]  uint8[] = zeros de padding (hasta siguiente entrada)
+Lado 0 (propias):
+  [6-9]    uint32 = timestamp de inicio (unix s)
+  [14-17]  uint32 = tiempo restante (segundos)
+  [18-20]  bytes   = PointCode (coordenadas, igual que 2478)
+  [21-22]  bytes   = AllyHead (low16 de un guild id)
+  [23-35]  string  = rallyLeader (13 B null-padded)
+  [36-39]  uint32  = tropas actuales
+  [40-43]  uint32  = capacidad máxima
+  [44]     uint8   = tipo
+  [45-64]  string  = gremio (semántica sin determinar)
+
+Lado 1 (en contra): mismos valores, posición distinta
+  [18]     uint8   = tipo
+  [19-22]  uint32  = tropas actuales
+  [23-26]  uint32  = capacidad (a veces < cur: no se informa)
+  [27-29]  bytes   = PointCode
+  [30-31]  bytes   = AllyHead
+  [32-44]  string  = rallyLeader (13 B)
 ```
+
+- `slot == 0` = lote nuevo de ese lado → se borran las torres viejas de ese lado.
+- Upsert por `(lado, slot)`: los paquetes se repiten en cada refresco.
+- El `WarEvent.index` (selección 2480) **no** es el `slot`; lo recalcula
+  `assignIndexes()` por menor `timeRemainingSec`.
 
 ---
 
@@ -261,6 +278,8 @@ Cuando `warMode=true` y una marcha llega en ≤2s:
 - `2479` elimina la agrupación de esa posición (mismo encoding index*256 que el 2480) y se renumera
 - `2477` trae el nº de agrupaciones restantes → `notifyCount`
 - El servidor reenvía la lista completa, no hay "diff"
-- `WarDetector` mantiene `activeWars[]` en memoria y actualiza por coordenadas + nombre
+- `WarDetector` mantiene `activeWars[]` en memoria: castillos/fortalezas se
+  upsertean por coordenadas + nombre, **torres (6611) por `(lado, slot)`**
+  (`slot == 0` limpia ese lado porque empieza un lote nuevo)
 - Los protos 2477 y 2485 son notificaciones/confirmaciones que disparan re-consulta
 - 7315 loguea el hex crudo (`[AGRU] 7315 raw`) además de parsearlo
