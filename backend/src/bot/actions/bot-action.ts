@@ -22,6 +22,8 @@ import { EventsAction, Relocate } from './event.action';
 import { MissionCheckAction } from './mission.action';
 import { LuckyCardAction } from './lucky-card.action';
 import { HuntAction } from './hunt.action';
+import { SendEmojiAction } from './emoji.action';
+import { FamiliarSkillsAction } from './familiar.action';
 
 export interface BotAction {
   name: string;
@@ -60,5 +62,7 @@ export function createActions(): BotAction[] {
     new SweepAction(),
     new LuckyCardAction(),
     new HuntAction(),
+    new SendEmojiAction(),
+    new FamiliarSkillsAction(),
   ];
 }

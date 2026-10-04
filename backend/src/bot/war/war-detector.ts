@@ -3,6 +3,7 @@ import { WarEvent } from '../models/war.types';
 import { MessagePacket } from '../network/message-packet';
 import { send2476 } from '../commands/war.commands';
 import { decodeCoordBytes } from '../../models/map-coords';
+import { parse6611, apply6611, pruneTowerSide } from './war-6611';
 
 export class WarDetector {
   private activeWars: WarEvent[] = [];
@@ -65,12 +66,11 @@ export class WarDetector {
     const proto = mp.protocolId;
 
     if (proto === 2477) {
-      // 2477 (8B): dos contadores independientes.
-      //   u32[0] = agrupaciones propias del gremio en curso (0..7)
-      //   u32[1] = agrupación en contra del gremio (0|1) — agruparon a
-      //            ALGUIEN del gremio, no necesariamente a este bot
-      // (hipótesis verificada contra ~4400 muestras de logs: u32[1] siempre es
-      //  0/1 y sube cuando agrupan a un miembro; ver teories/agrupaciones.md)
+      // 2477 (8B): dos contadores independientes (correlacionados con los
+      // bursts de 6611: cuántos paquetes a=0 y a=1 llegan por lote).
+      //   u32[0] = agrupaciones propias del gremio en curso (0..4 observado)
+      //   u32[1] = agrupación en contra del gremio (0..3 observado) — agruparon
+      //            a ALGUIEN del gremio, no necesariamente a este bot
       const own = body.length >= 4 ? body.readUInt32LE(0) : 0;
       const against = body.length >= 8 ? body.readUInt32LE(4) : 0;
       // El badge sólo se enciende cuando hay agrupación en contra DEL GREMIO
@@ -79,6 +79,13 @@ export class WarDetector {
       this.bot.log(
         `[AGRU] 2477 propias=${own} enContra=${against}${this.viewing ? ' (viendo la UI)' : ''}`,
       );
+      // El contador SÍ incluye las torres (en los bursts del 02/03-10, propias
+      // == nº de paquetes 6611 lado 0), pero va con desfase respecto de los
+      // paquetes: sólo se poda cuando un lado queda en 0 (ahí no hay duda).
+      // Para una lista que baja de N a M<N alcanza con que el refresco empiece
+      // por slot 0, que handle6611 limpia ese lado solo.
+      this.pruneTowersIfEmpty('own', own);
+      this.pruneTowersIfEmpty('against', against);
       this.onNotification?.(this.notifyCount);
     } else if (proto === 2479) {
       // 2479 = terminó/canceló la agrupación en esa posición (uint32 index * 256)
@@ -179,6 +186,7 @@ export class WarDetector {
         iggId: this.iggId,
         active: true,
         detectedAt: new Date(),
+        updatedAt: Date.now(),
         warTimestamp: new Date(ts * 1000),
         timeRemainingSec: timeRem,
         coordX: coord.x,
@@ -206,6 +214,7 @@ export class WarDetector {
       const existing = this.activeWars.find(x => x.coordX === w.coordX && x.coordY === w.coordY && x.type === w.type);
       if (existing) {
         existing.timeRemainingSec = w.timeRemainingSec;
+        existing.updatedAt = w.updatedAt;
         existing.warTimestamp = w.warTimestamp;
         existing.rallyLeader = w.rallyLeader;
         existing.enemyName = w.enemyName;
@@ -220,59 +229,42 @@ export class WarDetector {
     this.onWarsUpdated?.(this.activeWars);
   }
 
+  // 6611: UN paquete = UNA agrupación (body siempre de 87 B). N torres =>
+  // N paquetes separados; el parser viejo los leía como N entradas de un
+  // mismo body y salían entradas fantasmas (coords dentro del nombre de gremio).
+  // El layout byte a byte (lado, slot, PointCode, tropas) está en war-6611.ts.
   private handle6611(payload: Buffer): void {
-    let off = 6;
-    if (off >= payload.length) return;
+    const e = parse6611(payload);
+    if (!e) return;
     this.lastListType = 'tower';
 
-    const parsed: WarEvent[] = [];
-    while (off + 12 <= payload.length) {
-      const ts = payload.readUInt32LE(off); off += 4;
-      off += 4;
-      const timeRem = payload.readInt32LE(off); off += 4;
-      const cx = payload.readUInt16LE(off); off += 2;
-      const cy = payload.readUInt16LE(off); off += 2;
-      off += 1;
-      const nameStart = off;
-      while (off < payload.length && payload[off] !== 0) off++;
-      const rallyLeader = off > nameStart ? payload.toString('ascii', nameStart, off) : '';
-      if (off < payload.length) off++;
-      while (off < payload.length && payload[off] === 0) off++;
-
-      if (!rallyLeader && cx === 0 && cy === 0 && timeRem === 0) break;
-
-      parsed.push({
-        iggId: this.iggId,
-        active: true,
-        detectedAt: new Date(),
-        warTimestamp: new Date(ts * 1000),
-        timeRemainingSec: timeRem,
-        coordX: cx,
-        coordY: cy,
-        rallyLeader,
-        enemyName: '',
-        rallyType: 0,
-        index: 0,
-        type: 'tower',
-      });
-    }
-
-    this.activeWars = this.activeWars.filter(w => w.type !== 'tower');
-    for (const w of parsed) {
-      const existing = this.activeWars.find(x => x.coordX === w.coordX && x.coordY === w.coordY && x.type === w.type);
-      if (existing) {
-        existing.timeRemainingSec = w.timeRemainingSec;
-        existing.warTimestamp = w.warTimestamp;
-        existing.rallyLeader = w.rallyLeader;
-      } else {
-        this.activeWars.push(w);
-      }
+    const sideLabel = e.side === 'own' ? 'propias' : 'en contra';
+    const r = apply6611(this.activeWars, e, this.iggId);
+    this.activeWars = r.list;
+    if (r.dropped > 0) {
+      this.bot.log(`[AGRU] 6611 ${sideLabel}: nuevo lote, se limpiaron ${r.dropped} torres`);
     }
 
     this.assignIndexes();
 
-    this.bot.log(`[AGRU] 6611 parseado: ${parsed.length} torres`);
+    const towers = this.activeWars.filter(w => w.type === 'tower').length;
+    this.bot.log(
+      `[AGRU] 6611 ${sideLabel} [${e.slot}] "${e.rallyLeader}" (${e.coordX},${e.coordY}) ` +
+      `${e.troopsCurrent}/${e.troopsMax ?? '?'} tropas · ${towers} torres`,
+    );
     this.onWarsUpdated?.(this.activeWars);
+  }
+
+  // Poda de un lado de las torres cuando 2477 dice que ese lado quedó en 0
+  private pruneTowersIfEmpty(side: 'own' | 'against', count: number): void {
+    if (count > 0) return;
+    const before = this.activeWars.length;
+    this.activeWars = pruneTowerSide(this.activeWars, side);
+    if (this.activeWars.length !== before) {
+      this.bot.log(`[AGRU] 6611 lado ${side === 'own' ? 'propias' : 'en contra'} = 0 → ${before - this.activeWars.length} torres borradas`);
+      this.assignIndexes();
+      this.onWarsUpdated?.(this.activeWars);
+    }
   }
 
   private handle7315(payload: Buffer): void {
@@ -342,6 +334,7 @@ export class WarDetector {
         iggId: this.iggId,
         active: true,
         detectedAt: new Date(),
+        updatedAt: Date.now(),
         warTimestamp: new Date(ts * 1000),
         timeRemainingSec: timeRem,
         coordX: fort0 | (fort1 << 8),
@@ -363,6 +356,7 @@ export class WarDetector {
       const existing = this.activeWars.find(x => x.type === 'fortress' && x.coordX === w.coordX && x.coordY === w.coordY && x.rallyLeader === w.rallyLeader);
       if (existing) {
         existing.timeRemainingSec = w.timeRemainingSec;
+        existing.updatedAt = w.updatedAt;
         existing.warTimestamp = w.warTimestamp;
         existing.inMarch = w.inMarch;
         existing.level = w.level;

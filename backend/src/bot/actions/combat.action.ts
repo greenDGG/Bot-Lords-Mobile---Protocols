@@ -2,7 +2,8 @@ import type { BotInstance } from '../core/bot-instance';
 import type { BotAction } from './bot-action';
 import { attackRival, claimColiseumGems } from '../commands/coliseum.commands';
 import { sendSweep } from '../commands/sweep.commands';
-import { getColiseumHeroes, parseSweepPayload, sweepResistenciaCost } from '../../models/bot-config';
+import { getColiseumHeroes, parseSweepPayload } from '../../models/bot-config';
+import { chapterForSweepIdx, getEliteStage, stageForSweepIdx, sweepStaminaCost } from '../data/hero-stages-db';
 
 export class ShieldAction implements BotAction {
   name = 'shield';
@@ -84,7 +85,7 @@ export class SweepAction implements BotAction {
       return false;
     }
 
-    const cost = sweepResistenciaCost(parsed.tipo, parsed.etapa);
+    const cost = sweepStaminaCost(parsed.tipo, parsed.etapa, parsed.idx);
     const current = bot.getCurrentResistencia();
     if (current < cost) {
       bot.bot.log(`[SWEEP] Resistencia insuficiente: ${current}/${cost} necesaria`);
@@ -95,7 +96,16 @@ export class SweepAction implements BotAction {
     sendSweep(bot.bot, buf);
     const tipoStr = parsed.tipo === 1 ? 'x1' : 'x10';
     const etapaStr = parsed.etapa === 1 ? 'Normal' : parsed.etapa === 2 ? 'Elite' : 'Desafío';
-    bot.bot.log(`[SWEEP] ${tipoStr} ${etapaStr} capítulo ${parsed.capitulo} — gastando ${cost} resistencia`);
+    const chapterId = chapterForSweepIdx(parsed.etapa, parsed.idx);
+    const stage = stageForSweepIdx(parsed.etapa, parsed.idx);
+    const isNormal = parsed.etapa === 1;
+    const position = !isNormal && stage ? stage : null;
+    const elite = chapterId && position ? getEliteStage(chapterId, position) : undefined;
+    const where = chapterId && stage
+      ? `capítulo ${chapterId} etapa ${chapterId}-${isNormal ? stage : stage * 3}`
+      : `idx ${parsed.idx} fuera de rango`;
+    const medal = elite ? ` — ${elite.heroName} (medalla #${elite.medalItemId})` : '';
+    bot.bot.log(`[SWEEP] ${tipoStr} ${etapaStr} ${where}${medal} — gastando ${cost} resistencia`);
     bot.consumeResistencia(cost);
     await new Promise(r => setTimeout(r, 2000));
     return true;

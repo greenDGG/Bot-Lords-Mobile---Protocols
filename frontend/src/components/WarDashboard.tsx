@@ -13,6 +13,8 @@ interface WarEvent {
   warTimestamp: string;
   index: number;
   type: string;
+  /** 6611: 'own' = propias del gremio, 'against' = en contra */
+  side?: 'own' | 'against';
   level?: number;
   inMarch?: boolean;
   troopsCurrent?: number;
@@ -33,6 +35,7 @@ interface Group {
   coordX: number;
   coordY: number;
   type: string;
+  side?: 'own' | 'against';
   timeRemainingSec: number;
   warTimestamp: string;
   level?: number;
@@ -44,7 +47,9 @@ interface Group {
 const PRESETS_KEY = 'war_presets';
 const TROOPS_PER_ACCOUNT = 200000;
 
-const groupKey = (g: Group) => `${g.rallyLeader}|${g.coordX}|${g.coordY}|${g.type}`;
+// El lado (6611) va en la clave: la misma torre/líder puede existir en ambas
+// listas (propias y en contra) y son entradas distintas.
+const groupKey = (g: Group) => `${g.rallyLeader}|${g.coordX}|${g.coordY}|${g.type}|${g.side || ''}`;
 
 // El "enemigo" real: para fortalezas es la propia fortaleza (enemyName viene vacío
 // y rallyLeader es el aliado que inició la agrupación)
@@ -52,6 +57,11 @@ const enemyLabel = (g: Group) =>
   g.enemyName || (g.type === 'fortress' ? `Fortaleza${g.level ? ` ${g.level}` : ''}` : g.rallyLeader);
 
 const TYPE_LABEL: Record<string, string> = { castle: 'Castillo', tower: 'Torre', fortress: 'Fortaleza' };
+
+const SIDE_LABEL: Record<string, { text: string; color: string }> = {
+  own: { text: 'PROPIAS', color: '#22c55e' },
+  against: { text: 'EN CONTRA', color: '#ef4444' },
+};
 
 function loadPresets(): string[] {
   try { return JSON.parse(localStorage.getItem(PRESETS_KEY) || '[]'); } catch { return []; }
@@ -202,8 +212,8 @@ export default function WarDashboard({ socket, bots }: Props) {
 
   const groups = new Map<string, Group>();
   for (const w of activeWars) {
-    const key = `${w.rallyLeader}|${w.coordX}|${w.coordY}|${w.type}`;
-    if (!groups.has(key)) groups.set(key, { wars: [], rallyLeader: w.rallyLeader, enemyName: w.enemyName, coordX: w.coordX, coordY: w.coordY, type: w.type, timeRemainingSec: w.timeRemainingSec, warTimestamp: w.warTimestamp, level: w.level, inMarch: w.inMarch, troopsCurrent: w.troopsCurrent, troopsMax: w.troopsMax });
+    const key = `${w.rallyLeader}|${w.coordX}|${w.coordY}|${w.type}|${w.side || ''}`;
+    if (!groups.has(key)) groups.set(key, { wars: [], rallyLeader: w.rallyLeader, enemyName: w.enemyName, coordX: w.coordX, coordY: w.coordY, type: w.type, side: w.side, timeRemainingSec: w.timeRemainingSec, warTimestamp: w.warTimestamp, level: w.level, inMarch: w.inMarch, troopsCurrent: w.troopsCurrent, troopsMax: w.troopsMax });
     const g = groups.get(key)!;
     g.wars.push(w);
     if (w.inMarch) g.inMarch = true;
@@ -415,11 +425,25 @@ export default function WarDashboard({ socket, bots }: Props) {
                   >
                     {/* Izquierda: aliado que agrupa */}
                     <div style={{ minWidth: 0 }}>
-                      <div style={{ fontSize: 10, color: colors.textSecondary, textTransform: 'uppercase', letterSpacing: 1, fontWeight: 700 }}>Agrupa</div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                        <div style={{ fontSize: 10, color: colors.textSecondary, textTransform: 'uppercase', letterSpacing: 1, fontWeight: 700 }}>Agrupa</div>
+                        {g.side && SIDE_LABEL[g.side] && (
+                          <span style={{
+                            fontSize: 9, fontWeight: 800, letterSpacing: 1,
+                            padding: '1px 6px', borderRadius: 8,
+                            background: `${SIDE_LABEL[g.side].color}22`,
+                            color: SIDE_LABEL[g.side].color,
+                          }}>
+                            {SIDE_LABEL[g.side].text}
+                          </span>
+                        )}
+                      </div>
                       <div style={{ fontWeight: 600, fontSize: 14, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{g.rallyLeader || '—'}</div>
-                      {g.troopsMax ? (
+                      {g.troopsCurrent !== undefined || g.troopsMax ? (
                         <div style={{ fontSize: 11, color: colors.textSecondary }}>
-                          {formatNum(g.troopsCurrent || 0)} / {formatNum(g.troopsMax)} tropas
+                          {g.troopsMax
+                            ? `${formatNum(g.troopsCurrent || 0)} / ${formatNum(g.troopsMax)} tropas`
+                            : `${formatNum(g.troopsCurrent || 0)} tropas`}
                         </div>
                       ) : null}
                       <div style={{ fontSize: 11, color: colors.textSecondary }}>

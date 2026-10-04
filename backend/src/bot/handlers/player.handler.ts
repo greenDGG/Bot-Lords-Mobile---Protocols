@@ -7,12 +7,13 @@ export function handlePlayerInfo(bot: BotInstance, body: Buffer): void {
   try {
     bot.playerInfo = parsePlayerInfo(body);
     bot.lastRes = bot.playerInfo.res;
+    bot.syncEnergyFromServer();
     bot.emit('playerInfoUpdated');
   } catch {}
 }
 
 export function handleBuffs(bot: BotInstance, body: Buffer): void {
-  if (body.length < 4) return;
+  if (body.length < 1) return;
   bot.buffs.handlePacket(body);
 }
 

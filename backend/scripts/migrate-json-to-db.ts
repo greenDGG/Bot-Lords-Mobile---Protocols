@@ -31,8 +31,6 @@ const TokenModel = mongoose.model('Token', TokenSchema);
 // Config
 const ConfigSchema = new mongoose.Schema({
   iggId: { type: Number, required: true, unique: true, index: true },
-  dailyResetTime: { type: String, default: '00:00' },
-  limitTrain: { type: Number, default: 0 },
   reconnectTime: { type: Number, default: 30 },
   sendHelp: { type: Boolean, default: true },
   proxy: { type: String, default: '' },
@@ -131,8 +129,6 @@ async function migrate() {
           { iggId },
           {
             iggId,
-            dailyResetTime: normalized.dailyResetTime || '00:00',
-            limitTrain: normalized.limitTrain ?? 0,
             reconnectTime: normalized.reconnectTime ?? 30,
             sendHelp: normalized.sendHelp ?? true,
             proxy: normalized.proxy || '',

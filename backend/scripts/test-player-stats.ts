@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { parse3201 } from '../src/bot/parsers/research.parser';
-import { computePlayerStats, PlayerStat } from '../src/bot/features/player-stats';
+import { computePlayerStats, PlayerStat, getBarracksCapacity, getSubsidyPct, getTrainSpeedPct } from '../src/bot/features/player-stats';
 
 const src = fs.readFileSync(path.join(__dirname, 'test-parse-3201.ts'), 'utf-8');
 const m = src.match(/const IDLE_HEX =\s*'([^']+)'/);
@@ -69,6 +69,48 @@ check(
   'no queda la fila de % suelta',
 );
 
+console.log('\n== pasivas de héroes ==');
+const mkHero = (heroId: number, grade: number) => ({ heroId, level: 60, power: 0, rank: 8, grade, unknown: 0 });
+// Sabio de Viento: Potenciador construcción value 1000 (1 % en Blanco)
+// Guardián: Gestión suministro de comida value 11250 (11.25 % en Blanco)
+// Estafador: Potenc. energía máx. value 150 (entero) + Regeneración 500 (0.5 %)
+const goldHeroes = [mkHero(3, 5), mkHero(1, 5), mkHero(15, 5)];
+const heroStats = computePlayerStats({ heroes: goldHeroes });
+
+const constr = heroStats.find(s => s.name === 'Vel. construcción +');
+check(!!constr && constr.contributions.length === 1, `una fila "Vel. construcción +" con una fuente (${constr?.contributions.length})`);
+check(constr!.contributions[0].source === 'hero' && constr!.contributions[0].label === 'Héroes', 'fuente hero / etiqueta Héroes');
+check(constr!.total === 2000 && constr!.unit === '%', `Oro x20 → 20 % (2000 centésimas) — ${constr!.total}`);
+check(constr!.count === 1, `1 héroe con esa pasiva — ${constr!.count}`);
+check(constr!.contributions[0].items[0].name.startsWith('Sabio de Viento · '), `item con nombre de héroe — ${constr!.contributions[0].items[0].name}`);
+
+const food = heroStats.find(s => s.name === 'Producción de comida +');
+check(food?.total === 22500, `comida 11250 → 225 % en Oro — ${food?.total}`);
+
+const energy = heroStats.find(s => s.name === 'Energía +');
+check(energy?.unit === '' && energy?.total === 3000, `energía máx. 150 → 3000 entera — ${energy?.total}`);
+
+const regen = heroStats.find(s => s.name === 'Reclu.');
+check(regen?.total === 1000, `regeneración 500 → 10 % en Oro — ${regen?.total}`);
+
+check(
+  heroStats.every(s => !/(infantería|caballería|artillería|ejército|muralla|refuerzo)/i.test(s.name)),
+  'las pasivas de batalla (tropas/muralla) no entran en stats',
+);
+check(
+  heroStats.every(s => s.contributions.every(c => c.items.every(i => !i.level))),
+  'sin level en los items (el grado va en el nombre)',
+);
+
+const whiteStats = computePlayerStats({ heroes: [mkHero(3, 1)] });
+check(whiteStats.find(s => s.name === 'Vel. construcción +')?.total === 100, 'grado 1 (Blanco) → 1 % (100 centésimas)');
+const blueStats = computePlayerStats({ heroes: [mkHero(3, 3)] });
+check(blueStats.find(s => s.name === 'Vel. construcción +')?.total === 400, 'grado 3 (Azul) → 4 % (400 centésimas)');
+
+check(computePlayerStats({ heroes: [] }).length === 0, 'sin héroes => 0 stats');
+check(computePlayerStats({ heroes: [mkHero(9999, 5)] }).length === 0, 'héroe desconocido => 0 stats');
+check(computePlayerStats({ heroes: [mkHero(3, 5), mkHero(3, 5)] }).length === 1, 'héroe duplicado se cuenta una vez');
+
 // Mismo patrón con el Hospital: 120400 (3 hospitales) + 7.7% (dos techs).
 const enfLevels = new Array(500).fill(0);
 enfLevels[300 - 1] = 10; // Enfermería más grande III nv10 → 700 (7%)
@@ -106,5 +148,39 @@ check(vs.contributions.some(c => c.source === 'costume' && c.total === 3500), 't
 check(vs.contributions.length === 3, `3 fuentes — ${vs.contributions.map(c => c.label).join(' + ')}`);
 check(vs.total === 21000, `total 210% = 70 + 105 + 35 (${vs.total})`);
 check(vs.count === 4, `4 aportes (tech + 2 talentos + traje) — ${vs.count}`);
+
+console.log('\n== stats de entrenamiento (subsidios / velocidad / capacidad) ==');
+// 16 techs de subsidio (95-114) por (tipo, tier): 0=inf 1=cab 2=art 3=asedio, tiers 0-3.
+const SUBSIDY_TECH: number[][] = [
+  [95, 99, 104, 111], // Infantería: Grunt, Gladiator, Royal Guard, Heroic Fighter
+  [97, 101, 106, 113], // Caballería: Cataphract, Reptilian Rider, Royal Cavalry, Ancient Drake
+  [96, 100, 105, 112], // Artillería: Archer, Sharpshooter, Stealth Sniper, Heroic Cannoneer
+  [98, 102, 107, 114], // Asedio: Ballista, Catapult, Fire Trebuchet, Destroyer
+];
+const subsidyLevels = new Array(500).fill(0);
+for (const row of SUBSIDY_TECH) for (const id of row) subsidyLevels[id - 1] = 10;
+const subsidyStats = computePlayerStats({ research: { techLevels: subsidyLevels } });
+check(subsidyStats.filter(s => s.effectId !== undefined).length === 16, `16 stats de subsidio con effectId (${subsidyStats.filter(s => s.effectId !== undefined).length})`);
+check(getSubsidyPct(subsidyStats, 0, 0) === 40, 'inf T1 (efecto 280 Grunt, nv10) = 40%');
+check(getSubsidyPct(subsidyStats, 0, 3) === 30, 'inf T4 (efecto 292 Heroic Fighter) = 30%');
+check(getSubsidyPct(subsidyStats, 1, 0) === 40, 'cab T1 (efecto 282 Cataphract) = 40%');
+check(getSubsidyPct(subsidyStats, 2, 2) === 30, 'art T3 (efecto 289 Stealth Sniper) = 30%');
+check(getSubsidyPct(subsidyStats, 3, 1) === 40, 'asedio T2 (efecto 287 Catapult) = 40%');
+check(getSubsidyPct(subsidyStats, 4, 0) === 0 && getSubsidyPct(subsidyStats, 0, 4) === 0, 'tipo/tier fuera de rango → 0');
+
+const gruntLevels = new Array(500).fill(0);
+gruntLevels[95 - 1] = 10; // sólo Grunt: no toca a las otras 15 unidades
+const gruntStats = computePlayerStats({ research: { techLevels: gruntLevels } });
+check(getSubsidyPct(gruntStats, 0, 0) === 40 && getSubsidyPct(gruntStats, 1, 0) === 0, 'sólo Grunt nv10 → 40% en (0,0), resto 0');
+
+// Vel. entrenamiento I nv1 (2000 = 20%) + II nv6 (600 = 6%) → 26%
+const speedLevels = new Array(500).fill(0);
+speedLevels[42 - 1] = 1;
+speedLevels[109 - 1] = 6;
+const speedStats = computePlayerStats({ research: { techLevels: speedLevels } });
+check(getTrainSpeedPct(speedStats) === 26, `velocidad de entrenamiento 20% + 6% = 26% (${getTrainSpeedPct(speedStats)})`);
+
+check(getTrainSpeedPct(undefined) === 0 && getBarracksCapacity(undefined) === 0 && getSubsidyPct(undefined, 0, 0) === 0, 'sin stats → 0 en los tres helpers');
+check(getBarracksCapacity(merged) === 31138, `capacidad de cuartel combinada → ${getBarracksCapacity(merged)}`);
 
 console.log(`\n${ok} checks OK`);

@@ -15,6 +15,10 @@ interface PlayerInfo {
   resistenciaMax?: number;
   /** Recuperación de energía por hora (1800/h + bonus de investigación). */
   energyRegen?: { perHour: number; perSec: number; bonusPct: number; basePerHour: number };
+  /** Tope de energía (15000 base + stat "Energía +"). */
+  energyMax?: number;
+  /** Fecha de creación de la cuenta (ISO, proto 1008). Define el reset diario. */
+  accountCreatedAt?: string;
 }
 
 interface Resources {
@@ -33,6 +37,118 @@ interface OwnMarches {
   limit: number; count: number; entries: OwnMarch[];
 }
 
+interface FamiliarSkill {
+  id: number; name: string; level: number; maxLevel: number; exp: number;
+  type?: 'passive' | 'active';
+  effectText?: string; effectDesc?: string;
+  values?: number[]; unit?: number;
+  desc?: string;
+  params?: Record<string, { values: number[]; unit: number }>;
+}
+
+interface FamiliarTalent {
+  id: number; name: string; desc: string; level: number; maxLevel: number; pct?: number[];
+}
+
+interface Familiar {
+  petId: number; name: string; rare: number; army: string;
+  level: number; exp: number; stage: number; stageName: string;
+  skills: FamiliarSkill[]; talent: FamiliarTalent | null;
+}
+
+interface ArtifactEffect {
+  id: number; name: string; unit: string; value: number;
+}
+
+interface Artifact {
+  artifactId: number; name: string; nameEn: string; desc: string;
+  grade: number; gradeName: string; level: number; maxLevel: number;
+  star: number; starName: string; effects: ArtifactEffect[];
+  nextLevel: { level: number; effects: ArtifactEffect[] } | null;
+}
+
+interface ArtifactSetPiece {
+  artifactId: number; name: string; owned: boolean; level: number; star: number;
+}
+
+interface ArtifactSetTier {
+  condition: string; met: boolean; effects: ArtifactEffect[];
+}
+
+interface ArtifactSet {
+  id: number; name: string; pieces: ArtifactSetPiece[]; tiers: ArtifactSetTier[];
+}
+
+interface ArtifactsPayload {
+  list: Artifact[]; sets: ArtifactSet[];
+}
+
+const ARMY_LABELS: Record<string, string> = { inf: 'Infantería', art: 'Artillería', cav: 'Caballería', all: 'Ejército' };
+const STAGE_COLORS: Record<number, string> = { 0: colors.textSecondary, 1: colors.accent, 2: colors.success };
+/** Grados de artefacto (calidad del item): 3 = Extraordinario, 4 = Épico, 5 = Legendario. */
+const ARTIFACT_GRADE_COLORS: Record<number, string> = { 3: '#4a90d9', 4: '#a855f7', 5: '#e6a817' };
+const ARTIFACT_GRADE_PLURALS: Record<number, string> = { 3: 'Extraordinarios', 4: 'Épicos', 5: 'Legendarios' };
+const SET_TIER_LABELS: Record<string, string> = { collect: 'Coleccionar los 3', star3: '3+ estrellas', blessed: 'Todas bendecidas' };
+
+/** Descripción del talento con el %d sustituido por el valor del nivel actual. */
+function talentDesc(t: FamiliarTalent): string {
+  if (t.pct && t.level > 0) return t.desc.replace('%d', String(t.pct[t.level - 1]));
+  return t.desc;
+}
+
+/** Formatea un valor de skill según su unidad (0 = % v/100, 1 = cantidad, 2 = segundos). */
+function skillValue(v: number, unit: number | undefined): string {
+  if ((unit ?? 0) === 0) {
+    const pct = v / 100;
+    return `${Number.isInteger(pct) ? pct : String(pct.toFixed(2)).replace(/\.?0+$/, '')}%`;
+  }
+  if (unit === 2) {
+    if (!v) return '0';
+    if (v % 3600 === 0) return `${v / 3600} h`;
+    if (v % 60 === 0) return `${v / 60} min`;
+    return `${v} s`;
+  }
+  return String(v);
+}
+
+/** Pasiva de stats al nivel actual de la skill (rango nv1→nv10 si aún no subió). */
+function passiveText(s: FamiliarSkill): string | null {
+  if (s.type !== 'passive' || !s.effectText || !s.values) return null;
+  const { effectText, effectDesc, values, unit, level } = s;
+  const sep = /[+\s]$/.test(effectText) ? '' : ' ';
+  const fmt = (lvl: number): string | null => {
+    const v = values[lvl - 1];
+    return v ? skillValue(v, unit) : null;
+  };
+  if (level > 0) {
+    const cur = fmt(level);
+    if (cur) return `${effectText}${sep}${cur}`;
+    return effectDesc || null;
+  }
+  const first = fmt(1);
+  const top = fmt(10);
+  if (first && top) return `${effectText}${sep}nv1 ${first} → nv10 ${top}`;
+  return effectDesc || null;
+}
+
+/** Skill activa: desc con %a..%g sustituidos por los valores del nivel actual. */
+function activeDesc(s: FamiliarSkill): string | null {
+  if (s.type !== 'active' || !s.desc) return null;
+  const lvl = s.level >= 1 ? s.level : 1;
+  return s.desc.replace(/%([a-g])/g, (m, letter: string, offset: number, str: string) => {
+    const p = s.params?.[letter];
+    if (!p) return m;
+    const v = p.values[lvl - 1] ?? 0;
+    if (p.unit === 2) return skillValue(v, 2);
+    if (p.unit === 0) {
+      const n = v / 100;
+      const num = Number.isInteger(n) ? String(n) : String(n.toFixed(2)).replace(/\.?0+$/, '');
+      return str[offset + 2] === '%' || str[offset + 2] === '％' ? num : `${num}%`;
+    }
+    return String(v);
+  });
+}
+
 // El backend puede tardar en reiniciarse y mandar entries sin tropas/héroes;
 // se normaliza para que el render no reviente con `.length` de undefined.
 function normalizeOwnMarches(d: OwnMarches | null | undefined): OwnMarches | null {
@@ -42,6 +158,31 @@ function normalizeOwnMarches(d: OwnMarches | null | undefined): OwnMarches | nul
     count: d.count ?? 0,
     entries: (d.entries || []).map(e => ({ ...e, troops: e.troops || [], heroIds: e.heroIds || [] })),
   };
+}
+
+const DAY_SEC = 86400;
+const UTC3_OFFSET = 3 * 3600;
+
+function fmtHHMM(sec: number): string {
+  const s = ((sec % DAY_SEC) + DAY_SEC) % DAY_SEC;
+  return `${String(Math.floor(s / 3600)).padStart(2, '0')}:${String(Math.floor((s % 3600) / 60)).padStart(2, '0')}`;
+}
+
+// Reset diario de la cuenta: la fecha de creación del 1008 (offset 210) da
+// resetHourUtc = createdAt % 86400; acá se muestra en UTC-3.
+// Devuelve { hora, proximo } o null si no hay dato / no parece fecha válida.
+function dailyResetInfo(createdAtIso?: string): { hora: string; proximo: string } | null {
+  if (!createdAtIso) return null;
+  const t = Date.parse(createdAtIso);
+  if (!Number.isFinite(t) || t < 1420070400000 || t > Date.now() + DAY_SEC * 1000) return null;
+  const resetSec = Math.floor(t / 1000) % DAY_SEC;
+  const hora = fmtHHMM(resetSec - UTC3_OFFSET);
+  const now = Date.now();
+  const nowD = new Date(now);
+  let next = Math.floor(Date.UTC(nowD.getUTCFullYear(), nowD.getUTCMonth(), nowD.getUTCDate()) / 1000) + resetSec;
+  if (next * 1000 <= now) next += DAY_SEC;
+  const proxD = new Date((next - UTC3_OFFSET) * 1000);
+  return { hora, proximo: `${proxD.getUTCDate()}/${proxD.getUTCMonth() + 1} ${fmtHHMM(next - UTC3_OFFSET)}` };
 }
 
 interface TroopTraining {
@@ -56,6 +197,7 @@ interface Props {
 export default function BotDetail({ iggId, onBack }: Props) {
   const { socket, connected } = useSocket();
   const [playerInfo, setPlayerInfo] = useState<PlayerInfo | null>(null);
+  const dailyReset = useMemo(() => dailyResetInfo(playerInfo?.accountCreatedAt), [playerInfo?.accountCreatedAt]);
   const [resources, setResources] = useState<Resources | null>(null);
   const [troopTraining, setTroopTraining] = useState<TroopTraining | null>(null);
   const [localTrainingRemaining, setLocalTrainingRemaining] = useState(0);
@@ -64,13 +206,15 @@ export default function BotDetail({ iggId, onBack }: Props) {
   const [logs, setLogs] = useState<string[]>([]);
   const [chatText, setChatText] = useState('');
   const [chatMessages, setChatMessages] = useState<{ id: string; sender: string; guild: string; channel: string; text: string; self: boolean }[]>([]);
-  const [activeTab, setActiveTab] = useState<'info' | 'resources' | 'wars' | 'logs' | 'chat' | 'config' | 'camara' | 'construcciones' | 'academia' | 'stats' | 'transmutacion' | 'cuartel' | 'lider' | 'enfermeria' | 'atalaya' | 'mapa' | 'coliseo' | 'heroes' | 'misiones' | 'guildApps' | 'trajes' | 'talentos'>('info');
+  const [activeTab, setActiveTab] = useState<'info' | 'resources' | 'wars' | 'logs' | 'chat' | 'config' | 'camara' | 'construcciones' | 'academia' | 'stats' | 'transmutacion' | 'cuartel' | 'lider' | 'enfermeria' | 'atalaya' | 'mapa' | 'coliseo' | 'heroes' | 'misiones' | 'guildApps' | 'trajes' | 'talentos' | 'monstruitos' | 'artefactos'>('info');
   const [warNotif, setWarNotif] = useState(0);
   const [treasureChamber, setTreasureChamber] = useState<{ level: number; gems: number; startTime: number; durationType: number; endTime: number } | null>(null);
   const [troopState, setTroopState] = useState<{ troops: { type: number; tier: number; count: number }[] }>({ troops: [] });
   const [hospitalState, setHospitalState] = useState<{ troops: { type: number; tier: number; injured: number; healing: number }[]; finishTimestamp: number; totalHealingSeconds: number; isHealing: boolean; totalCost: { wheat: number; wood: number; stone: number; mineral: number; gold: number }; healingCost: { wheat: number; wood: number; stone: number; mineral: number; gold: number } } | null>(null);
   const [incomingMarches, setIncomingMarches] = useState<{ marchId: number; arrivalTimestamp: number; updated: boolean; marchType?: number; packet?: any }[]>([]);
   const [ownMarches, setOwnMarches] = useState<OwnMarches | null>(null);
+  const [familiars, setFamiliars] = useState<Familiar[]>([]);
+  const [artifacts, setArtifacts] = useState<ArtifactsPayload>({ list: [], sets: [] });
   const [marchHistory, setMarchHistory] = useState<any[]>([]);
   const [mapTiles, setMapTiles] = useState<any[]>([]);
   const [mapMarches, setMapMarches] = useState<any[]>([]);
@@ -84,6 +228,7 @@ export default function BotDetail({ iggId, onBack }: Props) {
   const [missions, setMissions] = useState<{ progress: number; activeMission: { missionId: number; name: string; timestamp: number; total: number; points: number; available: boolean } | null; missions: { missionId: number; name: string; timestamp: number; total: number; points: number; available: boolean }[] } | null>(null);
   const [missionRecords, setMissionRecords] = useState<{ header: any; records: { type: string; missionId?: number; level?: number; status?: number; timestamp?: number }[] } | null>(null);
   const [fdgExtension, setFdgExtension] = useState<{ activeMission: { missionId: number; level: number; remaining: number; endTimestamp: number; timeMinutes: number; startTimestamp: number; missionType: number; specialFlag: boolean } | null; mission200: { appearanceTimestamp: number; level: number; missionId: number; completed: number } | null; mission120: { appearanceTimestamp: number; level: number; missionId: number; completed: number } | null } | null>(null);
+  const [dailyMissions, setDailyMissions] = useState<{ pa: number; chestMask: number; missionRank: number; maxPa: number; chests: number[]; missions: { id: number; value: number; requirement: number; energy: number; icon: number; desc: string; hint: string | null; param: number; state: 'claimed' | 'complete' | 'progress' }[] } | null>(null);
   const [isLeaderCaptured, setIsLeaderCaptured] = useState(false);
   const [isLeaderExecuted, setIsLeaderExecuted] = useState(false);
   const [leaderFreeRevivalAt, setLeaderFreeRevivalAt] = useState(0);
@@ -147,10 +292,13 @@ export default function BotDetail({ iggId, onBack }: Props) {
       if (data.missions) setMissions(data.missions);
       if (data.missionRecords) setMissionRecords(data.missionRecords);
       if (data.fdgExtension) setFdgExtension(data.fdgExtension);
+      if (data.dailyMissions !== undefined) setDailyMissions(data.dailyMissions || null);
       if (data.troopState) setTroopState(data.troopState);
       if (data.hospitalState !== undefined) setHospitalState(data.hospitalState);
       if (data.incomingMarches !== undefined) setIncomingMarches(data.incomingMarches);
       if (data.ownMarches !== undefined) setOwnMarches(normalizeOwnMarches(data.ownMarches));
+      if (data.familiars !== undefined) setFamiliars(data.familiars || []);
+if (data.artifacts !== undefined) setArtifacts(data.artifacts || { list: [], sets: [] });
       if (data.marchHistory !== undefined) setMarchHistory(data.marchHistory);
       if (data.mapTiles !== undefined) setMapTiles(data.mapTiles);
       if (data.mapMarches !== undefined) setMapMarches(data.mapMarches || []);
@@ -250,9 +398,10 @@ export default function BotDetail({ iggId, onBack }: Props) {
       if (data.iggId !== iggId) return;
       setMissions(data.missions || null);
     });
-    socket.on('heroes', (data: { iggId: number; heroes: any[] }) => {
+    socket.on('heroes', (data: { iggId: number; heroes: any[]; playerStats?: any[] }) => {
       if (data.iggId !== iggId) return;
       setHeroes(data.heroes || []);
+      if (Array.isArray(data.playerStats)) setPlayerStats(data.playerStats);
     });
     socket.on('missionRecords', (data: { iggId: number; missionRecords: any }) => {
       if (data.iggId !== iggId) return;
@@ -261,6 +410,10 @@ export default function BotDetail({ iggId, onBack }: Props) {
     socket.on('fdgExtension', (data: { iggId: number; fdgExtension: any }) => {
       if (data.iggId !== iggId) return;
       setFdgExtension(data.fdgExtension || null);
+    });
+    socket.on('dailyMissions', (data: { iggId: number; dailyMissions: any }) => {
+      if (data.iggId !== iggId) return;
+      setDailyMissions(data.dailyMissions || null);
     });
     socket.on('troops', (data: { iggId: number; troopState: any }) => {
       if (data.iggId !== iggId) return;
@@ -278,6 +431,16 @@ export default function BotDetail({ iggId, onBack }: Props) {
       if (data.iggId !== iggId) return;
       setOwnMarches(normalizeOwnMarches(data.marches));
     });
+  socket.on('familiars', (data: { iggId: number; list: Familiar[]; playerStats?: any[] }) => {
+    if (data.iggId !== iggId) return;
+    setFamiliars(data.list || []);
+    if (data.playerStats) setPlayerStats(data.playerStats);
+  });
+  socket.on('artifacts', (data: { iggId: number; artifacts: ArtifactsPayload; playerStats?: any[] }) => {
+    if (data.iggId !== iggId) return;
+    setArtifacts(data.artifacts || { list: [], sets: [] });
+    if (data.playerStats) setPlayerStats(data.playerStats);
+  });
     socket.on('configUpdated', (data: { iggId: number; config: any }) => {
       if (data.iggId !== iggId) return;
       setBotConfig(data.config);
@@ -381,10 +544,13 @@ export default function BotDetail({ iggId, onBack }: Props) {
       socket.off('heroes');
       socket.off('missionRecords');
       socket.off('fdgExtension');
+      socket.off('dailyMissions');
       socket.off('troops');
       socket.off('hospitalState');
       socket.off('incomingMarches');
       socket.off('ownMarches');
+      socket.off('familiars');
+  socket.off('artifacts');
       socket.off('leaderState');
       socket.off('guildApplications');
       socket.off('configUpdated');
@@ -583,6 +749,8 @@ export default function BotDetail({ iggId, onBack }: Props) {
     { key: 'misiones' as const, label: 'Misiones' },
     { key: 'guildApps' as const, label: 'Guild Apps' },
     { key: 'trajes' as const, label: 'Trajes' },
+    { key: 'monstruitos' as const, label: 'Monstruitos' },
+    { key: 'artefactos' as const, label: 'Artefactos' },
   ];
 
   return (
@@ -646,6 +814,7 @@ export default function BotDetail({ iggId, onBack }: Props) {
           <div><strong>VIP Exp:</strong> {playerInfo.vipExp}</div>
           <div>
             <strong>Energía:</strong> {playerInfo.energy}
+            {playerInfo.energyMax ? ` / ${playerInfo.energyMax.toLocaleString()}` : ''}
             {playerInfo.energyRegen && (
               <span style={{ color: colors.textSecondary }}>
                 {' '}(+{Math.round(playerInfo.energyRegen.perHour)}/h
@@ -661,6 +830,12 @@ export default function BotDetail({ iggId, onBack }: Props) {
           </div>
           {playerInfo.castleX !== undefined && (
             <div><strong>Castillo:</strong> X={playerInfo.castleX} Y={playerInfo.castleY}</div>
+          )}
+          {dailyReset && (
+            <div>
+              <strong>Reset diario:</strong> {dailyReset.hora} (UTC-3)
+              <span style={{ color: colors.textSecondary }}> · próximo {dailyReset.proximo}</span>
+            </div>
           )}
           {equippedCostumes.length > 0 && (
             <div style={{ gridColumn: '1 / -1', marginTop: 8, borderTop: `1px solid ${colors.border}`, paddingTop: 12 }}>
@@ -737,6 +912,230 @@ export default function BotDetail({ iggId, onBack }: Props) {
 
       {activeTab === 'info' && !playerInfo && (
         <div style={{ color: colors.textSecondary }}>Esperando datos del jugador...</div>
+      )}
+
+      {activeTab === 'monstruitos' && (
+        <div style={{
+          background: colors.surface, border: `1px solid ${colors.border}`,
+          borderRadius: 8, padding: 16,
+        }}>
+          {familiars.length === 0 ? (
+            <div style={{ color: colors.textSecondary }}>Esperando datos de monstruitos (8210)...</div>
+          ) : (
+            <>
+              <div style={{ marginBottom: 10, fontSize: 13, color: colors.textSecondary }}>
+                {familiars.length} monstruitos ·{' '}
+                {[0, 1, 2].map(s => `${familiars.filter(f => f.stage === s).length} ${['Crías', 'Adulto', 'Anciano'][s]}`).join(' · ')}
+              </div>
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 14 }}>
+                <thead>
+                  <tr style={{ borderBottom: `1px solid ${colors.border}` }}>
+                    <th style={{ textAlign: 'left', padding: 8 }}>Monstruito</th>
+                    <th style={{ textAlign: 'left', padding: 8 }}>Nivel</th>
+                    <th style={{ textAlign: 'left', padding: 8 }}>Etapa</th>
+                    <th style={{ textAlign: 'left', padding: 8 }}>Habilidades</th>
+                    <th style={{ textAlign: 'left', padding: 8 }}>Talento de Ejército</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {familiars.map(v => (
+                    <tr key={v.petId} style={{ borderBottom: `1px solid ${colors.border}`, verticalAlign: 'top' }}>
+                      <td style={{ padding: 8 }}>
+                        <div style={{ fontWeight: 600 }}>{v.name}</div>
+                        <div style={{ fontSize: 11, color: colors.textSecondary }}>ID {v.petId} · rareza {v.rare}</div>
+                      </td>
+                      <td style={{ padding: 8 }}>
+                        <div style={{ fontWeight: 600 }}>Nv {v.level}</div>
+                        {v.level < 60 && v.exp > 0 && (
+                          <div style={{ fontSize: 11, color: colors.textSecondary }}>{v.exp} exp</div>
+                        )}
+                      </td>
+                      <td style={{ padding: 8, color: STAGE_COLORS[v.stage] || colors.textSecondary, fontWeight: 600 }}>
+                        {v.stageName}
+                      </td>
+                      <td style={{ padding: 8 }}>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                          {v.skills.filter(s => s.id > 0).map(s => {
+                            const pasiva = passiveText(s);
+                            const activa = s.type === 'active' ? activeDesc(s) : null;
+                            return (
+                              <div key={s.id} style={{ maxWidth: 280 }}>
+                                <span
+                                  title={activa || s.effectDesc || undefined}
+                                  style={{
+                                    background: '#0d1117', border: `1px solid ${colors.border}`,
+                                    borderRadius: 4, padding: '2px 6px', fontSize: 11, whiteSpace: 'nowrap',
+                                    cursor: activa ? 'help' : undefined,
+                                  }}
+                                >
+                                  {s.name}{' '}
+                                  <strong style={{ color: s.level >= s.maxLevel ? colors.success : colors.accent }}>
+                                    {s.level}/{s.maxLevel}
+                                  </strong>
+                                </span>
+                                {pasiva && (
+                                  <div style={{ fontSize: 10, color: colors.success, marginTop: 2 }}>
+                                    {pasiva}
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          })}
+                          {v.skills.every(s => s.id === 0) && (
+                            <span style={{ color: colors.textSecondary, fontSize: 12 }}>—</span>
+                          )}
+                        </div>
+                      </td>
+                      <td style={{ padding: 8 }}>
+                        {v.talent ? (
+                          <div>
+                            <div>
+                              <strong>{v.talent.name}</strong>{' '}
+                              <span style={{
+                                fontWeight: 600,
+                                color: v.talent.level > 0 ? colors.success : colors.textSecondary,
+                              }}>
+                                {v.talent.level > 0 ? `nv ${v.talent.level}/${v.talent.maxLevel}` : 'No desbloqueado'}
+                              </span>{' '}
+                              <span style={{ fontSize: 11, color: colors.textSecondary }}>
+                                ({ARMY_LABELS[v.army] || v.army})
+                              </span>
+                            </div>
+                            <div style={{ fontSize: 12, color: colors.textSecondary, marginTop: 2 }}>
+                              {talentDesc(v.talent)}
+                            </div>
+                            {v.talent.pct && v.talent.pct.length === 10 && v.talent.level === 0 && (
+                              <div style={{ fontSize: 11, color: colors.textSecondary, marginTop: 2 }}>
+                                nv1 {v.talent.pct[0]}% → nv10 {v.talent.pct[9]}%
+                              </div>
+                            )}
+                          </div>
+                        ) : (
+                          <span style={{ color: colors.textSecondary }}>—</span>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </>
+          )}
+        </div>
+      )}
+
+      {activeTab === 'artefactos' && (
+        <div style={{
+          background: colors.surface, border: `1px solid ${colors.border}`,
+          borderRadius: 8, padding: 16,
+        }}>
+          {artifacts.list.length === 0 ? (
+            <div style={{ color: colors.textSecondary }}>Esperando datos de artefactos (9771)...</div>
+          ) : (
+            <>
+              <div style={{ marginBottom: 10, fontSize: 13, color: colors.textSecondary }}>
+                {artifacts.list.length} artefactos ·{' '}
+                {Object.entries(artifacts.list.reduce<Record<number, number>>((m, a) => {
+                  m[a.grade] = (m[a.grade] || 0) + 1;
+                  return m;
+                }, {}))
+                  .sort((x, y) => Number(y[0]) - Number(x[0]))
+                  .map(([g, n]) => `${n} ${ARTIFACT_GRADE_PLURALS[Number(g)] || `grado ${g}`}`)
+                  .join(' · ')}
+                {artifacts.sets.length > 0 && (
+                  <> · {artifacts.sets.filter(s => s.tiers[0]?.met).length}/{artifacts.sets.length} sets completos</>
+                )}
+              </div>
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 14 }}>
+                <thead>
+                  <tr style={{ borderBottom: `1px solid ${colors.border}` }}>
+                    <th style={{ textAlign: 'left', padding: 8 }}>Artefacto</th>
+                    <th style={{ textAlign: 'left', padding: 8 }}>Grado</th>
+                    <th style={{ textAlign: 'left', padding: 8 }}>Nivel</th>
+                    <th style={{ textAlign: 'left', padding: 8 }}>Estrellas</th>
+                    <th style={{ textAlign: 'left', padding: 8 }}>Efectos</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {artifacts.list.map(a => (
+                    <tr key={a.artifactId} style={{ borderBottom: `1px solid ${colors.border}`, verticalAlign: 'top' }}>
+                      <td style={{ padding: 8 }}>
+                        <div title={a.desc || undefined} style={{ fontWeight: 600 }}>{a.name}</div>
+                        <div style={{ fontSize: 11, color: colors.textSecondary }}>
+                          ID {a.artifactId}{a.nameEn && a.nameEn !== a.name ? ` · ${a.nameEn}` : ''}
+                        </div>
+                      </td>
+                      <td style={{ padding: 8, color: ARTIFACT_GRADE_COLORS[a.grade] || colors.textSecondary, fontWeight: 600 }}>
+                        {a.gradeName}
+                      </td>
+                      <td style={{ padding: 8 }}>
+                        <span style={{ fontWeight: 600 }}>Nv {a.level}</span>
+                        <span style={{ color: colors.textSecondary }}>/{a.maxLevel}</span>
+                      </td>
+                      <td style={{ padding: 8, fontWeight: 600, color: a.star >= 6 ? '#e6a817' : (a.star > 0 ? colors.accent : colors.textSecondary) }}>
+                        {a.starName}
+                      </td>
+                      <td style={{ padding: 8 }}>
+                        <div>
+                          {a.effects.map(e => `${e.name} ${formatEffectValue(e.unit, e.value)}`).join(' · ')}
+                        </div>
+                        {a.nextLevel && a.nextLevel.effects.length > 0 && (
+                          <div style={{ fontSize: 11, color: colors.textSecondary, marginTop: 2 }}>
+                            → nv{a.nextLevel.level}: {a.nextLevel.effects.map(e => `${e.name} ${formatEffectValue(e.unit, e.value)}`).join(' · ')}
+                          </div>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+
+              {artifacts.sets.length > 0 && (
+                <div style={{ marginTop: 16 }}>
+                  <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 8 }}>Sets de artefactos</div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 10 }}>
+                    {artifacts.sets.map(s => (
+                      <div key={s.id} style={{ border: `1px solid ${colors.border}`, borderRadius: 8, padding: 10 }}>
+                        <div style={{ fontWeight: 600, marginBottom: 6 }}>{s.name}</div>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 8 }}>
+                          {s.pieces.map(p => (
+                            <span
+                              key={p.artifactId}
+                              title={p.owned ? `Nv ${p.level} · ${p.star >= 6 ? 'Bendecido' : `★ ${p.star}`}` : 'Sin obtener'}
+                              style={{
+                                fontSize: 11, borderRadius: 4, padding: '2px 6px',
+                                background: p.owned ? '#0d1117' : 'transparent',
+                                border: `1px solid ${colors.border}`,
+                                color: p.owned ? colors.text : colors.textSecondary,
+                                textDecoration: p.owned ? undefined : 'line-through',
+                              }}
+                            >
+                              {p.name}{p.owned ? ` · nv${p.level}${p.star >= 6 ? ' ✦' : p.star > 0 ? ` ★${p.star}` : ''}` : ''}
+                            </span>
+                          ))}
+                        </div>
+                        {s.tiers.map(t => (
+                          <div
+                            key={`${s.id}-${t.condition}`}
+                            style={{
+                              fontSize: 11, display: 'flex', justifyContent: 'space-between', gap: 8,
+                              color: t.met ? colors.success : colors.textSecondary,
+                              marginTop: 2,
+                            }}
+                          >
+                            <span>{t.met ? '✓' : '○'} {SET_TIER_LABELS[t.condition] || t.condition}</span>
+                            <span style={{ textAlign: 'right' }}>
+                              {t.effects.map(e => `${e.name} ${formatEffectValue(e.unit, e.value)}`).join(' · ')}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </>
+          )}
+        </div>
       )}
 
       {activeTab === 'resources' && resources && (
@@ -928,13 +1327,15 @@ export default function BotDetail({ iggId, onBack }: Props) {
       )}
 
       {activeTab === 'config' && botConfig && (
-        <ConfigPanel
-          config={botConfig}
-          socket={socket}
-          iggId={iggId}
-          colors={colors}
-          supplyCapacity={playerStats.find((s: any) => s.name === 'Capacidad de suministro +')?.total || 0}
-        />
+          <ConfigPanel
+            config={botConfig}
+            socket={socket}
+            iggId={iggId}
+            colors={colors}
+            dailyReset={dailyReset}
+            supplyCapacity={playerStats.find((s: any) => s.name === 'Capacidad de suministro +')?.total || 0}
+            familiars={familiars}
+          />
       )}
 
       {activeTab === 'config' && !botConfig && (
@@ -1280,7 +1681,7 @@ export default function BotDetail({ iggId, onBack }: Props) {
               background: colors.surface, border: `1px solid ${colors.border}`,
               borderRadius: 8, padding: 16, color: colors.textSecondary,
             }}>
-              {research ? 'Todavía no hay stats (investigaciones, trajes, construcciones o talentos)' : 'Esperando datos de la Academia...'}
+              {research ? 'Todavía no hay stats (investigaciones, trajes, construcciones, talentos, monstruitos o artefactos)' : 'Esperando datos de la Academia...'}
             </div>
           ) : (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 10 }}>
@@ -1506,10 +1907,89 @@ export default function BotDetail({ iggId, onBack }: Props) {
           background: colors.surface, border: `1px solid ${colors.border}`,
           borderRadius: 8, padding: 16,
         }}>
-          {!missions && !fdgExtension ? (
+          {!missions && !fdgExtension && !dailyMissions ? (
             <div style={{ color: colors.textSecondary }}>Esperando datos de misiones...</div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              {/* Diario */}
+              {dailyMissions && (
+                <div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                    <div style={{ fontSize: 14, fontWeight: 600 }}>Diario</div>
+                    <div style={{ fontSize: 11, color: colors.textSecondary }}>
+                      Rango {dailyMissions.missionRank} · {dailyMissions.missions.filter(m => m.state === 'claimed').length}/{dailyMissions.missions.length} reclamadas
+                    </div>
+                  </div>
+
+                  <div style={{
+                    background: '#0d1117', border: `1px solid ${colors.border}`,
+                    borderRadius: 8, padding: 12, marginBottom: 8,
+                  }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                      <div style={{ fontSize: 12 }}>
+                        <span style={{ color: colors.textSecondary }}>PA </span>
+                        <span style={{ fontWeight: 600 }}>{dailyMissions.pa}</span>
+                        <span style={{ color: colors.textSecondary }}>/{dailyMissions.maxPa}</span>
+                      </div>
+                      <div style={{ fontSize: 11, color: colors.textSecondary }}>
+                        {dailyMissions.missions.filter(m => m.state === 'complete').length} listas para reclamar
+                      </div>
+                    </div>
+                    <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                      {dailyMissions.chests.map((req, i) => {
+                        const claimed = (dailyMissions.chestMask & (1 << i)) !== 0;
+                        const unlocked = dailyMissions.pa >= req;
+                        return (
+                          <span key={i} style={{
+                            fontSize: 11, borderRadius: 4, padding: '2px 8px', fontWeight: 600,
+                            background: claimed ? 'rgba(63,185,80,.15)' : unlocked ? 'rgba(245,158,11,.15)' : '#1a1d21',
+                            color: claimed ? colors.success : unlocked ? colors.warning : colors.textSecondary,
+                            border: `1px solid ${claimed ? colors.success : unlocked ? colors.warning : colors.border}`,
+                          }}>
+                            {req} PA {claimed ? '· reclamado' : unlocked ? '· disponible' : ''}
+                          </span>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                    {dailyMissions.missions.map(m => {
+                      const claimed = m.state === 'claimed';
+                      const complete = m.state === 'complete';
+                      return (
+                        <div key={m.id} style={{
+                          background: '#0d1117',
+                          border: `1px solid ${claimed ? '#1f3d28' : complete ? '#3d321f' : colors.border}`,
+                          borderRadius: 6, padding: '6px 10px',
+                          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                          opacity: claimed ? 0.6 : 1,
+                        }}>
+                          <div style={{ minWidth: 0 }}>
+                            <div style={{ fontSize: 13, fontWeight: 600 }}>{m.desc}</div>
+                            <div style={{ fontSize: 11, color: colors.textSecondary }}>
+                              #{m.id} · +{m.energy} PA
+                              {m.hint && <span style={{ opacity: 0.7 }}> · {m.hint.replace('{0}', String(m.param))}</span>}
+                            </div>
+                          </div>
+                          <div style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>
+                            <div style={{ fontSize: 12, color: claimed ? colors.success : colors.textSecondary }}>
+                              {claimed ? 'Reclamada' : `${m.value.toLocaleString()}/${m.requirement.toLocaleString()}`}
+                            </div>
+                            <div style={{
+                              fontSize: 10, fontWeight: 600,
+                              color: claimed ? colors.success : complete ? colors.warning : colors.textSecondary,
+                            }}>
+                              {claimed ? '+PA' : complete ? 'COMPLETA' : 'En curso'}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
               {/* FDG - Misión activa */}
               {fdgExtension?.activeMission && fdgExtension.activeMission.missionId > 0 && (
                 <div>
@@ -2252,10 +2732,11 @@ function setDeep(obj: any, path: string, value: any): any {
   return clone;
 }
 
-function ConfigPanel({ config, socket, iggId, colors, supplyCapacity }: { config: any; socket: any; iggId: number; colors: any; supplyCapacity?: number }) {
+function ConfigPanel({ config, socket, iggId, colors, supplyCapacity, dailyReset, familiars }: { config: any; socket: any; iggId: number; colors: any; supplyCapacity?: number; dailyReset?: { hora: string; proximo: string } | null; familiars?: Familiar[] }) {
   const [draft, setDraft] = useState<any>(config);
   const [saved, setSaved] = useState(false);
   const [changed, setChanged] = useState(false);
+  const [newPetId, setNewPetId] = useState('');
 
   useEffect(() => {
     setDraft(config);
@@ -2297,6 +2778,12 @@ function ConfigPanel({ config, socket, iggId, colors, supplyCapacity }: { config
     },
   });
 
+  const selectedPets: number[] = getDeep(draft, 'familiarSkills.pets') || [];
+  const setPets = (pets: number[]) => {
+    setDraft((d: any) => setDeep(d, 'familiarSkills.pets', pets));
+    setChanged(true);
+  };
+
   return (
     <div style={{
       background: colors.surface, border: `1px solid ${colors.border}`,
@@ -2304,9 +2791,14 @@ function ConfigPanel({ config, socket, iggId, colors, supplyCapacity }: { config
       fontSize: 13, maxHeight: '70vh', overflowY: 'auto',
     }}>
       <Section title="General">
-        <TextInput label="Reset diario" {...set('dailyResetTime')} />
-        <NumInput label="Límite entrenamiento" {...set('limitTrain')} />
         <NumInput label="Reconexión (s)" {...set('reconnectTime')} />
+        {dailyReset && (
+          <div style={{ fontSize: 13 }}>
+            <span style={{ color: colors.textSecondary }}>Reset diario:</span>{' '}
+            <strong>{dailyReset.hora} (UTC-3)</strong>
+            <span style={{ color: colors.textSecondary }}> · próximo {dailyReset.proximo}</span>
+          </div>
+        )}
         <Toggle label="Auto Ayuda" {...bool('sendHelp')} />
         <Toggle label="War Mode" {...bool('warMode')} />
         <NumInput label="Índice traje guerra" {...set('costumeWar')} />
@@ -2316,8 +2808,6 @@ function ConfigPanel({ config, socket, iggId, colors, supplyCapacity }: { config
       <Section title="Entrenamiento">
         <Toggle label="Activo" {...bool('train.enable')} />
         <TextInput label="Tipo" {...set('train.type')} />
-        <NumInput label="Velocidad" {...set('train.velTrain')} />
-        <NumInput label="Subsidios %" {...set('train.subsidiosPorcentaje')} />
       </Section>
 
       <Section title="Escudo">
@@ -2368,6 +2858,11 @@ function ConfigPanel({ config, socket, iggId, colors, supplyCapacity }: { config
       <Section title="Misiones">
         <Toggle label="Admin" {...bool('adminQuest.enable')} />
         <Toggle label="Gremio" {...bool('guildQuest.enable')} />
+      </Section>
+
+      <Section title="Emoticonos">
+        <Toggle label="Enviar 1 al día (misión diaria)" {...bool('sendEmoji.enable')} />
+        <NumInput label="Próximo (unix)" {...set('sendEmoji.next')} />
       </Section>
 
       <Section title="Límite de Recursos">
@@ -2460,6 +2955,63 @@ function ConfigPanel({ config, socket, iggId, colors, supplyCapacity }: { config
           todavía no lo reclamó manda la tropa a buscar la carta (9866). Una búsqueda por cuenta
           hasta que la tropa vuelve. Con 3 nueves en mano canjea solo (9864, p.ej. 999 gems) y deja
           de buscar cofres hasta el próximo evento.
+        </div>
+      </Section>
+
+      <Section title="Monstruitos (skills activas)">
+        <Toggle label="Usar skills activas automáticamente" {...bool('familiarSkills.enable')} />
+        <div style={{ fontSize: 13, color: '#888' }}>
+          Monstruitos cuyas skills activas dispara el bot (8226) cuando no tienen cooldown:
+        </div>
+        {familiars && familiars.length > 0 ? (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+            {familiars.map(f => {
+              const actives = (f.skills || []).filter(s => s.type === 'active');
+              if (actives.length === 0) return null;
+              const checked = selectedPets.includes(f.petId);
+              return (
+                <label key={f.petId} style={{ display: 'flex', gap: 8, alignItems: 'center', cursor: 'pointer', fontSize: 13 }}>
+                  <input
+                    type="checkbox"
+                    checked={checked}
+                    onChange={e => setPets(e.target.checked ? [...selectedPets, f.petId] : selectedPets.filter(p => p !== f.petId))}
+                    style={{ accentColor: '#4ade80' }}
+                  />
+                  <span>{f.name} (#{f.petId})</span>
+                  <span style={{ color: '#888', fontSize: 12 }}>{actives.map(s => s.name).join(' · ')}</span>
+                </label>
+              );
+            })}
+          </div>
+        ) : (
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, alignItems: 'center' }}>
+            {selectedPets.map(id => (
+              <span key={id} style={{ display: 'flex', gap: 4, alignItems: 'center', border: '1px solid #444', borderRadius: 4, padding: '2px 6px' }}>
+                pet {id}
+                <button onClick={() => setPets(selectedPets.filter(p => p !== id))} style={{ cursor: 'pointer' }}>X</button>
+              </span>
+            ))}
+            <input
+              value={newPetId}
+              onChange={e => setNewPetId(e.target.value)}
+              placeholder="petId"
+              style={{ width: 80, padding: '2px 6px' }}
+            />
+            <button
+              onClick={() => {
+                const n = parseInt(newPetId, 10);
+                if (n > 0 && !selectedPets.includes(n)) setPets([...selectedPets, n]);
+                setNewPetId('');
+              }}
+              style={{ padding: '2px 8px', cursor: 'pointer' }}
+            >
+              + Agregar
+            </button>
+          </div>
+        )}
+        <div style={{ fontSize: 12, color: '#888' }}>
+          Sólo skills activas sin cooldown (8231); las ofensivas además necesitan fatiga (8230).
+          Un intento rechazado no se repite en 10 min.
         </div>
       </Section>
 

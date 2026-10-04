@@ -6,7 +6,8 @@ import { configService, normalizeKeys } from '../../config/config.service';
 import { BotConfig, defaultBotConfig, getLuckyCardsConfig, stripLegacyConfig } from '../../models/bot-config';
 import { PlayerInfo } from '../models/player.types';
 import { RESISTENCIA_BASE, computeResistenciaMax } from '../resistencia';
-import { computeEnergyRegen, computeHuntEnergyCost, EnergyRegen } from '../energy';
+import { computeEnergyRegen, computeEnergyMax, computeHuntEnergyCost, EnergyRegen } from '../energy';
+import { getEnergyCap } from '../features/player-stats';
 import { ResourcesData } from '../models/resources.types';
 import { ConstructionData } from '../models/buildings.types';
 import { TroopState } from '../../models/troop-state';
@@ -33,6 +34,7 @@ import { MessagePacket } from '../network/message-packet';
 import { TreasureChamberData } from '../models/treasure.types';
 import { EssenceTransmutationState } from '../models/essence.types';
 import { QuestMemory } from '../models/quest.types';
+import { DailyMissionCache, DailyMissionSnapshot } from '../models/daily-mission.types';
 import { MissionData } from '../models/missions.types';
 import { MissionRecordData } from '../models/missions.types';
 import { FdgMissionExtensionData } from '../models/missions.types';
@@ -40,8 +42,11 @@ import { VipChestMemory } from '../models/vip-chest.types';
 import { ColiseumState } from '../models/coliseum.types';
 import { HeroEntry } from '../models/heroes.types';
 import { BuildingState } from '../models/buildings.types';
-import { MarchInfo, OwnMarchesData } from '../models/march.types';
+import { MarchInfo, OwnMarch, OwnMarchesData } from '../models/march.types';
+import { FamiliarsData } from '../models/familiars.types';
+import { ArtifactsData } from '../models/artifacts.types';
 import { CostumeItem } from '../parsers/costume.parser';
+import { parse2473, OwnWarMarch } from '../parsers/war-march.parser';
 import { TalentInfo } from '../parsers/talent.parser';
 import { LordCaptivePacket } from '../models/leader.types';
 import { ChatMessage } from '../models/chat.types';
@@ -50,6 +55,7 @@ import { EventRewardData } from '../models/event-rewards.types';
 import { MarchQueue } from '../features/march-queue';
 import { MarchType } from '../models/march-queue.types';
 import { databaseService } from '../../database/database.service';
+import { serverNowSec } from '../../utils/clock-sync';
 import { EVENT_ACTIONS } from '../features/event-registry';
 import { findActionByName } from '../actions/bot-action';
 import { dispatchPacket } from '../handlers/index';
@@ -61,6 +67,22 @@ import { LuckyCardInfo, LuckyExchangeResult, LuckySearchResult, TileInfoResult }
 import { decodeCoordBytes, encodeCoordId } from '../../models/map-coords';
 import { getPlayerLocation as getPlayerLocationCmd } from '../commands/player.commands';
 import { selectAction11, selectWarIndex, sendTroops, send2476 } from '../commands/war.commands';
+import { parse1407 } from '../parsers/speedup.parser';
+import {
+  ACCEL_CANDIDATES,
+  AccelCandidate,
+  ACCEL_RETRY_DELAY_MS,
+  ACCEL_STATUS_RETRIES,
+  LastWarSend,
+  MAX_ACCEL_ATTEMPTS,
+  pickSpeedupItem,
+  resolveAccelIndex,
+  resolveParticipantIndex,
+  sendArmyStatus,
+  sendSpeedupSelect,
+  sendSpeedupUse,
+} from '../commands/speedup.commands';
+import { UI_SECTION_ARMY_STATUS, UI_SECTION_SPEEDUP } from '../commands/formation.commands';
 import { requestRivals, attackRival, claimColiseumGems } from '../commands/coliseum.commands';
 import { huntMonster } from '../commands/hunt.commands';
 import { useItemsForResource } from '../actions/action-helpers';
@@ -68,6 +90,11 @@ import { getHuntLevel, getHuntPayloadHex, getHuntSquad } from '../../models/bot-
 import { getMonster, getMonsterDebilidad, isMonsterChest, monsterName } from '../data/monsters';
 import { pickHuntSquad, buildHuntPayload } from '../data/hunt-squad';
 import { heroName } from '../data/heros-db';
+import {
+  MAIN_PER_CHAPTER as SWEEP_MAIN_PER_CHAPTER,
+  STAGES_PER_CHAPTER as SWEEP_STAGES_PER_CHAPTER,
+  SWEEP_CHAPTERS as SWEEP_CHAPTER_LIST,
+} from '../data/hero-stages-db';
 import { huntCoordinator, SquadPolicy } from '../models/hunt-coordinator';
 import { HuntTarget, HuntStatus } from '../models/hunt.types';
 import { matchHpScale, toHpPercent, MonsterHitUpdate } from '../models/monster-hit.types';
@@ -78,6 +105,16 @@ const ITEMS_DATA = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data',
 
 /** 2453 sin datos seguidos antes de abortar el lote de supply */
 const MAX_CONSECUTIVE_SEND_FAILS = 3;
+
+/** Caducidad de una etapa aprendida como bloqueada (el progreso avanza) */
+const SWEEP_BLOCKED_TTL_MS = 6 * 60 * 60 * 1000;
+
+/**
+ * Aceleración de marchas a agrupaciones (2473): gap mínimo en segundos para
+ * avisar "hay que acelerar". Por debajo de esto la marcha se considera a
+ * tiempo (evita avisados por redondeos de 1-2 s).
+ */
+const WAR_ACCEL_MIN_GAP_SEC = 5;
 
 /**
  * Capacidad máxima de recursos por caravana (proto 2452).
@@ -121,6 +158,26 @@ const MAP_SCAN_INTERVAL_MS = 3500;
   /** la mano sólo admite 10 cartas: las de mayor dígito (ver 9862.md) */
   const LUCKY_HAND_SIZE = 10;
 
+export interface SweepRequest {
+  etapa: number;
+  idx: number;
+  tipo: number;
+}
+
+export interface SweepOutcome {
+  ok: boolean;
+  status: number;
+  stamina: number;
+  stars: number;
+  etapa: number;
+  idx: number;
+}
+
+export interface SweepStageState {
+  s: 'ok' | 'blocked';
+  t: number;
+}
+
 export class BotInstance extends EventEmitter {
   readonly iggId: number;
   readonly bot: BotEngine;
@@ -132,11 +189,19 @@ export class BotInstance extends EventEmitter {
   config: BotConfig;
   playerInfo?: PlayerInfo;
   lastRes: number = 0;
+  sweepPending: SweepRequest | null = null;
+  private sweepWaiter: { resolve: (r: SweepOutcome | null) => void; timer: ReturnType<typeof setTimeout> } | null = null;
+  sweepStages: Record<string, SweepStageState> = {};
   resTimer?: ReturnType<typeof setInterval>;
   /** Tope real de resistencia (120 + bonificación de investigación). */
   private resistenciaMaxValue: number = computeResistenciaMax();
   /** Recuperación de energía (1800/h + bonificación de investigación). */
   private energyRegenValue: EnergyRegen = computeEnergyRegen();
+  /** Energía leída del último 1008 (valor del servidor en ese instante). */
+  private energyBase = 0;
+  /** ms en que se tomó energyBase; desde ahí se acumula la recuperación. */
+  private energyBaseAt = 0;
+  private energyTimer?: ReturnType<typeof setInterval>;
   resources?: ResourcesData;
   guildInfo?: GuildInfo;
   constructions?: ConstructionData;
@@ -165,6 +230,8 @@ export class BotInstance extends EventEmitter {
   heroes: HeroEntry[] = [];
   missions?: MissionData;
   missionRecords?: MissionRecordData;
+  /** 3144/3143: estado del "Diario" (PA, cofres y contadores) del día en curso. */
+  dailyMissions?: DailyMissionCache;
   fdgExtension?: FdgMissionExtensionData;
   eternalTreasureAvailable = false;
   eternalTreasureClaimed = false;
@@ -173,6 +240,10 @@ export class BotInstance extends EventEmitter {
   incomingMarches: MarchInfo[] = [];
   /** 2414: lista de marchas propias del castillo (slots en vuelo/llegadas). */
   ownMarches?: OwnMarchesData;
+  /** 8210+8245: monstruitos de la cuenta (nivel, etapa, skills y talentos). */
+  familiars?: FamiliarsData;
+  /** 9771: artefactos poseídos (nivel 1..12, estrellas 0..6). */
+  artifacts?: ArtifactsData;
   marchHistory: any[] = [];
   isLeaderCaptured = false;
   isLeaderExecuted = false;
@@ -238,6 +309,12 @@ export class BotInstance extends EventEmitter {
   chatMessages: ChatMessage[] = [];
   guildApplications?: GuildApplicationsData;
   warParticipants: WarParticipant[] = [];
+  /** 2473: última marcha propia enviada a una agrupación + comparación con su cierre */
+  warMarch?: OwnWarMarch;
+  private accelRunning = false;
+  private accelCursor = 0;
+  private lastWarSend: LastWarSend | null = null;
+  private ownSentMarches: OwnMarch[] = [];
   costumes: CostumeItem[] = [];
   equippedCostumes: CostumeItem[] = [];
   activeCaravans = 0;
@@ -364,6 +441,7 @@ export class BotInstance extends EventEmitter {
     this.war.onNotification = (count) => this.emit('warNotification', count);
 
     this.loadGuildApplications();
+    this.loadSweepStages();
 
     // Sonda viva para HuntCoordinator: energía/online consultados al momento
     // (para el cálculo de "¿puede otro bot rematar este bicho?" y el cupo extra)
@@ -382,6 +460,7 @@ export class BotInstance extends EventEmitter {
   private clearCoreTimers(): void {
     if (this.atalayaTimer) { clearInterval(this.atalayaTimer); this.atalayaTimer = undefined; }
     if (this.eventsTimer) { clearInterval(this.eventsTimer); this.eventsTimer = undefined; }
+    this.clearEnergyTick();
   }
 
   resetTransientState(): void {
@@ -680,15 +759,220 @@ export class BotInstance extends EventEmitter {
     this.bot.log('[COLISEO] 5204 enviado — solicitando rivales');
   }
 
+  beginSweepRequest(etapa: number, idx: number, tipo: number, timeoutMs = 8000): Promise<SweepOutcome | null> {
+    if (this.sweepWaiter) {
+      clearTimeout(this.sweepWaiter.timer);
+      this.sweepWaiter.resolve(null);
+      this.sweepWaiter = null;
+    }
+    this.sweepPending = { etapa, idx, tipo };
+    return new Promise<SweepOutcome | null>(resolve => {
+      const timer = setTimeout(() => {
+        if (this.sweepWaiter && this.sweepWaiter.timer === timer) this.sweepWaiter = null;
+        this.sweepPending = null;
+        resolve(null);
+      }, timeoutMs);
+      this.sweepWaiter = { resolve, timer };
+    });
+  }
+
+  takeSweepPending(): SweepRequest | null {
+    const pending = this.sweepPending;
+    this.sweepPending = null;
+    return pending;
+  }
+
+  settleSweep(outcome: SweepOutcome): void {
+    const waiter = this.sweepWaiter;
+    this.sweepWaiter = null;
+    if (!waiter) return;
+    clearTimeout(waiter.timer);
+    waiter.resolve(outcome);
+  }
+
+  sweepStageStatus(etapa: number, idx: number): 'ok' | 'blocked' | null {
+    const state = this.sweepStages[`${etapa}:${idx}`];
+    if (!state) return null;
+    if (state.s === 'blocked' && Date.now() - state.t > SWEEP_BLOCKED_TTL_MS) return null;
+    return state.s;
+  }
+
+  learnSweepStage(etapa: number, idx: number, ok: boolean): void {
+    if (!etapa || !idx) return;
+    const now = Date.now();
+    const per = etapa === 1 ? SWEEP_STAGES_PER_CHAPTER : SWEEP_MAIN_PER_CHAPTER;
+    const total = SWEEP_CHAPTER_LIST.length * per;
+    const step = etapa === 1 ? 3 : 1;
+    const touched: string[] = [];
+    if (etapa === 1) {
+      for (let i = step; i <= total; i += step) {
+        const key = `1:${i}`;
+        if (ok && i <= idx) {
+          this.sweepStages[key] = { s: 'ok', t: now };
+          touched.push(key);
+        } else if (!ok && i > idx) {
+          this.sweepStages[key] = { s: 'blocked', t: now };
+          touched.push(key);
+        }
+      }
+    }
+    const key = `${etapa}:${idx}`;
+    const next: SweepStageState = { s: ok ? 'ok' : 'blocked', t: now };
+    if (this.sweepStages[key]?.s !== next.s || this.sweepStages[key]?.t !== next.t) {
+      this.sweepStages[key] = next;
+      if (!touched.includes(key)) touched.push(key);
+    }
+    if (!touched.length) return;
+    this.saveSweepStages();
+    this.emit('sweepStagesUpdated', this.sweepStagesSnapshot());
+  }
+
+  sweepStagesSnapshot(): Record<string, SweepStageState> {
+    return { ...this.sweepStages };
+  }
+
+  saveSweepStages(): void {
+    try {
+      const filePath = path.join(configService.accessDir, String(this.iggId), 'sweep-stages.json');
+      const dir = path.dirname(filePath);
+      if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+      fs.writeFileSync(filePath, JSON.stringify({ updated: Date.now(), stages: this.sweepStages }, null, 2), 'utf-8');
+    } catch {}
+  }
+
+  loadSweepStages(): void {
+    try {
+      const filePath = path.join(configService.accessDir, String(this.iggId), 'sweep-stages.json');
+      if (!fs.existsSync(filePath)) return;
+      const data = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+      if (data && data.stages && typeof data.stages === 'object') this.sweepStages = data.stages;
+    } catch {}
+  }
+
+  /**
+   * Segundos desde medianoche UTC en que resetea el día de esta cuenta, según
+   * la fecha de creación que trae el 1008 (offset 210). Devuelve 0 (00:00 UTC)
+   * mientras no haya un 1008 parseado o si el valor no parece una fecha.
+   */
+  getDailyResetSec(): number {
+    const created = this.playerInfo?.accountCreatedAt?.getTime();
+    if (!created || created < 1420070400000 || created > Date.now() + 86400000) return 0;
+    return Math.floor(created / 1000) % 86400;
+  }
+
+  // ── Diario (3144/3143) ──
+
+  /**
+   * Clave del día de misiones diarias: días transcurridos desde el reset de la
+   * cuenta (`getDailyResetSec()`, 11:00 UTC-3 = 14:00 UTC si no hay 1008).
+   * Sirve para tirar a la basura el snapshot cuando cambia el día.
+   */
+  private dailyMissionDayKey(): string {
+    const resetSec = this.getDailyResetSec() || 14 * 3600;
+    return String(Math.floor((serverNowSec() - resetSec) / 86400));
+  }
+
+  /** Estado del Diario; lo descarta solo si ya es de otro día. */
+  getDailyMissions(): DailyMissionCache | undefined {
+    if (this.dailyMissions && this.dailyMissions.dayKey !== this.dailyMissionDayKey()) {
+      this.dailyMissions = undefined;
+    }
+    return this.dailyMissions;
+  }
+
+  /** Reemplaza la caché con el snapshot completo del 3144. */
+  setDailyMissions(snapshot: DailyMissionSnapshot): DailyMissionCache {
+    const cache: DailyMissionCache = { ...snapshot, dayKey: this.dailyMissionDayKey() };
+    this.dailyMissions = cache;
+    return cache;
+  }
+
+  /** Aplica un contador suelto (3143). Devuelve null si no hay caché del día. */
+  updateDailyMission(id: number, value: number): DailyMissionCache | null {
+    const cache = this.getDailyMissions();
+    if (!cache) return null;
+    const entry = cache.missions.find(m => m.id === id);
+    if (entry) entry.value = value;
+    else cache.missions.push({ id, value });
+    return cache;
+  }
+
   // ── Caza de monstruos (2488) ──
 
+  /**
+   * El 1008 sólo llega al entrar (o al reconectar), así que a partir de ese
+   * valor la recuperación se acumula en local: `energyBase` + perSec × tiempo.
+   * Mientras haya base, `playerInfo.energy` se mantiene al día con la fórmula.
+   */
+  syncEnergyFromServer(): void {
+    if (!this.playerInfo) return;
+    this.energyBase = Math.max(0, this.playerInfo.energy);
+    this.energyBaseAt = Date.now();
+    this.startEnergyTick();
+  }
+
+  /** Vuelca sobre playerInfo.energy la recuperación pendiente desde la base. */
+  private accrueEnergy(): void {
+    if (!this.playerInfo || !this.energyBaseAt) return;
+    const elapsed = (Date.now() - this.energyBaseAt) / 1000;
+    if (elapsed <= 0) return;
+    // Nunca por debajo de la base (si el tope calculado es menor que lo que
+    // mandó el servidor, el tope es el que está mal) ni por encima del tope.
+    const cap = Math.max(this.getEnergyMax(), this.energyBase);
+    const value = Math.min(Math.floor(this.energyBase + this.energyRegenValue.perSec * elapsed), cap);
+    this.playerInfo.energy = value;
+    if (value >= cap) {
+      // Lleno: la base queda fija en el tope para no "desbordar" la estimación
+      this.energyBase = cap;
+      this.energyBaseAt = Date.now();
+    }
+  }
+
+  /** Fija la base de la estimación sobre el valor actual de playerInfo.energy. */
+  private rebaseEnergy(): void {
+    if (!this.playerInfo) return;
+    this.accrueEnergy();
+    this.energyBase = this.playerInfo.energy;
+    this.energyBaseAt = Date.now();
+  }
+
+  /**
+   * La UI sólo recibe la energía cuando hay un evento; cada minuto se vuelca
+   * lo acumulado y se avisa si cambió, para que el contador se vea crecer.
+   */
+  private startEnergyTick(): void {
+    if (this.energyTimer) return;
+    this.energyTimer = setInterval(() => {
+      if (!this.playerInfo) { this.clearEnergyTick(); return; }
+      const before = this.playerInfo.energy;
+      this.accrueEnergy();
+      if (this.playerInfo.energy !== before) this.emit('playerInfoUpdated');
+    }, 60 * 1000);
+  }
+
+  private clearEnergyTick(): void {
+    if (this.energyTimer) { clearInterval(this.energyTimer); this.energyTimer = undefined; }
+  }
+
   getCurrentEnergy(): number {
+    this.accrueEnergy();
     return this.playerInfo?.energy ?? 0;
   }
 
   /** Recuperación de energía por hora con la investigación aplicada. */
   getEnergyRegen(): EnergyRegen {
     return this.energyRegenValue;
+  }
+
+  /**
+   * Tope de energía: 15000 de base + stat "Energía +" (efecto 319, techs
+   * "Límite de energía I/II/III"). Usa los playerStats cuando ya están
+   * calculados (cualquier fuente que aporte el efecto suma sola) y si no, la
+   * investigación directa.
+   */
+  getEnergyMax(): number {
+    if (this.playerStats) return getEnergyCap(this.playerStats);
+    return computeEnergyMax(this.research?.techLevels);
   }
 
   /**
@@ -708,6 +992,8 @@ export class BotInstance extends EventEmitter {
     const prev = this.energyRegenValue;
     const next = computeEnergyRegen(this.research?.techLevels);
     if (next.bonusPct === prev.bonusPct) return;
+    // Lo ya acumulado se vuelca con la tasa vieja antes de cambiarla
+    this.rebaseEnergy();
     this.energyRegenValue = next;
     this.bot.log(
       `[ENERG] recuperación → ${next.perHour}/h (base ${next.basePerHour}/h, +${(next.bonusPct / 100).toFixed(1)}%)`,
@@ -717,7 +1003,10 @@ export class BotInstance extends EventEmitter {
 
   consumeEnergy(amount: number): void {
     if (!this.playerInfo) return;
+    this.rebaseEnergy();
     this.playerInfo.energy = Math.max(0, this.playerInfo.energy - amount);
+    this.energyBase = this.playerInfo.energy;
+    this.energyBaseAt = Date.now();
     this.bot.log(`[ENERG] -${amount} → ${this.playerInfo.energy}`);
     this.emit('playerInfoUpdated');
   }
@@ -946,9 +1235,23 @@ export class BotInstance extends EventEmitter {
       if (isMonsterChest(t.monster.id)) continue; // cofres de evento: no son monstruos
       if (!getHuntLevel(this.config.hunt, t.monster.level)) continue;
       const tileHp = toHpPercent(t.monster.hp);
-      const sq = huntCoordinator.peek(t.id);
+      let sq = huntCoordinator.peek(t.id);
+      // El HP sólo baja, así que el tile local siempre es una cota buena del
+      // HP real: con eso el squad decide `needed` con el HP FRESCO (si no,
+      // un squad que creía ver el bicho al 60% seguía abriendo cupos para
+      // 2-3 bots mientras el tile real estaba al 4%).
+      if (sq) {
+        if (sq.hp <= 0 && tileHp > 0) {
+          // squad "fantasma" con HP 0 y un bicho vivo en el tile → refrescar
+          huntCoordinator.updateHp(t.id, tileHp, '2201');
+          sq = huntCoordinator.peek(t.id);
+        } else {
+          huntCoordinator.updateHp(t.id, Math.min(sq.hp, tileHp), '2201');
+        }
+      }
       if (sq && sq.hp <= 0) continue; // el squad ya sabe que ese bicho murió
-      if (sq && !huntCoordinator.hasRoom(t.id, policy)) continue; // squad completo: no nos sumamos
+      // `iggId` → también cuenta "yo puedo matar de un golpe" para entrar
+      if (sq && !huntCoordinator.hasRoom(t.id, policy, this.iggId)) continue; // squad completo: no nos sumamos
       // HP = lo más fresco de lo que sabemos (solo baja: el mínimo es el más nuevo)
       out.push({ tile: t, hp: sq ? Math.min(sq.hp, tileHp) : tileHp });
     }
@@ -1117,8 +1420,12 @@ export class BotInstance extends EventEmitter {
         }
         t.level = tile.monster.level;
         t.hp = tile.monster.hp;
-        // HP leído en el 2201 → el squad compartido de todos los bots lo ve
-        huntCoordinator.updateHp(t.tileId, toHpPercent(tile.monster.hp), '2201');
+        // HP leído en el 2201 → el squad compartido de todos los bots lo ve.
+        // Con `min`: el HP sólo baja, así que un squad con un valor más
+        // fresco (bajado por otro bot) nunca se "revive" con el tile viejo.
+        const hpLocal = toHpPercent(tile.monster.hp);
+        const sqHp = huntCoordinator.peek(t.tileId)?.hp;
+        huntCoordinator.updateHp(t.tileId, sqHp === undefined ? hpLocal : Math.min(sqHp, hpLocal), '2201');
         if (tile.monster.hp <= 0) {
           this.finishHunt('killed', 'Bicho muerto');
           break;
@@ -1162,15 +1469,17 @@ export class BotInstance extends EventEmitter {
           } else {
             this.finishHunt(
               'stopped',
-              `Sobra en el squad: HP ${gate.hp.toFixed(0)}% · ${gate.active} bot(s) cubren ${gate.needed} golpe(s) — va a por otro bicho`,
+              `Sobra en el squad: HP ${gate.hp.toFixed(0)}% · mi daño ${gate.myDamage.toFixed(1)}% · ` +
+                `${gate.active} bot(s) cubren ${gate.needed} golpe(s) (el mejor hace ${gate.activeDamage.toFixed(1)}%) — va a por otro bicho`,
             );
           }
           break;
         }
         if (gate.needed > 1 || gate.active > 0) {
           this.bot.log(
-            `[SQUAD] (${t.x},${t.y}) HP ${gate.hp.toFixed(0)}% · daño medio ${gate.avgDamage.toFixed(1)}% · ` +
-            `faltan ${gate.needed} golpe(s) · ${gate.active} en vuelo`,
+            `[SQUAD] (${t.x},${t.y}) HP ${gate.hp.toFixed(0)}% · mi daño ${gate.myDamage.toFixed(1)}%` +
+              `${gate.canKill ? ' (mato de 1)' : ''} · medio ${gate.avgDamage.toFixed(1)}% · ` +
+              `faltan ${gate.needed} golpe(s) · ${gate.active} en vuelo`,
           );
         }
 
@@ -2297,6 +2606,7 @@ export class BotInstance extends EventEmitter {
             exchangedTs: this.config.luckyCards?.exchangedTs || original.luckyCards?.exchangedTs || 0,
           },
           forgeGift: { ...original.forgeGift, next: this.config.forgeGift.next },
+          sendEmoji: { ...original.sendEmoji, next: this.config.sendEmoji.next },
         };
         fs.writeFileSync(configPath, JSON.stringify(updated, null, 2), 'utf-8');
       }
@@ -2368,6 +2678,10 @@ export class BotInstance extends EventEmitter {
 
   enqueueWarSend(warIndex: number, rallyLeader: string, mask: number, quantities: number[], onStatus?: (s: string) => void): void {
     onStatus?.('Encolando...');
+    this.lastWarSend = { mask, quantities };
+    // Sin la UI de guerras (0x05) el servidor no responde 2478/6611/7315 y la
+    // selección (2480) queda mandada al vacío.
+    this.requestWarData();
     this.bot.enqueueCommand(async () => {
       onStatus?.('Enviando 2476...');
       if (this.war.canSend2476()) send2476(this.bot);
@@ -2396,12 +2710,263 @@ export class BotInstance extends EventEmitter {
     this.bot.enqueueDelay(5000);
     this.bot.enqueueCommand(async () => {
       onStatus?.('Enviando tropas...');
+      // Registrar la espera ANTES de mandar el 2472 para no perder el 2473
+      // si la respuesta llega antes de que el comando siguiente arranque.
+      const reply = this.bot.waitForReply<Buffer>(2473, 8000);
       this.warSendTroops(rallyLeader, mask, quantities);
+      this.processWarSendConfirm(await reply, warIndex, rallyLeader, onStatus);
     });
-    this.bot.enqueueDelay(500);
+  }
+
+  /**
+   * 2473: confirma (o rechaza) el envío del 2472 y compara la llegada de
+   * nuestra marcha (`startTs + durationSec`) contra el cierre de la
+   * agrupación (timeRemaining del 7315). Si llega tarde, `gapSec` dice
+   * cuánto hay que acelerar.
+   */
+  private processWarSendConfirm(body: Buffer | undefined, warIndex: number, rallyLeader: string, onStatus?: (s: string) => void): void {
+    if (!body) {
+      this.bot.log('[GUERRA] 2473 timeout: el servidor no confirmó el 2472');
+      onStatus?.('⚠ 2473 sin respuesta (envío no confirmado)');
+      return;
+    }
+
+    const m = parse2473(body);
+    if (!m.ok) {
+      this.bot.log(`[GUERRA] 2473 rechazado (código ${m.code}, ${body.length}b)`);
+      onStatus?.(`❌ Servidor rechazó el envío (código ${m.code})`);
+      return;
+    }
+
+    const startTs = m.startTs!;
+    const durationSec = m.durationSec!;
+    const arrivalTs = m.arrivalTs!;
+    const nowSec = Math.floor(Date.now() / 1000);
+
+    const wars = this.war.activeWarsList;
+    const fort = wars.find(w => w.index === warIndex && w.rallyLeader === rallyLeader)
+      ?? wars.find(w => w.rallyLeader === rallyLeader);
+
+    let deadlineTs = 0;
+    let gapSec = 0;
+    let unknownWar = false;
+    if (fort) {
+      // timeRemainingSec es un snapshot del último 7315/2478/6611: restar lo
+      // transcurrido desde ese refresh para no sobrestimar la ventana.
+      const updatedAgo = fort.updatedAt ? (Date.now() - fort.updatedAt) / 1000 : 0;
+      const remaining = Math.max(0, fort.timeRemainingSec - updatedAgo);
+      deadlineTs = nowSec + Math.round(remaining);
+      gapSec = arrivalTs - deadlineTs;
+    } else {
+      unknownWar = true;
+    }
+
+    this.warMarch = {
+      warIndex,
+      rallyLeader,
+      startTs,
+      durationSec,
+      arrivalTs,
+      deadlineTs,
+      gapSec,
+      unknownWar,
+      at: new Date(),
+    };
+
+    this.ownSentMarches = this.ownSentMarches.filter(e => Math.abs(e.startAt - startTs) > 15);
+    this.ownSentMarches.push({
+      index: 0,
+      state: 6,
+      status: 'flying',
+      heroIds: [],
+      troops: [],
+      destCoordBytes: [0, 0, 0],
+      destX: 0,
+      destY: 0,
+      name: rallyLeader,
+      startAt: startTs,
+      durationSec,
+      unknown106: 0,
+    });
+
+    const fmt = (ts: number): string => {
+      const d = new Date(ts * 1000);
+      const p = (n: number): string => String(n).padStart(2, '0');
+      return `${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`;
+    };
+
+    if (unknownWar) {
+      this.bot.log(`[GUERRA] 2473 "${m.rallyLeader}": inicia ${fmt(startTs)} + ${durationSec}s → llega ${fmt(arrivalTs)} (agrupación ${warIndex} no está en la lista: sin comparar)`);
+      onStatus?.(`✔ Enviado — llega ${fmt(arrivalTs)} en ${durationSec}s (sin cierre para comparar)`);
+      return;
+    }
+
+    this.bot.log(
+      `[GUERRA] 2473 "${m.rallyLeader}": inicia ${fmt(startTs)} + ${durationSec}s → llega ${fmt(arrivalTs)}; ` +
+      `agrupación cierra ${fmt(deadlineTs)} (restaban ${deadlineTs - nowSec}s) → ` +
+      (gapSec > 0 ? `TARDE ${gapSec}s: hay que acelerar` : `a tiempo (sobra ${-gapSec}s)`),
+    );
+
+    if (gapSec > WAR_ACCEL_MIN_GAP_SEC) {
+      onStatus?.(`⏳ Llega tarde: acelerar ${gapSec}s (cierra ${fmt(deadlineTs)}, llega ${fmt(arrivalTs)})`);
+      this.enqueueWarAccelerate(onStatus);
+    } else {
+      onStatus?.(`✔ Enviado — llega ${fmt(arrivalTs)} en ${durationSec}s, cierra ${fmt(deadlineTs)} (sobra ${Math.max(0, -gapSec)}s)`);
+    }
+  }
+
+  enqueueWarAccelerate(onStatus?: (s: string) => void): void {
+    if (this.accelRunning) {
+      this.bot.log('[ACEL] ya hay una aceleración en curso');
+      return;
+    }
+    this.accelRunning = true;
     this.bot.enqueueCommand(async () => {
-      onStatus?.('✔ Enviado');
+      try {
+        await this.runWarAccelerate(onStatus);
+      } finally {
+        this.accelRunning = false;
+      }
     });
+  }
+
+  private accelMarchList(nowSec: number): OwnMarch[] {
+    const out: OwnMarch[] = [...(this.ownMarches?.entries ?? [])];
+    for (const s of this.ownSentMarches) {
+      if (s.startAt <= 0 || s.startAt + s.durationSec <= nowSec - 600) continue;
+      if (out.some(e => e.startAt > 0 && Math.abs(e.startAt - s.startAt) <= 15)) continue;
+      out.push(s);
+    }
+    return out;
+  }
+
+  private findOwnWarMarchEntry(entries: OwnMarch[]): OwnMarch | null {
+    const m = this.warMarch;
+    if (!m || !entries.length) return null;
+    const near = entries.filter(e => e.startAt > 0 && Math.abs(e.startAt - m.startTs) <= 15);
+    if (!near.length) return null;
+    return near.find(e => e.durationSec === m.durationSec) ?? near[0]!;
+  }
+
+  private async runWarAccelerate(onStatus?: (s: string) => void): Promise<void> {
+    const say = (msg: string): void => {
+      this.bot.log(`[ACEL] ${msg}`);
+      onStatus?.(`⏳ ${msg}`);
+    };
+
+    if (!this.warMarch || this.warMarch.gapSec <= 0) {
+      say('no hay marcha tarde para acelerar');
+      return;
+    }
+
+    if (this.uiSection !== UI_SECTION_ARMY_STATUS) {
+      sendArmyStatus(this.bot);
+      this.uiSection = UI_SECTION_ARMY_STATUS;
+      this.bot.log('[ACEL] UI → Estado de ejército (0x04)');
+    }
+    if (!this.findOwnWarMarchEntry(this.accelMarchList(this.nowSec()))) {
+      say('no encontré mi marcha en la lista: pruebo con índice 0');
+    }
+
+    const startCursor = this.accelCursor;
+    let failures = 0;
+    let applied = 0;
+    let attempt = 0;
+    let retries = 0;
+    say(`rate limit: ${ACCEL_RETRY_DELAY_MS} ms entre intentos`);
+
+    while (this.warMarch && this.warMarch.gapSec > 0 && failures < MAX_ACCEL_ATTEMPTS && applied < MAX_ACCEL_ATTEMPTS) {
+      if (attempt > 0) await this.sleep(ACCEL_RETRY_DELAY_MS);
+      attempt++;
+      const candidate: AccelCandidate = ACCEL_CANDIDATES[this.accelCursor]!;
+      const gapSec = this.warMarch.gapSec;
+      const remainingSec = Math.max(0, this.warMarch.arrivalTs - this.nowSec());
+      const pick = pickSpeedupItem(this.inventory, gapSec, ITEMS_DATA, remainingSec);
+      if (!pick) {
+        say('sin aceleradores en la mochila');
+        return;
+      }
+
+      const entries = this.accelMarchList(this.nowSec());
+      const target = this.findOwnWarMarchEntry(entries);
+      const index = candidate.source === 'participant'
+        ? resolveParticipantIndex(this.warParticipants, this.lastWarSend)
+        : target
+          ? resolveAccelIndex(entries, target, candidate.source, this.nowSec())
+          : 0;
+
+      say(`campo ${candidate.field} · índice ${index} (${candidate.source}) · ${pick.qty}× item ${pick.itemId} (${pick.seconds}s) para ${gapSec}s`);
+
+      sendSpeedupSelect(this.bot, candidate.field, index);
+      this.uiSection = UI_SECTION_SPEEDUP;
+      await this.sleep(350);
+
+      const reply = this.bot.waitForReply<Buffer>(1407, 5000);
+      sendSpeedupUse(this.bot, pick.itemId, pick.qty, candidate.field, index);
+      const body = await reply;
+
+      const rotate = (why: string): void => {
+        failures++;
+        say(why);
+        this.accelCursor = (this.accelCursor + 1) % ACCEL_CANDIDATES.length;
+        if (failures >= MAX_ACCEL_ATTEMPTS) say('probé todos los campos/índices sin que el 1407 tocara esta marcha');
+        else if (this.accelCursor === startCursor) say('volví al primer candidato: pruebo otro combo');
+      };
+
+      const retryOrRotate = (why: string): void => {
+        retries++;
+        if (retries < ACCEL_STATUS_RETRIES) {
+          say(`${why} → rate limit, repito el mismo candidato (${retries}/${ACCEL_STATUS_RETRIES})`);
+          return;
+        }
+        rotate(`${why} tras ${ACCEL_STATUS_RETRIES} reintentos`);
+      };
+
+      if (!body) {
+        retryOrRotate(`sin 1407 (campo ${candidate.field}, índice ${index})`);
+        continue;
+      }
+
+      const r = parse1407(body);
+      if (!r.ok || r.status !== 0 || !r.arrivalTs) {
+        retryOrRotate(`1407 sin aplicación (status=${r.status} item=${r.itemId} ${body.length}B)`);
+        continue;
+      }
+
+      const before = this.warMarch.arrivalTs;
+      if (r.arrivalTs >= before - 3) {
+        rotate(`el acelerador no tocó esta marcha (llegada ${r.arrivalTs} vs ${before}) → pruebo otro campo/índice`);
+        continue;
+      }
+
+      const savedSec = before - r.arrivalTs;
+      const current = this.inventory.get(pick.itemId) || 0;
+      const remaining = current - pick.qty;
+      if (remaining <= 0) this.inventory.delete(pick.itemId);
+      else this.inventory.set(pick.itemId, remaining);
+      this.emit('inventoryUpdated');
+
+      this.warMarch.startTs = r.newStartTs!;
+      this.warMarch.durationSec = r.newTimeSec!;
+      this.warMarch.arrivalTs = r.arrivalTs;
+      this.warMarch.gapSec = r.arrivalTs - this.warMarch.deadlineTs;
+      this.warMarch.at = new Date();
+      if (target) {
+        target.startAt = r.newStartTs!;
+        target.durationSec = r.newTimeSec!;
+        this.emit('ownMarchesUpdated');
+      }
+      applied++;
+      retries = 0;
+
+      say(`acelerada ${savedSec}s (quedan ${pick.qty - 1}× del item ${pick.itemId}) → llega ${new Date(r.arrivalTs * 1000).toISOString().slice(11, 19)}, falta ${this.warMarch.gapSec}s`);
+    }
+
+    if (this.warMarch && this.warMarch.gapSec > 0) {
+      say(`no pude cerrar el hueco del todo: quedan ${this.warMarch.gapSec}s`);
+    } else if (this.warMarch) {
+      say(`listo: la marcha ahora llega a tiempo (${this.warMarch.gapSec}s de sobra)`);
+    }
   }
 
   openChest(itemId: number, quantity: number, onProgress?: (opened: number, total: number) => void): void {

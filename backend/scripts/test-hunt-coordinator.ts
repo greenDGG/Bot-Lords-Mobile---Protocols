@@ -137,5 +137,76 @@ check('otro bot no repite el mismo bicho', !huntCoordinator.claimAnnounce(900, 3
 check('otro bicho sí se puede avisar', huntCoordinator.claimAnnounce(901, 300_000, 1500));
 check('pasado el cooldown vuelve', huntCoordinator.claimAnnounce(900, 300_000, 1000 + 300_001));
 
+// ── 11. El ejemplo del usuario: HP 5%, A hace 6% y B 4% ─────────────────────
+// Regla: manda el que MATA (6% >= 5%); el de 4% se va a otro bicho.
+console.log('\n11) "Si queda poca vida, va 1 solo — el que lo mata"');
+
+// a) B (4%) reclamó primero → el de 6% DEBE poder sumarse (él tiene historial)
+huntCoordinator.reset();
+huntCoordinator.claim(1, { id: 810, x: 9, y: 9, level: 4, hp: 11 }, ON);
+huntCoordinator.reportHit(1, 810, 11, 5); // historial de A: daño 6%
+huntCoordinator.release(1);
+huntCoordinator.claim(2, { id: 800, x: 1, y: 1, level: 4, hp: 5 }, ON); // B (sin datos)
+const cKiller = huntCoordinator.canClaim(1, 800, ON);
+check('a1) el de 6% se une al squad del de 4%', cKiller.ok, cKiller);
+check('a2) y se suma también por hasRoom', huntCoordinator.hasRoom(800, ON, 1));
+
+// b) A (6%) en vuelo → el de 4% SOBRA (nadie más hace falta)
+huntCoordinator.reset();
+huntCoordinator.claim(1, { id: 800, x: 1, y: 1, level: 4, hp: 5 }, ON);
+huntCoordinator.reportHit(1, 800, 11, 5); // A hace 6%
+huntCoordinator.markBusy(1, 800, Date.now() + 60_000);
+g = gate(2, 800);
+check('b1) needed=1 con el MEJOR daño (no el promedio)', g.needed === 1, g);
+check('b2) el de 4% sobra → va a otro bicho', !g.ok && g.reason === 'surplus', g);
+check('b3) el gate expone mi daño y si mato', g.myDamage === 0 && g.canKill === false, g);
+
+// c) B (débil, en vuelo) en un squad → el de 6% NO sobra y sí puede entrar
+huntCoordinator.reset();
+huntCoordinator.claim(1, { id: 811, x: 9, y: 9, level: 4, hp: 11 }, ON);
+huntCoordinator.reportHit(1, 811, 11, 5); // historial de A: 6%
+huntCoordinator.release(1);
+huntCoordinator.claim(2, { id: 804, x: 4, y: 4, level: 4, hp: 5 }, ON);
+huntCoordinator.reportHit(2, 804, 7, 5); // B (débil) hace 2%
+huntCoordinator.markBusy(2, 804, Date.now() + 60_000);
+check('c1) el de 6% puede unirse al squad del débil', huntCoordinator.canClaim(1, 804, ON).ok);
+g = gate(1, 804);
+check('c2) y NO sobra: el activo sólo hace 2% y yo mato',
+  g.ok && g.canKill && g.activeDamage === 2, g);
+
+// d) HP 4% y tres bots: sólo entra el que lo mata
+huntCoordinator.reset();
+huntCoordinator.claim(1, { id: 801, x: 2, y: 2, level: 4, hp: 4 }, ON);
+huntCoordinator.reportHit(1, 801, 10, 4); // A hace 6%
+check('d1) "van 3 por el mismo" → needed=1', huntCoordinator.canHit(1, 801, ON).needed === 1);
+check('d2) el de 4% no entra', !huntCoordinator.canClaim(2, 801, ON).ok);
+check('d3) el tercero tampoco', !huntCoordinator.canClaim(3, 801, ON).ok);
+
+// e) promedio vs mejor: A(6%) y B(4%) en el squad con HP 5% → 1 golpe basta
+huntCoordinator.reset();
+huntCoordinator.claim(1, { id: 802, x: 3, y: 3, level: 4, hp: 100 }, ON);
+huntCoordinator.reportHit(1, 802, 100, 94); // 6%
+huntCoordinator.claim(2, { id: 802, x: 3, y: 3, level: 4, hp: 94 }, ON);
+huntCoordinator.reportHit(2, 802, 94, 90); // 4%
+huntCoordinator.updateHp(802, 5, '2201');
+g = gate(1, 802);
+check('e1) HP 5% con dos bots → needed=1 (antes era 2 por el promedio)', g.needed === 1, g);
+huntCoordinator.markBusy(1, 802, Date.now() + 60_000);
+g = gate(2, 802);
+check('e2) el de 4% se libera cuando el de 6% está en vuelo', !g.ok && g.reason === 'surplus', g);
+
+// f) los débiles no rematan: el de 6% sigue pudiendo entrar y golpear
+huntCoordinator.reset();
+huntCoordinator.claim(1, { id: 812, x: 8, y: 8, level: 4, hp: 11 }, ON);
+huntCoordinator.reportHit(1, 812, 11, 5); // historial de A: 6%
+huntCoordinator.release(1);
+huntCoordinator.claim(2, { id: 803, x: 4, y: 4, level: 4, hp: 5 }, ON);
+huntCoordinator.reportHit(2, 803, 7, 5); // B (débil) hace 2%
+huntCoordinator.markBusy(2, 803, Date.now() + 60_000);
+g = gate(1, 803);
+check('f1) mejor daño del squad=2% → needed=ceil(5.25/2)=3', g.needed === 3, g);
+check('f2) el de 6% sí golpea (nadie activo puede matar)', g.ok && g.canKill, g);
+check('f3) y puede entrar al squad', huntCoordinator.canClaim(1, 803, ON).ok);
+
 console.log(failures === 0 ? '\nTODO OK' : `\n${failures} FALLA(S)`);
 if (failures > 0) process.exit(1);

@@ -1,7 +1,7 @@
 import { BotEngine } from '../engine/bot-engine';
 
 export function sendSweep(bot: BotEngine, payload: Buffer): void {
-  bot.sendCommandPacket(1805, payload, false);
+  bot.sendCommandPacket(1805, payload, true);
 }
 
 export function refineMana(bot: BotEngine): void {

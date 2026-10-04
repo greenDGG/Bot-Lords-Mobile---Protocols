@@ -1,19 +1,33 @@
 import { BuffCategory, BuffInstance } from '../models/player.types';
-import { getBuffDef } from '../parsers/player.parser';
+import { parseBuffs } from '../parsers/player.parser';
 
+/**
+ * Estado de los buffs activos del jugador.
+ *
+ * La fuente de verdad es el proto 1111, que llega como **snapshot completo**
+ * (periódicamente y en cada cambio): `handlePacket` reemplaza toda la lista,
+ * así que un body con `count = 0` limpia el estado y un paquete mal formado
+ * (devuelve `null` el parser) no toca nada.
+ */
 export class BuffManager {
   private active = new Map<number, BuffInstance>();
 
+  /** Todos los buffs vivos, indexados internamente por itemId. */
+  get all(): BuffInstance[] {
+    const now = Date.now();
+    return [...this.active.values()].filter((b) => b.expires.getTime() > now);
+  }
+
   get shield(): BuffInstance | undefined {
     for (const b of this.active.values()) {
-      if (b.def.category === BuffCategory.Shield) return b;
+      if (b.def.category === BuffCategory.Shield && b.remaining > 0) return b;
     }
     return undefined;
   }
 
   get fury(): BuffInstance | undefined {
     for (const b of this.active.values()) {
-      if (b.def.category === BuffCategory.Fury) return b;
+      if (b.def.category === BuffCategory.Fury && b.remaining > 0) return b;
     }
     return undefined;
   }
@@ -21,27 +35,27 @@ export class BuffManager {
   onBuffChanged?: () => void;
 
   handlePacket(data: Buffer): void {
-    if (!data || data.length < 4) return;
-    try {
-      const count = data[0];
-      const offset = 3;
-      const entrySize = 14;
-      let changed = false;
+    const list = parseBuffs(data);
+    if (!list) return;
 
-      for (let i = 0; i < count && offset + i * entrySize + entrySize <= data.length; i++) {
-        const entryOff = offset + i * entrySize;
-        const buffId = data.readUInt16LE(entryOff);
-        const known = getBuffDef(buffId);
-        if (!known) continue;
-        const startTs = Number(data.readBigInt64LE(entryOff + 2));
-        const durSec = data.readInt32LE(entryOff + 10);
-        const instance = new BuffInstance(known, new Date(startTs * 1000), durSec * 1000);
-        this.active.set(buffId, instance);
-        changed = true;
-      }
+    const next = new Map<number, BuffInstance>();
+    for (const b of list) next.set(b.def.id, b);
 
-      if (changed) this.onBuffChanged?.();
-    } catch {}
+    if (!this.sameAs(next)) {
+      this.active = next;
+      this.onBuffChanged?.();
+    }
+  }
+
+  private sameAs(next: Map<number, BuffInstance>): boolean {
+    if (next.size !== this.active.size) return false;
+    for (const [id, b] of next) {
+      const cur = this.active.get(id);
+      if (!cur) return false;
+      if (cur.start.getTime() !== b.start.getTime()) return false;
+      if (cur.expires.getTime() !== b.expires.getTime()) return false;
+    }
+    return true;
   }
 
   cleanupExpired(): boolean {

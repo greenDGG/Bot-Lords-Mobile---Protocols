@@ -7,6 +7,14 @@ export interface HeroSkillInfo {
   name: string;
   nameEn: string;
   desc: string;
+  /** Id del efecto (effects.json) cuando la skill es un buff pasivo. */
+  effectId?: number;
+  /**
+   * Valor de la pasiva en grado Common/Blanco: con unit '%' está en milésimas
+   * de % (1000 = 1 %), con unit '' es un entero (150 de energía).
+   * Escala por grado del héroe: [1, 2, 4, 8, 20] (Blanco..Oro).
+   */
+  value?: number;
 }
 
 export interface HeroDef {

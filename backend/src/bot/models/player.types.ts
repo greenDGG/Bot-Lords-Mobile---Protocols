@@ -17,12 +17,18 @@ export interface PlayerInfo {
   power: number;
   kills: number;
   vipExp: number;
+  /**
+   * u32 en el offset absoluto 210 (primeros 4 bytes de `unknownBlock2`):
+   * fecha de creación de la cuenta, redondeada a la hora. Su hora del día
+   * (UTC) es el reset diario de la cuenta (docs/protocols/1008.md).
+   */
+  accountCreatedAt: Date;
   unknownBlock2: Buffer;
   energy: number;
   tail: Buffer;
 }
 
-export enum BuffCategory { Shield, Fury }
+export enum BuffCategory { Shield, Fury, AntiScout, ArmyAtk, ArmyDef, ArmySize, Gather, Train, March, Other }
 
 export interface BuffDefinition {
   id: number;

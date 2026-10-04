@@ -1,0 +1,1074 @@
+{
+  "source": "Chapter.txt + AdvanceStage.txt + NormalStage.txt + NormalMiniStage.txt + Heros.txt (cliente) + wiki (medalla por etapa élite)",
+  "generatedBy": "backend/scripts/gen-hero-stages.py",
+  "mainStages": [
+    3,
+    6,
+    9,
+    12,
+    15,
+    18
+  ],
+  "staminaNote": "Normal = Chapter.Power (6; 8 en cap. 8). Elite = Power x2 (12; 16 en cap. 8).",
+  "sweepIdxNote": "byte2 del 1805: modo Élite = elite[].idx = AdvanceStage.id 1..48 = (capítulo-1)*6+posición (captura cliente: elite de 1-3 → 01). Modo Normal = número global de etapa 1..144 = (capítulo-1)*18+etapa (captura cliente: normal de 1-3 → 03; NormalMiniStage.u5 + NormalStage.u5 cubren 1..144).",
+  "chapters": [
+    {
+      "id": 1,
+      "name": "Ataque de los héroes",
+      "nameEn": "Heroes' Assault",
+      "needLevel": 1,
+      "staminaNormal": 6,
+      "staminaElite": 12,
+      "heroId": 17,
+      "heroName": "Cuervo Nocturno",
+      "heroMedalItemId": 318,
+      "heroMedalCount": 10,
+      "mainStages": [
+        3,
+        6,
+        9,
+        12,
+        15,
+        18
+      ],
+      "elite": [
+        {
+          "idx": 1,
+          "position": 1,
+          "mainStage": 3,
+          "heroId": 3,
+          "heroName": "Sabio de Viento",
+          "medalItemId": 304,
+          "enemyLevel": 6
+        },
+        {
+          "idx": 2,
+          "position": 2,
+          "mainStage": 6,
+          "heroId": 20,
+          "heroName": "Escudero del Mar",
+          "medalItemId": 321,
+          "enemyLevel": 7
+        },
+        {
+          "idx": 3,
+          "position": 3,
+          "mainStage": 9,
+          "heroId": 4,
+          "heroName": "Reina de la Nieve",
+          "medalItemId": 305,
+          "enemyLevel": 8
+        },
+        {
+          "idx": 4,
+          "position": 4,
+          "mainStage": 12,
+          "heroId": 6,
+          "heroName": "Incineradora",
+          "medalItemId": 307,
+          "enemyLevel": 9
+        },
+        {
+          "idx": 5,
+          "position": 5,
+          "mainStage": 15,
+          "heroId": 17,
+          "heroName": "Cuervo Nocturno",
+          "medalItemId": 318,
+          "enemyLevel": 10
+        },
+        {
+          "idx": 6,
+          "position": 6,
+          "mainStage": 18,
+          "heroId": 2,
+          "heroName": "Cuervo Negro",
+          "medalItemId": 303,
+          "enemyLevel": 11
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Reino enano",
+      "nameEn": "Dwarf Kingdom",
+      "needLevel": 3,
+      "staminaNormal": 6,
+      "staminaElite": 12,
+      "heroId": 16,
+      "heroName": "Trasgo Dinamita",
+      "heroMedalItemId": 317,
+      "heroMedalCount": 10,
+      "mainStages": [
+        3,
+        6,
+        9,
+        12,
+        15,
+        18
+      ],
+      "elite": [
+        {
+          "idx": 7,
+          "position": 1,
+          "mainStage": 3,
+          "heroId": 1,
+          "heroName": "Guardián",
+          "medalItemId": 302,
+          "enemyLevel": 12
+        },
+        {
+          "idx": 8,
+          "position": 2,
+          "mainStage": 6,
+          "heroId": 15,
+          "heroName": "Estafador",
+          "medalItemId": 316,
+          "enemyLevel": 13
+        },
+        {
+          "idx": 9,
+          "position": 3,
+          "mainStage": 9,
+          "heroId": 16,
+          "heroName": "Trasgo Dinamita",
+          "medalItemId": 317,
+          "enemyLevel": 14
+        },
+        {
+          "idx": 10,
+          "position": 4,
+          "mainStage": 12,
+          "heroId": 5,
+          "heroName": "Prima Donna",
+          "medalItemId": 306,
+          "enemyLevel": 15
+        },
+        {
+          "idx": 11,
+          "position": 5,
+          "mainStage": 15,
+          "heroId": 23,
+          "heroName": "Rastreadora",
+          "medalItemId": 324,
+          "enemyLevel": 16
+        },
+        {
+          "idx": 12,
+          "position": 6,
+          "mainStage": 18,
+          "heroId": 21,
+          "heroName": "Forjador de Almas",
+          "medalItemId": 322,
+          "enemyLevel": 17
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Viento fantasmal",
+      "nameEn": "Ghostly Wind",
+      "needLevel": 5,
+      "staminaNormal": 6,
+      "staminaElite": 12,
+      "heroId": 13,
+      "heroName": "Rayo Escarlata",
+      "heroMedalItemId": 314,
+      "heroMedalCount": 10,
+      "mainStages": [
+        3,
+        6,
+        9,
+        12,
+        15,
+        18
+      ],
+      "elite": [
+        {
+          "idx": 13,
+          "position": 1,
+          "mainStage": 3,
+          "heroId": 2,
+          "heroName": "Cuervo Negro",
+          "medalItemId": 303,
+          "enemyLevel": 19
+        },
+        {
+          "idx": 14,
+          "position": 2,
+          "mainStage": 6,
+          "heroId": 1,
+          "heroName": "Guardián",
+          "medalItemId": 302,
+          "enemyLevel": 21
+        },
+        {
+          "idx": 15,
+          "position": 3,
+          "mainStage": 9,
+          "heroId": 8,
+          "heroName": "Sombra",
+          "medalItemId": 309,
+          "enemyLevel": 23
+        },
+        {
+          "idx": 16,
+          "position": 4,
+          "mainStage": 12,
+          "heroId": 13,
+          "heroName": "Rayo Escarlata",
+          "medalItemId": 314,
+          "enemyLevel": 25
+        },
+        {
+          "idx": 17,
+          "position": 5,
+          "mainStage": 15,
+          "heroId": 18,
+          "heroName": "Matademonios",
+          "medalItemId": 319,
+          "enemyLevel": 27
+        },
+        {
+          "idx": 18,
+          "position": 6,
+          "mainStage": 18,
+          "heroId": 7,
+          "heroName": "Caballero Letal",
+          "medalItemId": 308,
+          "enemyLevel": 28
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Contienda bestial",
+      "nameEn": "Beastly Showdown",
+      "needLevel": 11,
+      "staminaNormal": 6,
+      "staminaElite": 12,
+      "heroId": 10,
+      "heroName": "Hijo de la Luz",
+      "heroMedalItemId": 311,
+      "heroMedalCount": 10,
+      "mainStages": [
+        3,
+        6,
+        9,
+        12,
+        15,
+        18
+      ],
+      "elite": [
+        {
+          "idx": 19,
+          "position": 1,
+          "mainStage": 3,
+          "heroId": 3,
+          "heroName": "Sabio de Viento",
+          "medalItemId": 304,
+          "enemyLevel": 30
+        },
+        {
+          "idx": 20,
+          "position": 2,
+          "mainStage": 6,
+          "heroId": 20,
+          "heroName": "Escudero del Mar",
+          "medalItemId": 321,
+          "enemyLevel": 32
+        },
+        {
+          "idx": 21,
+          "position": 3,
+          "mainStage": 9,
+          "heroId": 5,
+          "heroName": "Prima Donna",
+          "medalItemId": 306,
+          "enemyLevel": 34
+        },
+        {
+          "idx": 22,
+          "position": 4,
+          "mainStage": 12,
+          "heroId": 17,
+          "heroName": "Cuervo Nocturno",
+          "medalItemId": 318,
+          "enemyLevel": 36
+        },
+        {
+          "idx": 23,
+          "position": 5,
+          "mainStage": 15,
+          "heroId": 10,
+          "heroName": "Hijo de la Luz",
+          "medalItemId": 311,
+          "enemyLevel": 38
+        },
+        {
+          "idx": 24,
+          "position": 6,
+          "mainStage": 18,
+          "heroId": 9,
+          "heroName": "Arquera Letal",
+          "medalItemId": 310,
+          "enemyLevel": 39
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "Maldición oscura",
+      "nameEn": "Dark Curse",
+      "needLevel": 21,
+      "staminaNormal": 6,
+      "staminaElite": 12,
+      "heroId": 18,
+      "heroName": "Matademonios",
+      "heroMedalItemId": 319,
+      "heroMedalCount": 10,
+      "mainStages": [
+        3,
+        6,
+        9,
+        12,
+        15,
+        18
+      ],
+      "elite": [
+        {
+          "idx": 25,
+          "position": 1,
+          "mainStage": 3,
+          "heroId": 4,
+          "heroName": "Reina de la Nieve",
+          "medalItemId": 305,
+          "enemyLevel": 41
+        },
+        {
+          "idx": 26,
+          "position": 2,
+          "mainStage": 6,
+          "heroId": 2,
+          "heroName": "Cuervo Negro",
+          "medalItemId": 303,
+          "enemyLevel": 43
+        },
+        {
+          "idx": 27,
+          "position": 3,
+          "mainStage": 9,
+          "heroId": 13,
+          "heroName": "Rayo Escarlata",
+          "medalItemId": 314,
+          "enemyLevel": 45
+        },
+        {
+          "idx": 28,
+          "position": 4,
+          "mainStage": 12,
+          "heroId": 8,
+          "heroName": "Sombra",
+          "medalItemId": 309,
+          "enemyLevel": 47
+        },
+        {
+          "idx": 29,
+          "position": 5,
+          "mainStage": 15,
+          "heroId": 7,
+          "heroName": "Caballero Letal",
+          "medalItemId": 308,
+          "enemyLevel": 49
+        },
+        {
+          "idx": 30,
+          "position": 6,
+          "mainStage": 18,
+          "heroId": 18,
+          "heroName": "Matademonios",
+          "medalItemId": 319,
+          "enemyLevel": 50
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "name": "Ensoñación",
+      "nameEn": "Dreamfall",
+      "needLevel": 31,
+      "staminaNormal": 6,
+      "staminaElite": 12,
+      "heroId": 19,
+      "heroName": "Elementalista",
+      "heroMedalItemId": 320,
+      "heroMedalCount": 10,
+      "mainStages": [
+        3,
+        6,
+        9,
+        12,
+        15,
+        18
+      ],
+      "elite": [
+        {
+          "idx": 31,
+          "position": 1,
+          "mainStage": 3,
+          "heroId": 20,
+          "heroName": "Escudero del Mar",
+          "medalItemId": 321,
+          "enemyLevel": 52
+        },
+        {
+          "idx": 32,
+          "position": 2,
+          "mainStage": 6,
+          "heroId": 15,
+          "heroName": "Estafador",
+          "medalItemId": 316,
+          "enemyLevel": 54
+        },
+        {
+          "idx": 33,
+          "position": 3,
+          "mainStage": 9,
+          "heroId": 10,
+          "heroName": "Hijo de la Luz",
+          "medalItemId": 311,
+          "enemyLevel": 56
+        },
+        {
+          "idx": 34,
+          "position": 4,
+          "mainStage": 12,
+          "heroId": 29,
+          "heroName": "Caballera de la Rosa",
+          "medalItemId": 330,
+          "enemyLevel": 57
+        },
+        {
+          "idx": 35,
+          "position": 5,
+          "mainStage": 15,
+          "heroId": 5,
+          "heroName": "Prima Donna",
+          "medalItemId": 306,
+          "enemyLevel": 58
+        },
+        {
+          "idx": 36,
+          "position": 6,
+          "mainStage": 18,
+          "heroId": 19,
+          "heroName": "Elementalista",
+          "medalItemId": 320,
+          "enemyLevel": 59
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "name": "Camino de fuego",
+      "nameEn": "Way of Fire",
+      "needLevel": 41,
+      "staminaNormal": 6,
+      "staminaElite": 12,
+      "heroId": 6,
+      "heroName": "Incineradora",
+      "heroMedalItemId": 307,
+      "heroMedalCount": 10,
+      "mainStages": [
+        3,
+        6,
+        9,
+        12,
+        15,
+        18
+      ],
+      "elite": [
+        {
+          "idx": 37,
+          "position": 1,
+          "mainStage": 3,
+          "heroId": 9,
+          "heroName": "Arquera Letal",
+          "medalItemId": 310,
+          "enemyLevel": 60
+        },
+        {
+          "idx": 38,
+          "position": 2,
+          "mainStage": 6,
+          "heroId": 23,
+          "heroName": "Rastreadora",
+          "medalItemId": 324,
+          "enemyLevel": 61
+        },
+        {
+          "idx": 39,
+          "position": 3,
+          "mainStage": 9,
+          "heroId": 21,
+          "heroName": "Forjador de Almas",
+          "medalItemId": 322,
+          "enemyLevel": 62
+        },
+        {
+          "idx": 40,
+          "position": 4,
+          "mainStage": 12,
+          "heroId": 16,
+          "heroName": "Trasgo Dinamita",
+          "medalItemId": 317,
+          "enemyLevel": 63
+        },
+        {
+          "idx": 41,
+          "position": 5,
+          "mainStage": 15,
+          "heroId": 17,
+          "heroName": "Cuervo Nocturno",
+          "medalItemId": 318,
+          "enemyLevel": 64
+        },
+        {
+          "idx": 42,
+          "position": 6,
+          "mainStage": 18,
+          "heroId": 6,
+          "heroName": "Incineradora",
+          "medalItemId": 307,
+          "enemyLevel": 65
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "name": "Prueba divina",
+      "nameEn": "Goddess' Trial",
+      "needLevel": 51,
+      "staminaNormal": 8,
+      "staminaElite": 16,
+      "heroId": 7,
+      "heroName": "Caballero Letal",
+      "heroMedalItemId": 308,
+      "heroMedalCount": 10,
+      "mainStages": [
+        3,
+        6,
+        9,
+        12,
+        15,
+        18
+      ],
+      "elite": [
+        {
+          "idx": 43,
+          "position": 1,
+          "mainStage": 3,
+          "heroId": 1,
+          "heroName": "Guardián",
+          "medalItemId": 302,
+          "enemyLevel": 65
+        },
+        {
+          "idx": 44,
+          "position": 2,
+          "mainStage": 6,
+          "heroId": 3,
+          "heroName": "Sabio de Viento",
+          "medalItemId": 304,
+          "enemyLevel": 65
+        },
+        {
+          "idx": 45,
+          "position": 3,
+          "mainStage": 9,
+          "heroId": 29,
+          "heroName": "Caballera de la Rosa",
+          "medalItemId": 330,
+          "enemyLevel": 65
+        },
+        {
+          "idx": 46,
+          "position": 4,
+          "mainStage": 12,
+          "heroId": 7,
+          "heroName": "Caballero Letal",
+          "medalItemId": 308,
+          "enemyLevel": 65
+        },
+        {
+          "idx": 47,
+          "position": 5,
+          "mainStage": 15,
+          "heroId": 19,
+          "heroName": "Elementalista",
+          "medalItemId": 320,
+          "enemyLevel": 65
+        },
+        {
+          "idx": 48,
+          "position": 6,
+          "mainStage": 18,
+          "heroId": 4,
+          "heroName": "Reina de la Nieve",
+          "medalItemId": 305,
+          "enemyLevel": 65
+        }
+      ]
+    }
+  ],
+  "heroes": {
+    "3": {
+      "id": 3,
+      "name": "Sabio de Viento",
+      "nameEn": "Sage of Storms",
+      "medalItemId": 304,
+      "stages": [
+        {
+          "chapter": 1,
+          "position": 1,
+          "mainStage": 3,
+          "idx": 1
+        },
+        {
+          "chapter": 4,
+          "position": 1,
+          "mainStage": 3,
+          "idx": 19
+        },
+        {
+          "chapter": 8,
+          "position": 2,
+          "mainStage": 6,
+          "idx": 44
+        }
+      ]
+    },
+    "20": {
+      "id": 20,
+      "name": "Escudero del Mar",
+      "nameEn": "Sea Squire",
+      "medalItemId": 321,
+      "stages": [
+        {
+          "chapter": 1,
+          "position": 2,
+          "mainStage": 6,
+          "idx": 2
+        },
+        {
+          "chapter": 4,
+          "position": 2,
+          "mainStage": 6,
+          "idx": 20
+        },
+        {
+          "chapter": 6,
+          "position": 1,
+          "mainStage": 3,
+          "idx": 31
+        }
+      ]
+    },
+    "4": {
+      "id": 4,
+      "name": "Reina de la Nieve",
+      "nameEn": "Snow Queen",
+      "medalItemId": 305,
+      "stages": [
+        {
+          "chapter": 1,
+          "position": 3,
+          "mainStage": 9,
+          "idx": 3
+        },
+        {
+          "chapter": 5,
+          "position": 1,
+          "mainStage": 3,
+          "idx": 25
+        },
+        {
+          "chapter": 8,
+          "position": 6,
+          "mainStage": 18,
+          "idx": 48
+        }
+      ]
+    },
+    "6": {
+      "id": 6,
+      "name": "Incineradora",
+      "nameEn": "Incinerator",
+      "medalItemId": 307,
+      "stages": [
+        {
+          "chapter": 1,
+          "position": 4,
+          "mainStage": 12,
+          "idx": 4
+        },
+        {
+          "chapter": 7,
+          "position": 6,
+          "mainStage": 18,
+          "idx": 42
+        }
+      ]
+    },
+    "17": {
+      "id": 17,
+      "name": "Cuervo Nocturno",
+      "nameEn": "Night Raven",
+      "medalItemId": 318,
+      "stages": [
+        {
+          "chapter": 1,
+          "position": 5,
+          "mainStage": 15,
+          "idx": 5
+        },
+        {
+          "chapter": 4,
+          "position": 4,
+          "mainStage": 12,
+          "idx": 22
+        },
+        {
+          "chapter": 7,
+          "position": 5,
+          "mainStage": 15,
+          "idx": 41
+        }
+      ]
+    },
+    "2": {
+      "id": 2,
+      "name": "Cuervo Negro",
+      "nameEn": "Black Crow",
+      "medalItemId": 303,
+      "stages": [
+        {
+          "chapter": 1,
+          "position": 6,
+          "mainStage": 18,
+          "idx": 6
+        },
+        {
+          "chapter": 3,
+          "position": 1,
+          "mainStage": 3,
+          "idx": 13
+        },
+        {
+          "chapter": 5,
+          "position": 2,
+          "mainStage": 6,
+          "idx": 26
+        }
+      ]
+    },
+    "1": {
+      "id": 1,
+      "name": "Guardián",
+      "nameEn": "Oath Keeper",
+      "medalItemId": 302,
+      "stages": [
+        {
+          "chapter": 2,
+          "position": 1,
+          "mainStage": 3,
+          "idx": 7
+        },
+        {
+          "chapter": 3,
+          "position": 2,
+          "mainStage": 6,
+          "idx": 14
+        },
+        {
+          "chapter": 8,
+          "position": 1,
+          "mainStage": 3,
+          "idx": 43
+        }
+      ]
+    },
+    "15": {
+      "id": 15,
+      "name": "Estafador",
+      "nameEn": "Trickster",
+      "medalItemId": 316,
+      "stages": [
+        {
+          "chapter": 2,
+          "position": 2,
+          "mainStage": 6,
+          "idx": 8
+        },
+        {
+          "chapter": 6,
+          "position": 2,
+          "mainStage": 6,
+          "idx": 32
+        }
+      ]
+    },
+    "16": {
+      "id": 16,
+      "name": "Trasgo Dinamita",
+      "nameEn": "Bombin' Goblin",
+      "medalItemId": 317,
+      "stages": [
+        {
+          "chapter": 2,
+          "position": 3,
+          "mainStage": 9,
+          "idx": 9
+        },
+        {
+          "chapter": 7,
+          "position": 4,
+          "mainStage": 12,
+          "idx": 40
+        }
+      ]
+    },
+    "5": {
+      "id": 5,
+      "name": "Prima Donna",
+      "nameEn": "Prima Donna",
+      "medalItemId": 306,
+      "stages": [
+        {
+          "chapter": 2,
+          "position": 4,
+          "mainStage": 12,
+          "idx": 10
+        },
+        {
+          "chapter": 4,
+          "position": 3,
+          "mainStage": 9,
+          "idx": 21
+        },
+        {
+          "chapter": 6,
+          "position": 5,
+          "mainStage": 15,
+          "idx": 35
+        }
+      ]
+    },
+    "23": {
+      "id": 23,
+      "name": "Rastreadora",
+      "nameEn": "Tracker",
+      "medalItemId": 324,
+      "stages": [
+        {
+          "chapter": 2,
+          "position": 5,
+          "mainStage": 15,
+          "idx": 11
+        },
+        {
+          "chapter": 7,
+          "position": 2,
+          "mainStage": 6,
+          "idx": 38
+        }
+      ]
+    },
+    "21": {
+      "id": 21,
+      "name": "Forjador de Almas",
+      "nameEn": "Soul Forger",
+      "medalItemId": 322,
+      "stages": [
+        {
+          "chapter": 2,
+          "position": 6,
+          "mainStage": 18,
+          "idx": 12
+        },
+        {
+          "chapter": 7,
+          "position": 3,
+          "mainStage": 9,
+          "idx": 39
+        }
+      ]
+    },
+    "8": {
+      "id": 8,
+      "name": "Sombra",
+      "nameEn": "Shade",
+      "medalItemId": 309,
+      "stages": [
+        {
+          "chapter": 3,
+          "position": 3,
+          "mainStage": 9,
+          "idx": 15
+        },
+        {
+          "chapter": 5,
+          "position": 4,
+          "mainStage": 12,
+          "idx": 28
+        }
+      ]
+    },
+    "13": {
+      "id": 13,
+      "name": "Rayo Escarlata",
+      "nameEn": "Scarlet Bolt",
+      "medalItemId": 314,
+      "stages": [
+        {
+          "chapter": 3,
+          "position": 4,
+          "mainStage": 12,
+          "idx": 16
+        },
+        {
+          "chapter": 5,
+          "position": 3,
+          "mainStage": 9,
+          "idx": 27
+        }
+      ]
+    },
+    "18": {
+      "id": 18,
+      "name": "Matademonios",
+      "nameEn": "Demon Slayer",
+      "medalItemId": 319,
+      "stages": [
+        {
+          "chapter": 3,
+          "position": 5,
+          "mainStage": 15,
+          "idx": 17
+        },
+        {
+          "chapter": 5,
+          "position": 6,
+          "mainStage": 18,
+          "idx": 30
+        }
+      ]
+    },
+    "7": {
+      "id": 7,
+      "name": "Caballero Letal",
+      "nameEn": "Death Knight",
+      "medalItemId": 308,
+      "stages": [
+        {
+          "chapter": 3,
+          "position": 6,
+          "mainStage": 18,
+          "idx": 18
+        },
+        {
+          "chapter": 5,
+          "position": 5,
+          "mainStage": 15,
+          "idx": 29
+        },
+        {
+          "chapter": 8,
+          "position": 4,
+          "mainStage": 12,
+          "idx": 46
+        }
+      ]
+    },
+    "10": {
+      "id": 10,
+      "name": "Hijo de la Luz",
+      "nameEn": "Child of Light",
+      "medalItemId": 311,
+      "stages": [
+        {
+          "chapter": 4,
+          "position": 5,
+          "mainStage": 15,
+          "idx": 23
+        },
+        {
+          "chapter": 6,
+          "position": 3,
+          "mainStage": 9,
+          "idx": 33
+        }
+      ]
+    },
+    "9": {
+      "id": 9,
+      "name": "Arquera Letal",
+      "nameEn": "Death Archer",
+      "medalItemId": 310,
+      "stages": [
+        {
+          "chapter": 4,
+          "position": 6,
+          "mainStage": 18,
+          "idx": 24
+        },
+        {
+          "chapter": 7,
+          "position": 1,
+          "mainStage": 3,
+          "idx": 37
+        }
+      ]
+    },
+    "29": {
+      "id": 29,
+      "name": "Caballera de la Rosa",
+      "nameEn": "Rose Knight",
+      "medalItemId": 330,
+      "stages": [
+        {
+          "chapter": 6,
+          "position": 4,
+          "mainStage": 12,
+          "idx": 34
+        },
+        {
+          "chapter": 8,
+          "position": 3,
+          "mainStage": 9,
+          "idx": 45
+        }
+      ]
+    },
+    "19": {
+      "id": 19,
+      "name": "Elementalista",
+      "nameEn": "Elementalist",
+      "medalItemId": 320,
+      "stages": [
+        {
+          "chapter": 6,
+          "position": 6,
+          "mainStage": 18,
+          "idx": 36
+        },
+        {
+          "chapter": 8,
+          "position": 5,
+          "mainStage": 15,
+          "idx": 47
+        }
+      ]
+    }
+  }
+}

@@ -15,6 +15,8 @@ export interface ResearchStat {
   unit: string;
   total: number;
   count: number;
+  /** Id del efecto si todo el grupo comparte el mismo; clave p/ buscar subsidios. */
+  effectId?: number;
   techs: ResearchStatTech[];
 }
 
@@ -53,8 +55,10 @@ export function computeResearchStats(techLevels: number[]): ResearchStat[] {
     const key = `${name}|${unit}`;
     let entry = map.get(key);
     if (!entry) {
-      entry = { key, name, unit, total: 0, count: 0, techs: [] };
+      entry = { key, name, unit, total: 0, count: 0, effectId: t.effect.id, techs: [] };
       map.set(key, entry);
+    } else if (entry.effectId !== undefined && entry.effectId !== t.effect.id) {
+      entry.effectId = undefined; // mismo nombre+unidad con efectos distintos
     }
     entry.total += value;
     entry.count += 1;

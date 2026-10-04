@@ -35,6 +35,16 @@ check(heroBattleSkills(5)[0].name === 'Melodía de la muerte', `héroe 5 battle 
 check(heroSkills(107).length === 0 && heroBattleSkills(107).length === 0, 'héroe 107 sin skills en tablas');
 check(heroSkills(9999).length === 0, 'id desconocido => []');
 
+console.log('\n== pasivas: effectId + value en battle skills ==');
+const constr3 = heroBattleSkills(3).find(s => s.name === 'Potenciador construcción');
+check(constr3?.effectId === 248 && constr3?.value === 1000, `héroe 3 construcción effect 248 value 1000 (${constr3?.effectId}/${constr3?.value})`);
+const comida1 = heroBattleSkills(1).find(s => s.effectId === 242);
+check(comida1?.value === 11250, `héroe 1 comida effect 242 value 11250 (${comida1?.value})`);
+const energia13 = heroBattleSkills(13).find(s => s.effectId === 319);
+check(energia13?.value === 150, `héroe 13 energía máx effect 319 value 150 (${energia13?.value})`);
+check(heroBattleSkills(1)[0].effectId === undefined && heroBattleSkills(1)[0].value === undefined, 'Tactics (slot 0) sin effectId/value');
+check(heroBattleSkills(1).some(s => s.effectId === 211), 'las skills de tropa sí exportan effectId (las filtra hero-stats)');
+
 console.log('\n== parse 1201: header 10 / entry 20 ==');
 function buildEntry(id: number, level: number, power: number, rank: number, grade: number, entryLen = 20): Buffer {
   const b = Buffer.alloc(entryLen);

@@ -14,7 +14,7 @@ export class ReclaimDailyAction implements BotAction {
     bot.bot.log(`[ACTION] Reclamando daily index ${idx}...`);
     await claimDaily(bot.bot, idx);
     cfg.index = idx >= 20 ? 0 : idx + 1;
-    cfg.next = nextByResetTime(bot.config.dailyResetTime);
+    cfg.next = nextByResetTime(bot.getDailyResetSec());
     bot.saveConfig();
     return true;
   }
@@ -41,7 +41,7 @@ export class ForgeGiftAction implements BotAction {
     if (cfg.next !== 0 && cfg.next > Math.floor(Date.now() / 1000)) return false;
     bot.bot.log('[ACTION] Reclamando forge gift...');
     claimForgeGift(bot.bot);
-    cfg.next = nextByResetTime(bot.config.dailyResetTime);
+    cfg.next = nextByResetTime(bot.getDailyResetSec());
     bot.saveConfig();
     await new Promise(r => setTimeout(r, 2000));
     return true;

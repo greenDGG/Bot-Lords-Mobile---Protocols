@@ -44,19 +44,25 @@
 "id": 212,
 "name": "Potenciador PS infantería",
 "nameEn": "Infantry HP Boost",
-"desc": ""
+"desc": "",
+"effectId": 211,
+"value": 2500
 },
 {
 "id": 213,
 "name": "Gestión suministro de comida",
 "nameEn": "Food Supply Management",
-"desc": ""
+"desc": "",
+"effectId": 242,
+"value": 11250
 },
 {
 "id": 214,
 "name": "Potenciador ATQ infantería",
 "nameEn": "Infantry ATK Boost",
-"desc": ""
+"desc": "",
+"effectId": 201,
+"value": 1500
 }
 ]
 },
@@ -102,19 +108,25 @@
 "id": 216,
 "name": "Potenciador PS artillería",
 "nameEn": "Ranged HP Boost",
-"desc": ""
+"desc": "",
+"effectId": 213,
+"value": 2500
 },
 {
 "id": 217,
 "name": "Potenciador DEF artillería",
 "nameEn": "Ranged DEF Boost",
-"desc": ""
+"desc": "",
+"effectId": 208,
+"value": 2500
 },
 {
 "id": 218,
 "name": "Potenciador ATQ trampa",
 "nameEn": "Trap ATK Boost",
-"desc": ""
+"desc": "",
+"effectId": 205,
+"value": 1500
 }
 ]
 },
@@ -160,19 +172,25 @@
 "id": 220,
 "name": "Potenciador construcción",
 "nameEn": "Construction Boost",
-"desc": ""
+"desc": "",
+"effectId": 248,
+"value": 1000
 },
 {
 "id": 221,
 "name": "Potenciador ATQ trampa",
 "nameEn": "Trap ATK Boost",
-"desc": ""
+"desc": "",
+"effectId": 205,
+"value": 1500
 },
 {
 "id": 222,
 "name": "Potenciador DEF caballería",
 "nameEn": "Cavalry DEF Boost",
-"desc": ""
+"desc": "",
+"effectId": 207,
+"value": 2500
 }
 ]
 },
@@ -218,19 +236,25 @@
 "id": 224,
 "name": "Potenciador DEF trampa",
 "nameEn": "Trap DEF Boost",
-"desc": ""
+"desc": "",
+"effectId": 210,
+"value": 3750
 },
 {
 "id": 225,
 "name": "Potenciador PS artillería",
 "nameEn": "Ranged HP Boost",
-"desc": ""
+"desc": "",
+"effectId": 213,
+"value": 2500
 },
 {
 "id": 226,
 "name": "Potenciador ATQ artillería",
 "nameEn": "Ranged ATK Boost",
-"desc": ""
+"desc": "",
+"effectId": 203,
+"value": 1500
 }
 ]
 },
@@ -276,19 +300,25 @@
 "id": 228,
 "name": "Potenciador PS máquina de asedio",
 "nameEn": "Siege Engine HP Boost",
-"desc": ""
+"desc": "",
+"effectId": 214,
+"value": 3750
 },
 {
 "id": 229,
 "name": "Potenciador DEF máquina de asedio",
 "nameEn": "Siege Engine DEF Boost",
-"desc": ""
+"desc": "",
+"effectId": 209,
+"value": 3750
 },
 {
 "id": 230,
 "name": "Potenciador ATQ máquina de asedio",
 "nameEn": "Siege Engine ATK Boost",
-"desc": ""
+"desc": "",
+"effectId": 204,
+"value": 2500
 }
 ]
 },
@@ -334,19 +364,25 @@
 "id": 232,
 "name": "Gestión suministro de madera",
 "nameEn": "Timber Supply Management",
-"desc": ""
+"desc": "",
+"effectId": 244,
+"value": 7500
 },
 {
 "id": 233,
 "name": "Potenciador PS máquina de asedio",
 "nameEn": "Siege Engine HP Boost",
-"desc": ""
+"desc": "",
+"effectId": 214,
+"value": 3750
 },
 {
 "id": 234,
 "name": "Potenciador ATQ máquina de asedio",
 "nameEn": "Siege Engine ATK Boost",
-"desc": ""
+"desc": "",
+"effectId": 204,
+"value": 2500
 }
 ]
 },
@@ -392,19 +428,25 @@
 "id": 236,
 "name": "Gestión suministro de piedra",
 "nameEn": "Stone Supply Management",
-"desc": ""
+"desc": "",
+"effectId": 243,
+"value": 7500
 },
 {
 "id": 237,
 "name": "Potenciador DEF caballería",
 "nameEn": "Cavalry DEF Boost",
-"desc": ""
+"desc": "",
+"effectId": 207,
+"value": 2500
 },
 {
 "id": 238,
 "name": "Potenciador PS caballería",
 "nameEn": "Cavalry HP Boost",
-"desc": ""
+"desc": "",
+"effectId": 212,
+"value": 2500
 }
 ]
 },
@@ -450,19 +492,25 @@
 "id": 240,
 "name": "Guardia del castillo",
 "nameEn": "Castle Guard",
-"desc": ""
+"desc": "",
+"effectId": 313,
+"value": 3000
 },
 {
 "id": 241,
 "name": "Potenciador construc. trampa",
 "nameEn": "Trap Construction Boost",
-"desc": ""
+"desc": "",
+"effectId": 252,
+"value": 2000
 },
 {
 "id": 242,
 "name": "Potenciador DEF infantería",
 "nameEn": "Infantry DEF Boost",
-"desc": ""
+"desc": "",
+"effectId": 206,
+"value": 2500
 }
 ]
 },
@@ -508,19 +556,25 @@
 "id": 244,
 "name": "Gestión suministro de mineral",
 "nameEn": "Ore Supply Management",
-"desc": ""
+"desc": "",
+"effectId": 245,
+"value": 7500
 },
 {
 "id": 245,
 "name": "Potenciador ATQ trampa",
 "nameEn": "Trap ATK Boost",
-"desc": ""
+"desc": "",
+"effectId": 205,
+"value": 1500
 },
 {
 "id": 246,
 "name": "Potenciador ATQ artillería",
 "nameEn": "Ranged ATK Boost",
-"desc": ""
+"desc": "",
+"effectId": 203,
+"value": 1500
 }
 ]
 },
@@ -566,19 +620,25 @@
 "id": 248,
 "name": "Potenc. duración trampa",
 "nameEn": "Trap Durability Boost",
-"desc": ""
+"desc": "",
+"effectId": 215,
+"value": 3750
 },
 {
 "id": 249,
 "name": "Potenciador PS caballería",
 "nameEn": "Cavalry HP Boost",
-"desc": ""
+"desc": "",
+"effectId": 212,
+"value": 2500
 },
 {
 "id": 250,
 "name": "Potenciador ATQ caballería",
 "nameEn": "Cavalry ATK Boost",
-"desc": ""
+"desc": "",
+"effectId": 202,
+"value": 1500
 }
 ]
 },
@@ -624,19 +684,25 @@
 "id": 252,
 "name": "Potenciador PS caballería",
 "nameEn": "Cavalry HP Boost",
-"desc": ""
+"desc": "",
+"effectId": 212,
+"value": 2500
 },
 {
 "id": 253,
 "name": "Defensa inquebrantable",
 "nameEn": "Impenetrable Defense",
-"desc": ""
+"desc": "",
+"effectId": 217,
+"value": 1250
 },
 {
 "id": 254,
 "name": "Potenciador ATQ caballería",
 "nameEn": "Cavalry ATK Boost",
-"desc": ""
+"desc": "",
+"effectId": 202,
+"value": 1500
 }
 ]
 },
@@ -682,13 +748,17 @@
 "id": 257,
 "name": "Potenciador DEF infantería",
 "nameEn": "Infantry DEF Boost",
-"desc": ""
+"desc": "",
+"effectId": 206,
+"value": 2500
 },
 {
 "id": 258,
 "name": "Potenciador ATQ infantería",
 "nameEn": "Infantry ATK Boost",
-"desc": ""
+"desc": "",
+"effectId": 201,
+"value": 1500
 }
 ]
 },
@@ -734,19 +804,25 @@
 "id": 260,
 "name": "Potenciador construcción",
 "nameEn": "Construction Boost",
-"desc": ""
+"desc": "",
+"effectId": 248,
+"value": 1000
 },
 {
 "id": 261,
 "name": "Potenciador DEF infantería",
 "nameEn": "Infantry DEF Boost",
-"desc": ""
+"desc": "",
+"effectId": 206,
+"value": 2500
 },
 {
 "id": 262,
 "name": "Potenc. energía máx.",
 "nameEn": "Max Energy Boost",
-"desc": ""
+"desc": "",
+"effectId": 319,
+"value": 150
 }
 ]
 },
@@ -792,19 +868,25 @@
 "id": 264,
 "name": "Gestión suministro de oro",
 "nameEn": "Gold Supply Management",
-"desc": ""
+"desc": "",
+"effectId": 246,
+"value": 7500
 },
 {
 "id": 265,
 "name": "Potenciador investigación",
 "nameEn": "Research Boost",
-"desc": ""
+"desc": "",
+"effectId": 249,
+"value": 1250
 },
 {
 "id": 266,
 "name": "Muñeco de entrenamiento",
 "nameEn": "Training Dummy",
-"desc": ""
+"desc": "",
+"effectId": 251,
+"value": 1000
 }
 ]
 },
@@ -850,19 +932,25 @@
 "id": 268,
 "name": "Potenciador investigación",
 "nameEn": "Research Boost",
-"desc": ""
+"desc": "",
+"effectId": 249,
+"value": 1250
 },
 {
 "id": 269,
 "name": "Potenc. energía máx.",
 "nameEn": "Max Energy Boost",
-"desc": ""
+"desc": "",
+"effectId": 319,
+"value": 150
 },
 {
 "id": 270,
 "name": "Regeneración energía",
 "nameEn": "Energy Regeneration",
-"desc": ""
+"desc": "",
+"effectId": 317,
+"value": 500
 }
 ]
 },
@@ -908,19 +996,25 @@
 "id": 272,
 "name": "Potenc. duración trampa",
 "nameEn": "Trap Durability Boost",
-"desc": ""
+"desc": "",
+"effectId": 215,
+"value": 3750
 },
 {
 "id": 273,
 "name": "Potenciador ATQ trampa",
 "nameEn": "Trap ATK Boost",
-"desc": ""
+"desc": "",
+"effectId": 205,
+"value": 1500
 },
 {
 "id": 274,
 "name": "Potenc. ATQ ejército",
 "nameEn": "Army ATK Boost",
-"desc": ""
+"desc": "",
+"effectId": 216,
+"value": 1000
 }
 ]
 },
@@ -966,19 +1060,25 @@
 "id": 276,
 "name": "Guardia del castillo",
 "nameEn": "Castle Guard",
-"desc": ""
+"desc": "",
+"effectId": 313,
+"value": 3000
 },
 {
 "id": 277,
 "name": "Potenciador DEF caballería",
 "nameEn": "Cavalry DEF Boost",
-"desc": ""
+"desc": "",
+"effectId": 207,
+"value": 2500
 },
 {
 "id": 278,
 "name": "Potenciador ATQ caballería",
 "nameEn": "Cavalry ATK Boost",
-"desc": ""
+"desc": "",
+"effectId": 202,
+"value": 1500
 }
 ]
 },
@@ -1024,19 +1124,25 @@
 "id": 280,
 "name": "Potenciador PS infantería",
 "nameEn": "Infantry HP Boost",
-"desc": ""
+"desc": "",
+"effectId": 211,
+"value": 2500
 },
 {
 "id": 281,
 "name": "Potenciador ATQ trampa",
 "nameEn": "Trap ATK Boost",
-"desc": ""
+"desc": "",
+"effectId": 205,
+"value": 1500
 },
 {
 "id": 282,
 "name": "Potenciador ATQ infantería",
 "nameEn": "Infantry ATK Boost",
-"desc": ""
+"desc": "",
+"effectId": 201,
+"value": 1500
 }
 ]
 },
@@ -1082,19 +1188,25 @@
 "id": 284,
 "name": "Gestión suministro de comida",
 "nameEn": "Food Supply Management",
-"desc": ""
+"desc": "",
+"effectId": 242,
+"value": 11250
 },
 {
 "id": 285,
 "name": "Potenciador DEF máquina de asedio",
 "nameEn": "Siege Engine DEF Boost",
-"desc": ""
+"desc": "",
+"effectId": 209,
+"value": 3750
 },
 {
 "id": 286,
 "name": "Potenciador ATQ máquina de asedio",
 "nameEn": "Siege Engine ATK Boost",
-"desc": ""
+"desc": "",
+"effectId": 204,
+"value": 2500
 }
 ]
 },
@@ -1140,19 +1252,25 @@
 "id": 288,
 "name": "Gestión suministro de piedra",
 "nameEn": "Stone Supply Management",
-"desc": ""
+"desc": "",
+"effectId": 243,
+"value": 7500
 },
 {
 "id": 289,
 "name": "Potenciador construc. trampa",
 "nameEn": "Trap Construction Boost",
-"desc": ""
+"desc": "",
+"effectId": 252,
+"value": 2000
 },
 {
 "id": 290,
 "name": "Potenciador ATQ infantería",
 "nameEn": "Infantry ATK Boost",
-"desc": ""
+"desc": "",
+"effectId": 201,
+"value": 1500
 }
 ]
 },
@@ -1198,19 +1316,25 @@
 "id": 292,
 "name": "Gestión suministro de oro",
 "nameEn": "Gold Supply Management",
-"desc": ""
+"desc": "",
+"effectId": 246,
+"value": 7500
 },
 {
 "id": 293,
 "name": "Potenciador DEF trampa",
 "nameEn": "Trap DEF Boost",
-"desc": ""
+"desc": "",
+"effectId": 210,
+"value": 3750
 },
 {
 "id": 294,
 "name": "Potenciador ATQ infantería",
 "nameEn": "Infantry ATK Boost",
-"desc": ""
+"desc": "",
+"effectId": 201,
+"value": 1500
 }
 ]
 },
@@ -1256,19 +1380,25 @@
 "id": 296,
 "name": "Canción de batalla",
 "nameEn": "Battle Song",
-"desc": ""
+"desc": "",
+"effectId": 218,
+"value": 1250
 },
 {
 "id": 297,
 "name": "Potenciador DEF artillería",
 "nameEn": "Ranged DEF Boost",
-"desc": ""
+"desc": "",
+"effectId": 208,
+"value": 2500
 },
 {
 "id": 298,
 "name": "Potenciador ATQ artillería",
 "nameEn": "Ranged ATK Boost",
-"desc": ""
+"desc": "",
+"effectId": 203,
+"value": 1500
 }
 ]
 },
@@ -1314,19 +1444,25 @@
 "id": 300,
 "name": "Gestión suministro de mineral",
 "nameEn": "Ore Supply Management",
-"desc": ""
+"desc": "",
+"effectId": 245,
+"value": 7500
 },
 {
 "id": 301,
 "name": "Potenciador DEF artillería",
 "nameEn": "Ranged DEF Boost",
-"desc": ""
+"desc": "",
+"effectId": 208,
+"value": 2500
 },
 {
 "id": 302,
 "name": "Potenciador ATQ artillería",
 "nameEn": "Ranged ATK Boost",
-"desc": ""
+"desc": "",
+"effectId": 203,
+"value": 1500
 }
 ]
 },
@@ -1372,19 +1508,25 @@
 "id": 304,
 "name": "Canción de batalla",
 "nameEn": "Battle Song",
-"desc": ""
+"desc": "",
+"effectId": 218,
+"value": 1250
 },
 {
 "id": 305,
 "name": "Defensa inquebrantable",
 "nameEn": "Impenetrable Defense",
-"desc": ""
+"desc": "",
+"effectId": 217,
+"value": 1250
 },
 {
 "id": 306,
 "name": "Potenc. ATQ ejército",
 "nameEn": "Army ATK Boost",
-"desc": ""
+"desc": "",
+"effectId": 216,
+"value": 1000
 }
 ]
 },
@@ -1430,19 +1572,25 @@
 "id": 308,
 "name": "Potenciador investigación",
 "nameEn": "Research Boost",
-"desc": ""
+"desc": "",
+"effectId": 249,
+"value": 1250
 },
 {
 "id": 309,
 "name": "Defensa inquebrantable",
 "nameEn": "Impenetrable Defense",
-"desc": ""
+"desc": "",
+"effectId": 217,
+"value": 1250
 },
 {
 "id": 310,
 "name": "Potenciador ATQ caballería",
 "nameEn": "Cavalry ATK Boost",
-"desc": ""
+"desc": "",
+"effectId": 202,
+"value": 1500
 }
 ]
 },
@@ -1488,19 +1636,25 @@
 "id": 312,
 "name": "Muñeco de entrenamiento",
 "nameEn": "Training Dummy",
-"desc": ""
+"desc": "",
+"effectId": 251,
+"value": 1000
 },
 {
 "id": 313,
 "name": "Canción de batalla",
 "nameEn": "Battle Song",
-"desc": ""
+"desc": "",
+"effectId": 218,
+"value": 1250
 },
 {
 "id": 314,
 "name": "Potenc. ATQ ejército",
 "nameEn": "Army ATK Boost",
-"desc": ""
+"desc": "",
+"effectId": 216,
+"value": 1000
 }
 ]
 },
@@ -1546,19 +1700,25 @@
 "id": 316,
 "name": "Potenciador investigación",
 "nameEn": "Research Boost",
-"desc": ""
+"desc": "",
+"effectId": 249,
+"value": 1250
 },
 {
 "id": 317,
 "name": "Defensa inquebrantable",
 "nameEn": "Impenetrable Defense",
-"desc": ""
+"desc": "",
+"effectId": 217,
+"value": 1250
 },
 {
 "id": 318,
 "name": "Potenciador ATQ infantería",
 "nameEn": "Infantry ATK Boost",
-"desc": ""
+"desc": "",
+"effectId": 201,
+"value": 1500
 }
 ]
 },
@@ -1604,19 +1764,25 @@
 "id": 320,
 "name": "Potenciador investigación",
 "nameEn": "Research Boost",
-"desc": ""
+"desc": "",
+"effectId": 249,
+"value": 1250
 },
 {
 "id": 321,
 "name": "Potenciador PS artillería",
 "nameEn": "Ranged HP Boost",
-"desc": ""
+"desc": "",
+"effectId": 213,
+"value": 2500
 },
 {
 "id": 322,
 "name": "Potenciador ATQ artillería",
 "nameEn": "Ranged ATK Boost",
-"desc": ""
+"desc": "",
+"effectId": 203,
+"value": 1500
 }
 ]
 },
@@ -1662,19 +1828,25 @@
 "id": 324,
 "name": "Gestión suministro de madera",
 "nameEn": "Timber Supply Management",
-"desc": ""
+"desc": "",
+"effectId": 244,
+"value": 7500
 },
 {
 "id": 325,
 "name": "Potenciador PS caballería",
 "nameEn": "Cavalry HP Boost",
-"desc": ""
+"desc": "",
+"effectId": 212,
+"value": 2500
 },
 {
 "id": 326,
 "name": "Potenc. ATQ ejército",
 "nameEn": "Army ATK Boost",
-"desc": ""
+"desc": "",
+"effectId": 216,
+"value": 1000
 }
 ]
 },
@@ -1720,19 +1892,25 @@
 "id": 328,
 "name": "Muñeco de entrenamiento",
 "nameEn": "Training Dummy",
-"desc": ""
+"desc": "",
+"effectId": 251,
+"value": 1000
 },
 {
 "id": 329,
 "name": "Canción de batalla",
 "nameEn": "Battle Song",
-"desc": ""
+"desc": "",
+"effectId": 218,
+"value": 1250
 },
 {
 "id": 330,
 "name": "Potenc. ATQ ejército",
 "nameEn": "Army ATK Boost",
-"desc": ""
+"desc": "",
+"effectId": 216,
+"value": 1000
 }
 ]
 },
@@ -1778,19 +1956,25 @@
 "id": 332,
 "name": "Potenciador PS caballería",
 "nameEn": "Cavalry HP Boost",
-"desc": ""
+"desc": "",
+"effectId": 212,
+"value": 2500
 },
 {
 "id": 333,
 "name": "Potenciador DEF caballería",
 "nameEn": "Cavalry DEF Boost",
-"desc": ""
+"desc": "",
+"effectId": 207,
+"value": 2500
 },
 {
 "id": 334,
 "name": "Potenciador ATQ caballería",
 "nameEn": "Cavalry ATK Boost",
-"desc": ""
+"desc": "",
+"effectId": 202,
+"value": 1500
 }
 ]
 },
@@ -1836,19 +2020,25 @@
 "id": 336,
 "name": "Potenciador PS infantería",
 "nameEn": "Infantry HP Boost",
-"desc": ""
+"desc": "",
+"effectId": 211,
+"value": 2500
 },
 {
 "id": 337,
 "name": "Potenciador DEF infantería",
 "nameEn": "Infantry DEF Boost",
-"desc": ""
+"desc": "",
+"effectId": 206,
+"value": 2500
 },
 {
 "id": 338,
 "name": "Potenciador ATQ infantería",
 "nameEn": "Infantry ATK Boost",
-"desc": ""
+"desc": "",
+"effectId": 201,
+"value": 1500
 }
 ]
 },
@@ -1894,19 +2084,25 @@
 "id": 340,
 "name": "Potenciador construcción",
 "nameEn": "Construction Boost",
-"desc": ""
+"desc": "",
+"effectId": 248,
+"value": 1000
 },
 {
 "id": 341,
 "name": "Potenciador investigación",
 "nameEn": "Research Boost",
-"desc": ""
+"desc": "",
+"effectId": 249,
+"value": 1250
 },
 {
 "id": 342,
 "name": "Muñeco de entrenamiento",
 "nameEn": "Training Dummy",
-"desc": ""
+"desc": "",
+"effectId": 251,
+"value": 1000
 }
 ]
 },
@@ -1952,19 +2148,25 @@
 "id": 344,
 "name": "Potenciador investigación",
 "nameEn": "Research Boost",
-"desc": ""
+"desc": "",
+"effectId": 249,
+"value": 1250
 },
 {
 "id": 345,
 "name": "Defensa inquebrantable",
 "nameEn": "Impenetrable Defense",
-"desc": ""
+"desc": "",
+"effectId": 217,
+"value": 1250
 },
 {
 "id": 346,
 "name": "Potenc. ATQ ejército",
 "nameEn": "Army ATK Boost",
-"desc": ""
+"desc": "",
+"effectId": 216,
+"value": 1000
 }
 ]
 },
@@ -2010,19 +2212,25 @@
 "id": 348,
 "name": "Potenciador PS artillería",
 "nameEn": "Ranged HP Boost",
-"desc": ""
+"desc": "",
+"effectId": 213,
+"value": 2500
 },
 {
 "id": 349,
 "name": "Potenciador DEF artillería",
 "nameEn": "Ranged DEF Boost",
-"desc": ""
+"desc": "",
+"effectId": 208,
+"value": 2500
 },
 {
 "id": 350,
 "name": "Potenciador ATQ artillería",
 "nameEn": "Ranged ATK Boost",
-"desc": ""
+"desc": "",
+"effectId": 203,
+"value": 1500
 }
 ]
 },
@@ -2068,19 +2276,25 @@
 "id": 352,
 "name": "Canción de batalla",
 "nameEn": "Battle Song",
-"desc": ""
+"desc": "",
+"effectId": 218,
+"value": 1500
 },
 {
 "id": 353,
 "name": "Potenciador ATQ caballería",
 "nameEn": "Cavalry ATK Boost",
-"desc": ""
+"desc": "",
+"effectId": 202,
+"value": 3000
 },
 {
 "id": 354,
 "name": "Potenciador ATQ artillería",
 "nameEn": "Ranged ATK Boost",
-"desc": ""
+"desc": "",
+"effectId": 203,
+"value": 3000
 }
 ]
 },
@@ -2126,19 +2340,25 @@
 "id": 356,
 "name": "Potenciador PS artillería",
 "nameEn": "Ranged HP Boost",
-"desc": ""
+"desc": "",
+"effectId": 213,
+"value": 2500
 },
 {
 "id": 357,
 "name": "Defensa inquebrantable",
 "nameEn": "Impenetrable Defense",
-"desc": ""
+"desc": "",
+"effectId": 217,
+"value": 1250
 },
 {
 "id": 358,
 "name": "Potenciador ATQ artillería",
 "nameEn": "Ranged ATK Boost",
-"desc": ""
+"desc": "",
+"effectId": 203,
+"value": 1500
 }
 ]
 },
@@ -2184,19 +2404,25 @@
 "id": 360,
 "name": "Canción de batalla",
 "nameEn": "Battle Song",
-"desc": ""
+"desc": "",
+"effectId": 218,
+"value": 1250
 },
 {
 "id": 361,
 "name": "Defensa inquebrantable",
 "nameEn": "Impenetrable Defense",
-"desc": ""
+"desc": "",
+"effectId": 217,
+"value": 1250
 },
 {
 "id": 362,
 "name": "Potenc. ATQ ejército",
 "nameEn": "Army ATK Boost",
-"desc": ""
+"desc": "",
+"effectId": 216,
+"value": 1000
 }
 ]
 },
@@ -2242,19 +2468,25 @@
 "id": 364,
 "name": "Canción de batalla",
 "nameEn": "Battle Song",
-"desc": ""
+"desc": "",
+"effectId": 218,
+"value": 1250
 },
 {
 "id": 365,
 "name": "Defensa inquebrantable",
 "nameEn": "Impenetrable Defense",
-"desc": ""
+"desc": "",
+"effectId": 217,
+"value": 1250
 },
 {
 "id": 366,
 "name": "Potenc. ATQ ejército",
 "nameEn": "Army ATK Boost",
-"desc": ""
+"desc": "",
+"effectId": 216,
+"value": 1000
 }
 ]
 },
@@ -2300,19 +2532,25 @@
 "id": 368,
 "name": "Canción de batalla",
 "nameEn": "Battle Song",
-"desc": ""
+"desc": "",
+"effectId": 218,
+"value": 1250
 },
 {
 "id": 369,
 "name": "Potenciador DEF infantería",
 "nameEn": "Infantry DEF Boost",
-"desc": ""
+"desc": "",
+"effectId": 206,
+"value": 2500
 },
 {
 "id": 370,
 "name": "Potenciador ATQ infantería",
 "nameEn": "Infantry ATK Boost",
-"desc": ""
+"desc": "",
+"effectId": 201,
+"value": 1500
 }
 ]
 },
@@ -2358,19 +2596,25 @@
 "id": 937,
 "name": "Muñeco de entrenamiento",
 "nameEn": "Training Dummy",
-"desc": ""
+"desc": "",
+"effectId": 251,
+"value": 1000
 },
 {
 "id": 938,
 "name": "Canción de batalla",
 "nameEn": "Battle Song",
-"desc": ""
+"desc": "",
+"effectId": 218,
+"value": 1250
 },
 {
 "id": 939,
 "name": "Potenc. ATQ ejército",
 "nameEn": "Army ATK Boost",
-"desc": ""
+"desc": "",
+"effectId": 216,
+"value": 1000
 }
 ]
 },
@@ -2416,19 +2660,25 @@
 "id": 941,
 "name": "Potenciador investigación",
 "nameEn": "Research Boost",
-"desc": ""
+"desc": "",
+"effectId": 249,
+"value": 1250
 },
 {
 "id": 942,
 "name": "Defensa inquebrantable",
 "nameEn": "Impenetrable Defense",
-"desc": ""
+"desc": "",
+"effectId": 217,
+"value": 1500
 },
 {
 "id": 943,
 "name": "Potenc. ATQ ejército",
 "nameEn": "Army ATK Boost",
-"desc": ""
+"desc": "",
+"effectId": 216,
+"value": 1250
 }
 ]
 },
@@ -2474,19 +2724,25 @@
 "id": 945,
 "name": "Canción de batalla",
 "nameEn": "Battle Song",
-"desc": ""
+"desc": "",
+"effectId": 218,
+"value": 1500
 },
 {
 "id": 946,
 "name": "Potenciador ATQ infantería",
 "nameEn": "Infantry ATK Boost",
-"desc": ""
+"desc": "",
+"effectId": 201,
+"value": 3000
 },
 {
 "id": 947,
 "name": "Potenciador ATQ caballería",
 "nameEn": "Cavalry ATK Boost",
-"desc": ""
+"desc": "",
+"effectId": 202,
+"value": 3000
 }
 ]
 },
@@ -2532,19 +2788,25 @@
 "id": 949,
 "name": "Provisión de Anima",
 "nameEn": "Anima Storage",
-"desc": ""
+"desc": "",
+"effectId": 359,
+"value": 15000
 },
 {
 "id": 951,
 "name": "Potenciador ATQ caballería",
 "nameEn": "Cavalry ATK Boost",
-"desc": ""
+"desc": "",
+"effectId": 202,
+"value": 1500
 },
 {
 "id": 950,
 "name": "Escena bélica",
 "nameEn": "Wonder Army",
-"desc": ""
+"desc": "",
+"effectId": 406,
+"value": 10000
 }
 ]
 },
@@ -2590,19 +2852,25 @@
 "id": 953,
 "name": "Canción de batalla",
 "nameEn": "Battle Song",
-"desc": ""
+"desc": "",
+"effectId": 218,
+"value": 1500
 },
 {
 "id": 954,
 "name": "Potenciador ATQ artillería",
 "nameEn": "Ranged ATK Boost",
-"desc": ""
+"desc": "",
+"effectId": 203,
+"value": 3000
 },
 {
 "id": 955,
 "name": "Potenciador ATQ infantería",
 "nameEn": "Infantry ATK Boost",
-"desc": ""
+"desc": "",
+"effectId": 201,
+"value": 3000
 }
 ]
 },
@@ -2648,19 +2916,25 @@
 "id": 957,
 "name": "Entrenador de Monstruitos",
 "nameEn": "Familiar Trainer",
-"desc": ""
+"desc": "",
+"effectId": 361,
+"value": 1000
 },
 {
 "id": 958,
 "name": "Potenciador ATQ artillería",
 "nameEn": "Ranged ATK Boost",
-"desc": ""
+"desc": "",
+"effectId": 203,
+"value": 1500
 },
 {
 "id": 959,
 "name": "Escena bélica",
 "nameEn": "Wonder Army",
-"desc": ""
+"desc": "",
+"effectId": 406,
+"value": 10000
 }
 ]
 },
@@ -2706,19 +2980,25 @@
 "id": 961,
 "name": "Experto en Fusión",
 "nameEn": "Merging Expert",
-"desc": ""
+"desc": "",
+"effectId": 360,
+"value": 1000
 },
 {
 "id": 963,
 "name": "Potenciador ATQ infantería",
 "nameEn": "Infantry ATK Boost",
-"desc": ""
+"desc": "",
+"effectId": 201,
+"value": 1500
 },
 {
 "id": 962,
 "name": "Escena bélica",
 "nameEn": "Wonder Army",
-"desc": ""
+"desc": "",
+"effectId": 406,
+"value": 10000
 }
 ]
 },
@@ -2764,19 +3044,25 @@
 "id": 965,
 "name": "Bendición de DEF",
 "nameEn": "DEF Blessing",
-"desc": ""
+"desc": "",
+"effectId": 217,
+"value": 500
 },
 {
 "id": 966,
 "name": "Bendición de PS",
 "nameEn": "HP Blessing",
-"desc": ""
+"desc": "",
+"effectId": 218,
+"value": 500
 },
 {
 "id": 967,
 "name": "Bendición de ATQ",
 "nameEn": "ATK Blessing",
-"desc": ""
+"desc": "",
+"effectId": 216,
+"value": 500
 }
 ]
 },
@@ -2822,19 +3108,25 @@
 "id": 969,
 "name": "Refuerzo de ATQ infantería",
 "nameEn": "Infantry Counter Boost",
-"desc": ""
+"desc": "",
+"effectId": 456,
+"value": 750
 },
 {
 "id": 970,
 "name": "Refuerzo de ATQ artillería",
 "nameEn": "Ranged Counter Boost",
-"desc": ""
+"desc": "",
+"effectId": 458,
+"value": 750
 },
 {
 "id": 971,
 "name": "Refuerzo de ATQ caballería",
 "nameEn": "Cavalry Counter Boost",
-"desc": ""
+"desc": "",
+"effectId": 457,
+"value": 750
 }
 ]
 },
@@ -2880,19 +3172,25 @@
 "id": 973,
 "name": "Bendición de DEF de infantería",
 "nameEn": "Infantry DEF Blessing",
-"desc": ""
+"desc": "",
+"effectId": 206,
+"value": 500
 },
 {
 "id": 974,
 "name": "Bendición de ATQ de infantería",
 "nameEn": "Infantry ATK Blessing",
-"desc": ""
+"desc": "",
+"effectId": 201,
+"value": 500
 },
 {
 "id": 975,
 "name": "Mejora de elaboración de equipo",
 "nameEn": "Gear Crafting Boost",
-"desc": ""
+"desc": "",
+"effectId": 455,
+"value": 1000
 }
 ]
 },
@@ -2938,19 +3236,25 @@
 "id": 1306,
 "name": "Bendición de DEF de caballería",
 "nameEn": "Cavalry DEF Blessing",
-"desc": ""
+"desc": "",
+"effectId": 207,
+"value": 500
 },
 {
 "id": 1307,
 "name": "Bendición de ATQ de caballería",
 "nameEn": "Cavalry ATK Blessing",
-"desc": ""
+"desc": "",
+"effectId": 202,
+"value": 500
 },
 {
 "id": 1308,
 "name": "Mejora de elaboración de equipo",
 "nameEn": "Gear Crafting Boost",
-"desc": ""
+"desc": "",
+"effectId": 455,
+"value": 1000
 }
 ]
 },
@@ -2996,19 +3300,25 @@
 "id": 1310,
 "name": "Canción de batalla",
 "nameEn": "Battle Song",
-"desc": ""
+"desc": "",
+"effectId": 218,
+"value": 1250
 },
 {
 "id": 1311,
 "name": "Potenciador DEF infantería",
 "nameEn": "Infantry DEF Boost",
-"desc": ""
+"desc": "",
+"effectId": 206,
+"value": 2500
 },
 {
 "id": 1312,
 "name": "Potenciador ATQ infantería",
 "nameEn": "Infantry ATK Boost",
-"desc": ""
+"desc": "",
+"effectId": 201,
+"value": 1500
 }
 ]
 },
@@ -3054,19 +3364,25 @@
 "id": 1314,
 "name": "Bendición de DEF de artillería",
 "nameEn": "Ranged DEF Blessing",
-"desc": ""
+"desc": "",
+"effectId": 208,
+"value": 500
 },
 {
 "id": 1315,
 "name": "Bendición de ATQ de artillería",
 "nameEn": "Ranged ATK Blessing",
-"desc": ""
+"desc": "",
+"effectId": 203,
+"value": 500
 },
 {
 "id": 1316,
 "name": "Mejora de elaboración de equipo",
 "nameEn": "Gear Crafting Boost",
-"desc": ""
+"desc": "",
+"effectId": 455,
+"value": 1000
 }
 ]
 },
@@ -3112,19 +3428,25 @@
 "id": 1318,
 "name": "Entrenador de Monstruitos",
 "nameEn": "Familiar Trainer",
-"desc": ""
+"desc": "",
+"effectId": 361,
+"value": 1000
 },
 {
 "id": 1319,
 "name": "Bendición de DEF de infantería",
 "nameEn": "Infantry DEF Blessing",
-"desc": ""
+"desc": "",
+"effectId": 206,
+"value": 500
 },
 {
 "id": 1320,
 "name": "Bendición de ATQ de infantería",
 "nameEn": "Infantry ATK Blessing",
-"desc": ""
+"desc": "",
+"effectId": 201,
+"value": 500
 }
 ]
 },
@@ -3170,19 +3492,25 @@
 "id": 1322,
 "name": "Bendición de DEF de caballería",
 "nameEn": "Cavalry DEF Blessing",
-"desc": ""
+"desc": "",
+"effectId": 207,
+"value": 500
 },
 {
 "id": 1323,
 "name": "Bendición de PS de caballería",
 "nameEn": "Cavalry HP Blessing",
-"desc": ""
+"desc": "",
+"effectId": 212,
+"value": 500
 },
 {
 "id": 1324,
 "name": "Bendición de ATQ de caballería",
 "nameEn": "Cavalry ATK Blessing",
-"desc": ""
+"desc": "",
+"effectId": 202,
+"value": 500
 }
 ]
 },
@@ -3228,19 +3556,25 @@
 "id": 1326,
 "name": "Bendición de DEF de artillería",
 "nameEn": "Ranged DEF Blessing",
-"desc": ""
+"desc": "",
+"effectId": 208,
+"value": 500
 },
 {
 "id": 1327,
 "name": "Bendición de PS de artillería",
 "nameEn": "Ranged HP Blessing",
-"desc": ""
+"desc": "",
+"effectId": 213,
+"value": 500
 },
 {
 "id": 1328,
 "name": "Bendición de ATQ de artillería",
 "nameEn": "Ranged ATK Blessing",
-"desc": ""
+"desc": "",
+"effectId": 203,
+"value": 500
 }
 ]
 },
@@ -3286,19 +3620,25 @@
 "id": 1330,
 "name": "Bendición de DEF",
 "nameEn": "DEF Blessing",
-"desc": ""
+"desc": "",
+"effectId": 217,
+"value": 500
 },
 {
 "id": 1331,
 "name": "Bendición de PS",
 "nameEn": "HP Blessing",
-"desc": ""
+"desc": "",
+"effectId": 218,
+"value": 500
 },
 {
 "id": 1332,
 "name": "Bendición de ATQ",
 "nameEn": "ATK Blessing",
-"desc": ""
+"desc": "",
+"effectId": 216,
+"value": 500
 }
 ]
 },
@@ -3344,19 +3684,25 @@
 "id": 1342,
 "name": "Muñeco de entrenamiento",
 "nameEn": "Training Dummy",
-"desc": ""
+"desc": "",
+"effectId": 251,
+"value": 1000
 },
 {
 "id": 1343,
 "name": "Potenciador PS infantería",
 "nameEn": "Infantry HP Boost",
-"desc": ""
+"desc": "",
+"effectId": 211,
+"value": 2500
 },
 {
 "id": 1344,
 "name": "Potenciador ATQ infantería",
 "nameEn": "Infantry ATK Boost",
-"desc": ""
+"desc": "",
+"effectId": 201,
+"value": 1500
 }
 ]
 },
@@ -3402,19 +3748,25 @@
 "id": 2778,
 "name": "Potenciador PS caballería",
 "nameEn": "Cavalry HP Boost",
-"desc": ""
+"desc": "",
+"effectId": 212,
+"value": 2500
 },
 {
 "id": 2779,
 "name": "Defensa inquebrantable",
 "nameEn": "Impenetrable Defense",
-"desc": ""
+"desc": "",
+"effectId": 217,
+"value": 1250
 },
 {
 "id": 2780,
 "name": "Potenciador ATQ caballería",
 "nameEn": "Cavalry ATK Boost",
-"desc": ""
+"desc": "",
+"effectId": 202,
+"value": 1500
 }
 ]
 },
@@ -3460,19 +3812,25 @@
 "id": 698,
 "name": "Bendición de DEF",
 "nameEn": "DEF Blessing",
-"desc": ""
+"desc": "",
+"effectId": 217,
+"value": 500
 },
 {
 "id": 699,
 "name": "Bendición de PS",
 "nameEn": "HP Blessing",
-"desc": ""
+"desc": "",
+"effectId": 218,
+"value": 500
 },
 {
 "id": 700,
 "name": "Bendición de ATQ",
 "nameEn": "ATK Blessing",
-"desc": ""
+"desc": "",
+"effectId": 216,
+"value": 500
 }
 ]
 },
@@ -3551,13 +3909,17 @@
 "id": 257,
 "name": "Potenciador DEF infantería",
 "nameEn": "Infantry DEF Boost",
-"desc": ""
+"desc": "",
+"effectId": 206,
+"value": 2500
 },
 {
 "id": 258,
 "name": "Potenciador ATQ infantería",
 "nameEn": "Infantry ATK Boost",
-"desc": ""
+"desc": "",
+"effectId": 201,
+"value": 1500
 }
 ]
 },
@@ -3610,19 +3972,25 @@
 "id": 212,
 "name": "Potenciador PS infantería",
 "nameEn": "Infantry HP Boost",
-"desc": ""
+"desc": "",
+"effectId": 211,
+"value": 2500
 },
 {
 "id": 213,
 "name": "Gestión suministro de comida",
 "nameEn": "Food Supply Management",
-"desc": ""
+"desc": "",
+"effectId": 242,
+"value": 11250
 },
 {
 "id": 214,
 "name": "Potenciador ATQ infantería",
 "nameEn": "Infantry ATK Boost",
-"desc": ""
+"desc": "",
+"effectId": 201,
+"value": 1500
 }
 ]
 },
@@ -3643,19 +4011,25 @@
 "id": 216,
 "name": "Potenciador PS artillería",
 "nameEn": "Ranged HP Boost",
-"desc": ""
+"desc": "",
+"effectId": 213,
+"value": 2500
 },
 {
 "id": 217,
 "name": "Potenciador DEF artillería",
 "nameEn": "Ranged DEF Boost",
-"desc": ""
+"desc": "",
+"effectId": 208,
+"value": 2500
 },
 {
 "id": 218,
 "name": "Potenciador ATQ trampa",
 "nameEn": "Trap ATK Boost",
-"desc": ""
+"desc": "",
+"effectId": 205,
+"value": 1500
 }
 ]
 },
@@ -3676,19 +4050,25 @@
 "id": 220,
 "name": "Potenciador construcción",
 "nameEn": "Construction Boost",
-"desc": ""
+"desc": "",
+"effectId": 248,
+"value": 1000
 },
 {
 "id": 221,
 "name": "Potenciador ATQ trampa",
 "nameEn": "Trap ATK Boost",
-"desc": ""
+"desc": "",
+"effectId": 205,
+"value": 1500
 },
 {
 "id": 222,
 "name": "Potenciador DEF caballería",
 "nameEn": "Cavalry DEF Boost",
-"desc": ""
+"desc": "",
+"effectId": 207,
+"value": 2500
 }
 ]
 },

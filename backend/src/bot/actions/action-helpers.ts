@@ -1,6 +1,7 @@
 import type { BotInstance } from '../core/bot-instance';
 import { ResourceTracker } from '../features/resource-tracker';
 import { openChestBatch } from '../commands/chest.commands';
+import { serverNow } from '../../utils/clock-sync';
 import itemsData from '../data/items.json';
 
 export type BagDefs = { wheat: [number, number][]; stone: [number, number][]; wood: [number, number][]; mineral: [number, number][]; gold: [number, number][] };
@@ -18,16 +19,21 @@ export function calcSimpleDeficit(tracker: ResourceTracker, wheat: number, wood:
   return { wheat: dw, wood: dwo, stone: ds, ore: do_, gold: dg };
 }
 
-export function nextByResetTime(resetTime: string): number {
-  if (!resetTime) return 0;
-  const parts = resetTime.split(':');
-  if (parts.length !== 2) return 0;
-  const h = parseInt(parts[0], 10) || 0;
-  const m = parseInt(parts[1], 10) || 0;
-  const now = new Date();
-  const next = new Date(now);
-  next.setUTCHours(h, m, 0, 0);
-  if (next <= now) next.setDate(next.getDate() + 1);
+/**
+ * Próximo unix (segundos) en que va a ocurrir el reset diario de la cuenta.
+ *
+ * @param resetSec Segundos desde medianoche UTC en que resetea la cuenta
+ *   (`bot.getDailyResetSec()`, tomado del 1008). Valores fuera de `[0, 86400)`
+ *   caen a 0 = 00:00 UTC. Usa `serverNow()` (reloj contra worldtimeapi) para
+ *   no depender de la hora local del host.
+ */
+export function nextByResetTime(resetSec: number): number {
+  const base = serverNow();
+  const sec = Number.isFinite(resetSec) && resetSec >= 0 && resetSec < 86400 ? Math.floor(resetSec) : 0;
+  const next = new Date(base);
+  next.setUTCHours(0, 0, 0, 0);
+  next.setUTCMilliseconds(next.getUTCMilliseconds() + sec * 1000);
+  if (next.getTime() <= base) next.setUTCDate(next.getUTCDate() + 1);
   return Math.floor(next.getTime() / 1000);
 }
 

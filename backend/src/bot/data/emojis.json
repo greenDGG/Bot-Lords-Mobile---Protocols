@@ -1,0 +1,2358 @@
+{
+  "source": "LordsBot-Release/GameAssets (EMOJI + Item + Strings/{Spa,Eng})",
+  "generatedBy": "gen-emojis.py",
+  "note": "Emoticonos del chat (proto 3001/3003). Los 40 basicos (paginas 0-4) vienen con itemId 0 (siempre disponibles) y nombre null; los otros 195 se desbloquean con su item (itemId) y sólo se pueden usar si estan en el inventario.",
+  "count": 235,
+  "emojis": [
+    {
+      "id": 1,
+      "page": 0,
+      "idx": 3,
+      "w": 60,
+      "h": 60,
+      "itemId": 0,
+      "name": null,
+      "nameEn": null
+    },
+    {
+      "id": 2,
+      "page": 0,
+      "idx": 1,
+      "w": 77,
+      "h": 65,
+      "itemId": 0,
+      "name": null,
+      "nameEn": null
+    },
+    {
+      "id": 3,
+      "page": 0,
+      "idx": 0,
+      "w": 60,
+      "h": 60,
+      "itemId": 0,
+      "name": null,
+      "nameEn": null
+    },
+    {
+      "id": 4,
+      "page": 0,
+      "idx": 6,
+      "w": 60,
+      "h": 60,
+      "itemId": 0,
+      "name": null,
+      "nameEn": null
+    },
+    {
+      "id": 5,
+      "page": 0,
+      "idx": 2,
+      "w": 60,
+      "h": 60,
+      "itemId": 0,
+      "name": null,
+      "nameEn": null
+    },
+    {
+      "id": 6,
+      "page": 0,
+      "idx": 5,
+      "w": 60,
+      "h": 60,
+      "itemId": 0,
+      "name": null,
+      "nameEn": null
+    },
+    {
+      "id": 7,
+      "page": 0,
+      "idx": 7,
+      "w": 65,
+      "h": 65,
+      "itemId": 0,
+      "name": null,
+      "nameEn": null
+    },
+    {
+      "id": 8,
+      "page": 0,
+      "idx": 4,
+      "w": 60,
+      "h": 63,
+      "itemId": 0,
+      "name": null,
+      "nameEn": null
+    },
+    {
+      "id": 129,
+      "page": 1,
+      "idx": 14,
+      "w": 80,
+      "h": 60,
+      "itemId": 0,
+      "name": null,
+      "nameEn": null
+    },
+    {
+      "id": 130,
+      "page": 1,
+      "idx": 9,
+      "w": 76,
+      "h": 68,
+      "itemId": 0,
+      "name": null,
+      "nameEn": null
+    },
+    {
+      "id": 131,
+      "page": 1,
+      "idx": 10,
+      "w": 79,
+      "h": 69,
+      "itemId": 0,
+      "name": null,
+      "nameEn": null
+    },
+    {
+      "id": 132,
+      "page": 1,
+      "idx": 11,
+      "w": 72,
+      "h": 72,
+      "itemId": 0,
+      "name": null,
+      "nameEn": null
+    },
+    {
+      "id": 133,
+      "page": 1,
+      "idx": 15,
+      "w": 78,
+      "h": 64,
+      "itemId": 0,
+      "name": null,
+      "nameEn": null
+    },
+    {
+      "id": 134,
+      "page": 1,
+      "idx": 13,
+      "w": 72,
+      "h": 64,
+      "itemId": 0,
+      "name": null,
+      "nameEn": null
+    },
+    {
+      "id": 135,
+      "page": 1,
+      "idx": 12,
+      "w": 76,
+      "h": 76,
+      "itemId": 0,
+      "name": null,
+      "nameEn": null
+    },
+    {
+      "id": 136,
+      "page": 1,
+      "idx": 8,
+      "w": 65,
+      "h": 79,
+      "itemId": 0,
+      "name": null,
+      "nameEn": null
+    },
+    {
+      "id": 257,
+      "page": 2,
+      "idx": 16,
+      "w": 81,
+      "h": 88,
+      "itemId": 0,
+      "name": null,
+      "nameEn": null
+    },
+    {
+      "id": 258,
+      "page": 2,
+      "idx": 19,
+      "w": 87,
+      "h": 83,
+      "itemId": 0,
+      "name": null,
+      "nameEn": null
+    },
+    {
+      "id": 259,
+      "page": 2,
+      "idx": 17,
+      "w": 76,
+      "h": 80,
+      "itemId": 0,
+      "name": null,
+      "nameEn": null
+    },
+    {
+      "id": 260,
+      "page": 2,
+      "idx": 22,
+      "w": 86,
+      "h": 83,
+      "itemId": 0,
+      "name": null,
+      "nameEn": null
+    },
+    {
+      "id": 261,
+      "page": 2,
+      "idx": 20,
+      "w": 91,
+      "h": 85,
+      "itemId": 0,
+      "name": null,
+      "nameEn": null
+    },
+    {
+      "id": 262,
+      "page": 2,
+      "idx": 21,
+      "w": 88,
+      "h": 80,
+      "itemId": 0,
+      "name": null,
+      "nameEn": null
+    },
+    {
+      "id": 263,
+      "page": 2,
+      "idx": 18,
+      "w": 91,
+      "h": 85,
+      "itemId": 0,
+      "name": null,
+      "nameEn": null
+    },
+    {
+      "id": 264,
+      "page": 2,
+      "idx": 23,
+      "w": 77,
+      "h": 86,
+      "itemId": 0,
+      "name": null,
+      "nameEn": null
+    },
+    {
+      "id": 385,
+      "page": 3,
+      "idx": 29,
+      "w": 82,
+      "h": 80,
+      "itemId": 0,
+      "name": null,
+      "nameEn": null
+    },
+    {
+      "id": 386,
+      "page": 3,
+      "idx": 27,
+      "w": 78,
+      "h": 80,
+      "itemId": 0,
+      "name": null,
+      "nameEn": null
+    },
+    {
+      "id": 387,
+      "page": 3,
+      "idx": 26,
+      "w": 75,
+      "h": 80,
+      "itemId": 0,
+      "name": null,
+      "nameEn": null
+    },
+    {
+      "id": 388,
+      "page": 3,
+      "idx": 25,
+      "w": 60,
+      "h": 80,
+      "itemId": 0,
+      "name": null,
+      "nameEn": null
+    },
+    {
+      "id": 389,
+      "page": 3,
+      "idx": 31,
+      "w": 66,
+      "h": 80,
+      "itemId": 0,
+      "name": null,
+      "nameEn": null
+    },
+    {
+      "id": 390,
+      "page": 3,
+      "idx": 30,
+      "w": 85,
+      "h": 80,
+      "itemId": 0,
+      "name": null,
+      "nameEn": null
+    },
+    {
+      "id": 391,
+      "page": 3,
+      "idx": 24,
+      "w": 71,
+      "h": 80,
+      "itemId": 0,
+      "name": null,
+      "nameEn": null
+    },
+    {
+      "id": 392,
+      "page": 3,
+      "idx": 28,
+      "w": 81,
+      "h": 75,
+      "itemId": 0,
+      "name": null,
+      "nameEn": null
+    },
+    {
+      "id": 513,
+      "page": 4,
+      "idx": 39,
+      "w": 72,
+      "h": 73,
+      "itemId": 0,
+      "name": null,
+      "nameEn": null
+    },
+    {
+      "id": 514,
+      "page": 4,
+      "idx": 33,
+      "w": 81,
+      "h": 78,
+      "itemId": 0,
+      "name": null,
+      "nameEn": null
+    },
+    {
+      "id": 515,
+      "page": 4,
+      "idx": 34,
+      "w": 90,
+      "h": 81,
+      "itemId": 0,
+      "name": null,
+      "nameEn": null
+    },
+    {
+      "id": 516,
+      "page": 4,
+      "idx": 36,
+      "w": 83,
+      "h": 79,
+      "itemId": 0,
+      "name": null,
+      "nameEn": null
+    },
+    {
+      "id": 517,
+      "page": 4,
+      "idx": 35,
+      "w": 81,
+      "h": 78,
+      "itemId": 0,
+      "name": null,
+      "nameEn": null
+    },
+    {
+      "id": 518,
+      "page": 4,
+      "idx": 37,
+      "w": 72,
+      "h": 78,
+      "itemId": 0,
+      "name": null,
+      "nameEn": null
+    },
+    {
+      "id": 519,
+      "page": 4,
+      "idx": 38,
+      "w": 83,
+      "h": 73,
+      "itemId": 0,
+      "name": null,
+      "nameEn": null
+    },
+    {
+      "id": 520,
+      "page": 4,
+      "idx": 32,
+      "w": 76,
+      "h": 77,
+      "itemId": 0,
+      "name": null,
+      "nameEn": null
+    },
+    {
+      "id": 641,
+      "page": 5,
+      "idx": 44,
+      "w": 87,
+      "h": 75,
+      "itemId": 1958,
+      "name": "Petardos",
+      "nameEn": "Fireworks"
+    },
+    {
+      "id": 642,
+      "page": 5,
+      "idx": 43,
+      "w": 84,
+      "h": 80,
+      "itemId": 1957,
+      "name": "Fortuna",
+      "nameEn": "Fortune"
+    },
+    {
+      "id": 643,
+      "page": 5,
+      "idx": 41,
+      "w": 75,
+      "h": 81,
+      "itemId": 1961,
+      "name": "Pulgares arriba",
+      "nameEn": "Thumbs Up"
+    },
+    {
+      "id": 644,
+      "page": 5,
+      "idx": 42,
+      "w": 76,
+      "h": 79,
+      "itemId": 1959,
+      "name": "Alegría",
+      "nameEn": "Cheers"
+    },
+    {
+      "id": 645,
+      "page": 5,
+      "idx": 40,
+      "w": 85,
+      "h": 77,
+      "itemId": 1960,
+      "name": "Brindis",
+      "nameEn": "Drink Up"
+    },
+    {
+      "id": 646,
+      "page": 5,
+      "idx": 53,
+      "w": 86,
+      "h": 82,
+      "itemId": 1962,
+      "name": "Infantería",
+      "nameEn": "Infantry"
+    },
+    {
+      "id": 647,
+      "page": 5,
+      "idx": 54,
+      "w": 85,
+      "h": 84,
+      "itemId": 1973,
+      "name": "Artillería",
+      "nameEn": "Ranged"
+    },
+    {
+      "id": 648,
+      "page": 5,
+      "idx": 55,
+      "w": 91,
+      "h": 79,
+      "itemId": 1974,
+      "name": "Caballería",
+      "nameEn": "Cavalry"
+    },
+    {
+      "id": 649,
+      "page": 5,
+      "idx": 56,
+      "w": 92,
+      "h": 84,
+      "itemId": 1977,
+      "name": "Bofetada",
+      "nameEn": "Slap"
+    },
+    {
+      "id": 650,
+      "page": 5,
+      "idx": 57,
+      "w": 86,
+      "h": 80,
+      "itemId": 1978,
+      "name": "¡Mira!",
+      "nameEn": "Look!"
+    },
+    {
+      "id": 651,
+      "page": 5,
+      "idx": 58,
+      "w": 89,
+      "h": 88,
+      "itemId": 1979,
+      "name": "Pillado",
+      "nameEn": "Caught"
+    },
+    {
+      "id": 652,
+      "page": 5,
+      "idx": 59,
+      "w": 91,
+      "h": 76,
+      "itemId": 1980,
+      "name": "Confort",
+      "nameEn": "Comfort"
+    },
+    {
+      "id": 653,
+      "page": 5,
+      "idx": 60,
+      "w": 91,
+      "h": 80,
+      "itemId": 1981,
+      "name": "Agrupación",
+      "nameEn": "Rally"
+    },
+    {
+      "id": 654,
+      "page": 5,
+      "idx": 61,
+      "w": 92,
+      "h": 80,
+      "itemId": 1982,
+      "name": "Sonrisa",
+      "nameEn": "Smile"
+    },
+    {
+      "id": 655,
+      "page": 5,
+      "idx": 62,
+      "w": 88,
+      "h": 83,
+      "itemId": 1987,
+      "name": "Broma",
+      "nameEn": "Prank"
+    },
+    {
+      "id": 656,
+      "page": 5,
+      "idx": 63,
+      "w": 82,
+      "h": 80,
+      "itemId": 1988,
+      "name": "Momia",
+      "nameEn": "Mummy"
+    },
+    {
+      "id": 657,
+      "page": 5,
+      "idx": 64,
+      "w": 88,
+      "h": 79,
+      "itemId": 1989,
+      "name": "Calabaza",
+      "nameEn": "Pumpkin"
+    },
+    {
+      "id": 658,
+      "page": 5,
+      "idx": 65,
+      "w": 88,
+      "h": 85,
+      "itemId": 1990,
+      "name": "Araña",
+      "nameEn": "Spider"
+    },
+    {
+      "id": 659,
+      "page": 5,
+      "idx": 66,
+      "w": 88,
+      "h": 80,
+      "itemId": 1950,
+      "name": "Sorpresa",
+      "nameEn": "Surprise"
+    },
+    {
+      "id": 660,
+      "page": 5,
+      "idx": 67,
+      "w": 87,
+      "h": 78,
+      "itemId": 1951,
+      "name": "Abrazo",
+      "nameEn": "Hug"
+    },
+    {
+      "id": 661,
+      "page": 5,
+      "idx": 68,
+      "w": 88,
+      "h": 80,
+      "itemId": 1952,
+      "name": "Escalofrío",
+      "nameEn": "Shiver"
+    },
+    {
+      "id": 662,
+      "page": 5,
+      "idx": 69,
+      "w": 89,
+      "h": 83,
+      "itemId": 1953,
+      "name": "Escarcha",
+      "nameEn": "Frosty"
+    },
+    {
+      "id": 663,
+      "page": 5,
+      "idx": 78,
+      "w": 86,
+      "h": 79,
+      "itemId": 1927,
+      "name": "Estrella astuta",
+      "nameEn": "Shrewd Star"
+    },
+    {
+      "id": 664,
+      "page": 5,
+      "idx": 79,
+      "w": 87,
+      "h": 80,
+      "itemId": 1928,
+      "name": "UpSTARt",
+      "nameEn": "UpSTARt"
+    },
+    {
+      "id": 665,
+      "page": 5,
+      "idx": 80,
+      "w": 86,
+      "h": 79,
+      "itemId": 1929,
+      "name": "Ojos estrellados",
+      "nameEn": "Starry Eyed"
+    },
+    {
+      "id": 666,
+      "page": 5,
+      "idx": 81,
+      "w": 85,
+      "h": 79,
+      "itemId": 1930,
+      "name": "Con estrella",
+      "nameEn": "Starstruck"
+    },
+    {
+      "id": 667,
+      "page": 5,
+      "idx": 82,
+      "w": 85,
+      "h": 82,
+      "itemId": 1931,
+      "name": "Amor estrellado",
+      "nameEn": "Starry Love"
+    },
+    {
+      "id": 668,
+      "page": 5,
+      "idx": 83,
+      "w": 84,
+      "h": 84,
+      "itemId": 1918,
+      "name": "Canto",
+      "nameEn": "Jam Out"
+    },
+    {
+      "id": 669,
+      "page": 5,
+      "idx": 84,
+      "w": 82,
+      "h": 84,
+      "itemId": 1919,
+      "name": "Baja la voz",
+      "nameEn": "Keep It Down"
+    },
+    {
+      "id": 670,
+      "page": 5,
+      "idx": 85,
+      "w": 86,
+      "h": 84,
+      "itemId": 1920,
+      "name": "Fan de la música",
+      "nameEn": "Music Lover"
+    },
+    {
+      "id": 671,
+      "page": 5,
+      "idx": 86,
+      "w": 82,
+      "h": 84,
+      "itemId": 1921,
+      "name": "Silbido",
+      "nameEn": "Sheepish Whistle"
+    },
+    {
+      "id": 672,
+      "page": 5,
+      "idx": 87,
+      "w": 88,
+      "h": 82,
+      "itemId": 1922,
+      "name": "Grito estridente",
+      "nameEn": "Shrill Shriek"
+    },
+    {
+      "id": 673,
+      "page": 5,
+      "idx": 93,
+      "w": 78,
+      "h": 86,
+      "itemId": 1908,
+      "name": "Mal de ojo",
+      "nameEn": "Evil Eye"
+    },
+    {
+      "id": 674,
+      "page": 5,
+      "idx": 94,
+      "w": 92,
+      "h": 87,
+      "itemId": 1909,
+      "name": "Escuadrón de espíritus",
+      "nameEn": "Squad Ghouls"
+    },
+    {
+      "id": 675,
+      "page": 5,
+      "idx": 95,
+      "w": 85,
+      "h": 78,
+      "itemId": 1891,
+      "name": "Cuenta conmigo",
+      "nameEn": "Count Me In"
+    },
+    {
+      "id": 676,
+      "page": 5,
+      "idx": 96,
+      "w": 81,
+      "h": 80,
+      "itemId": 1892,
+      "name": "Confusión",
+      "nameEn": "Confusion"
+    },
+    {
+      "id": 677,
+      "page": 5,
+      "idx": 97,
+      "w": 89,
+      "h": 80,
+      "itemId": 1893,
+      "name": "Sorpresa",
+      "nameEn": "Awestruck"
+    },
+    {
+      "id": 678,
+      "page": 5,
+      "idx": 98,
+      "w": 86,
+      "h": 77,
+      "itemId": 1894,
+      "name": "Gratitud",
+      "nameEn": "Gratitude"
+    },
+    {
+      "id": 679,
+      "page": 5,
+      "idx": 99,
+      "w": 89,
+      "h": 81,
+      "itemId": 1895,
+      "name": "Lágrimas",
+      "nameEn": "In Tears"
+    },
+    {
+      "id": 680,
+      "page": 5,
+      "idx": 100,
+      "w": 88,
+      "h": 82,
+      "itemId": 1896,
+      "name": "Sobresaltado",
+      "nameEn": "Startled"
+    },
+    {
+      "id": 681,
+      "page": 5,
+      "idx": 101,
+      "w": 84,
+      "h": 82,
+      "itemId": 1897,
+      "name": "Enamorado",
+      "nameEn": "Smitten"
+    },
+    {
+      "id": 682,
+      "page": 5,
+      "idx": 102,
+      "w": 96,
+      "h": 87,
+      "itemId": 1878,
+      "name": "Todo oídos",
+      "nameEn": "All Ears"
+    },
+    {
+      "id": 683,
+      "page": 5,
+      "idx": 103,
+      "w": 99,
+      "h": 94,
+      "itemId": 1879,
+      "name": "Liebre millonaria",
+      "nameEn": "Millionhare"
+    },
+    {
+      "id": 684,
+      "page": 5,
+      "idx": 104,
+      "w": 95,
+      "h": 88,
+      "itemId": 1880,
+      "name": "Empaquetado",
+      "nameEn": "Bundled Up"
+    },
+    {
+      "id": 685,
+      "page": 5,
+      "idx": 105,
+      "w": 93,
+      "h": 93,
+      "itemId": 1881,
+      "name": "Conejito de peluche",
+      "nameEn": "Stuffed Bunny"
+    },
+    {
+      "id": 686,
+      "page": 5,
+      "idx": 106,
+      "w": 96,
+      "h": 82,
+      "itemId": 1882,
+      "name": "Tiempo en la madriguera",
+      "nameEn": "Burrowed Time"
+    },
+    {
+      "id": 687,
+      "page": 5,
+      "idx": 241,
+      "w": 97,
+      "h": 80,
+      "itemId": 1633,
+      "name": null,
+      "nameEn": null
+    },
+    {
+      "id": 688,
+      "page": 5,
+      "idx": 242,
+      "w": 80,
+      "h": 86,
+      "itemId": 1634,
+      "name": "Confusión",
+      "nameEn": "Confused"
+    },
+    {
+      "id": 689,
+      "page": 5,
+      "idx": 243,
+      "w": 90,
+      "h": 81,
+      "itemId": 1635,
+      "name": "Angustia",
+      "nameEn": "Distressed"
+    },
+    {
+      "id": 690,
+      "page": 5,
+      "idx": 244,
+      "w": 88,
+      "h": 83,
+      "itemId": 1636,
+      "name": "Desánimo",
+      "nameEn": "Discouraged"
+    },
+    {
+      "id": 691,
+      "page": 5,
+      "idx": 245,
+      "w": 84,
+      "h": 80,
+      "itemId": 1620,
+      "name": "Seguimos en pie",
+      "nameEn": "Still Standing"
+    },
+    {
+      "id": 692,
+      "page": 5,
+      "idx": 246,
+      "w": 90,
+      "h": 80,
+      "itemId": 1621,
+      "name": "Por los pelos",
+      "nameEn": "Close Call"
+    },
+    {
+      "id": 693,
+      "page": 5,
+      "idx": 247,
+      "w": 90,
+      "h": 80,
+      "itemId": 1622,
+      "name": "Desconcierto",
+      "nameEn": "Puzzled"
+    },
+    {
+      "id": 694,
+      "page": 5,
+      "idx": 248,
+      "w": 88,
+      "h": 77,
+      "itemId": 1623,
+      "name": "Trampa",
+      "nameEn": "Pitfall"
+    },
+    {
+      "id": 695,
+      "page": 5,
+      "idx": 282,
+      "w": 90,
+      "h": 86,
+      "itemId": 6159,
+      "name": "Carnaval futbolero - Emoción",
+      "nameEn": "Lords Ball Carnival - Amped"
+    },
+    {
+      "id": 696,
+      "page": 5,
+      "idx": 283,
+      "w": 87,
+      "h": 81,
+      "itemId": 6160,
+      "name": "Carnaval futbolero - Amarilla",
+      "nameEn": "Lords Ball Carnival - Yellow Card"
+    },
+    {
+      "id": 697,
+      "page": 5,
+      "idx": 284,
+      "w": 90,
+      "h": 90,
+      "itemId": 6161,
+      "name": "Carnaval futbolero - ¡Lucha!",
+      "nameEn": "Lords Ball Carnival - Fight!"
+    },
+    {
+      "id": 698,
+      "page": 5,
+      "idx": 285,
+      "w": 100,
+      "h": 90,
+      "itemId": 6162,
+      "name": "Carnaval futbolero - Ánimos",
+      "nameEn": "Lords Ball Carnival - Cheer"
+    },
+    {
+      "id": 699,
+      "page": 5,
+      "idx": 286,
+      "w": 86,
+      "h": 92,
+      "itemId": 6163,
+      "name": "Carnaval futbolero - Decepción",
+      "nameEn": "Lords Ball Carnival - Disappointed"
+    },
+    {
+      "id": 700,
+      "page": 5,
+      "idx": 287,
+      "w": 97,
+      "h": 84,
+      "itemId": 6164,
+      "name": "Carnaval futbolero - Golpe",
+      "nameEn": "Lords Ball Carnival - Bonked"
+    },
+    {
+      "id": 701,
+      "page": 5,
+      "idx": 288,
+      "w": 95,
+      "h": 80,
+      "itemId": 6165,
+      "name": "Carnaval futbolero: Déjamelo a mí",
+      "nameEn": "Lords Ball Carnival - Leave It to Me"
+    },
+    {
+      "id": 702,
+      "page": 5,
+      "idx": 289,
+      "w": 94,
+      "h": 88,
+      "itemId": 6166,
+      "name": "Carnaval futbolero: Vítores",
+      "nameEn": "Lords Ball Carnival - Cheers"
+    },
+    {
+      "id": 703,
+      "page": 5,
+      "idx": 290,
+      "w": 95,
+      "h": 83,
+      "itemId": 6175,
+      "name": null,
+      "nameEn": null
+    },
+    {
+      "id": 769,
+      "page": 6,
+      "idx": 45,
+      "w": 84,
+      "h": 81,
+      "itemId": 1965,
+      "name": "Aprobación de Seiya",
+      "nameEn": "Seiya's Approval"
+    },
+    {
+      "id": 770,
+      "page": 6,
+      "idx": 46,
+      "w": 86,
+      "h": 81,
+      "itemId": 1966,
+      "name": "Derrota de Seiya",
+      "nameEn": "Seiya's Defeat"
+    },
+    {
+      "id": 771,
+      "page": 6,
+      "idx": 47,
+      "w": 76,
+      "h": 83,
+      "itemId": 1967,
+      "name": "Seiya avergonzado",
+      "nameEn": "Sheepish Seiya"
+    },
+    {
+      "id": 772,
+      "page": 6,
+      "idx": 48,
+      "w": 83,
+      "h": 80,
+      "itemId": 1968,
+      "name": "Reflexión de Atenea",
+      "nameEn": "Athena Ponders"
+    },
+    {
+      "id": 773,
+      "page": 6,
+      "idx": 50,
+      "w": 98,
+      "h": 85,
+      "itemId": 1969,
+      "name": "Resolución de Shiryu",
+      "nameEn": "Shiryu's Resolve"
+    },
+    {
+      "id": 774,
+      "page": 6,
+      "idx": 49,
+      "w": 79,
+      "h": 81,
+      "itemId": 1970,
+      "name": "Rechazo de Hyoga",
+      "nameEn": "Hyoga's Refusal"
+    },
+    {
+      "id": 775,
+      "page": 6,
+      "idx": 51,
+      "w": 85,
+      "h": 87,
+      "itemId": 1971,
+      "name": "Llanto de Shun",
+      "nameEn": "Shun's Tears"
+    },
+    {
+      "id": 776,
+      "page": 6,
+      "idx": 52,
+      "w": 81,
+      "h": 83,
+      "itemId": 1972,
+      "name": "Ovación de Ikki",
+      "nameEn": "Cheering Ikki"
+    },
+    {
+      "id": 897,
+      "page": 7,
+      "idx": 72,
+      "w": 87,
+      "h": 72,
+      "itemId": 1938,
+      "name": "Po aprobación",
+      "nameEn": "Po Approval"
+    },
+    {
+      "id": 898,
+      "page": 7,
+      "idx": 73,
+      "w": 92,
+      "h": 73,
+      "itemId": 1939,
+      "name": "Po celoso",
+      "nameEn": "Envious Po"
+    },
+    {
+      "id": 899,
+      "page": 7,
+      "idx": 70,
+      "w": 83,
+      "h": 83,
+      "itemId": 1936,
+      "name": "Logway relajado",
+      "nameEn": "Relaxed Oogway"
+    },
+    {
+      "id": 900,
+      "page": 7,
+      "idx": 71,
+      "w": 65,
+      "h": 84,
+      "itemId": 1937,
+      "name": "Logway emocionado",
+      "nameEn": "Touched Oogway"
+    },
+    {
+      "id": 901,
+      "page": 7,
+      "idx": 75,
+      "w": 85,
+      "h": 82,
+      "itemId": 1941,
+      "name": "Shifu sin palabras",
+      "nameEn": "Speechless Shifu"
+    },
+    {
+      "id": 902,
+      "page": 7,
+      "idx": 74,
+      "w": 92,
+      "h": 85,
+      "itemId": 1940,
+      "name": "Shifu sorprendido",
+      "nameEn": "Shocked Shifu"
+    },
+    {
+      "id": 903,
+      "page": 7,
+      "idx": 77,
+      "w": 76,
+      "h": 85,
+      "itemId": 1943,
+      "name": "Tigresa furiosa",
+      "nameEn": "Furious Tigress"
+    },
+    {
+      "id": 904,
+      "page": 7,
+      "idx": 76,
+      "w": 90,
+      "h": 81,
+      "itemId": 1942,
+      "name": "Tigresa NO",
+      "nameEn": "Tigress NO"
+    },
+    {
+      "id": 1025,
+      "page": 8,
+      "idx": 88,
+      "w": 84,
+      "h": 80,
+      "itemId": 1910,
+      "name": "Prima Donna radiante",
+      "nameEn": "Beaming Prima Donna"
+    },
+    {
+      "id": 1026,
+      "page": 8,
+      "idx": 89,
+      "w": 76,
+      "h": 86,
+      "itemId": 1911,
+      "name": "Cuervo Negro sonriente",
+      "nameEn": "Grinning Black Crow"
+    },
+    {
+      "id": 1027,
+      "page": 8,
+      "idx": 90,
+      "w": 72,
+      "h": 82,
+      "itemId": 1912,
+      "name": "Caballera de la Rosa sonriente",
+      "nameEn": "Smiling Rose Knight"
+    },
+    {
+      "id": 1028,
+      "page": 8,
+      "idx": 91,
+      "w": 78,
+      "h": 78,
+      "itemId": 1913,
+      "name": "Diablilla carcajeante",
+      "nameEn": "Sniggering Petite Devil"
+    },
+    {
+      "id": 1029,
+      "page": 8,
+      "idx": 92,
+      "w": 70,
+      "h": 78,
+      "itemId": 1914,
+      "name": "Soldado risueño",
+      "nameEn": "Smoldering Soldier"
+    },
+    {
+      "id": 1153,
+      "page": 9,
+      "idx": 107,
+      "w": 90,
+      "h": 92,
+      "itemId": 1868,
+      "name": "Dientepúa hostil",
+      "nameEn": "Hookfang Glowers"
+    },
+    {
+      "id": 1154,
+      "page": 9,
+      "idx": 108,
+      "w": 97,
+      "h": 84,
+      "itemId": 1869,
+      "name": "Barf y Belch travieso",
+      "nameEn": "Impish Barf & Belch"
+    },
+    {
+      "id": 1155,
+      "page": 9,
+      "idx": 109,
+      "w": 84,
+      "h": 86,
+      "itemId": 1870,
+      "name": "Albóndiga inocente",
+      "nameEn": "Innocent Meatlug"
+    },
+    {
+      "id": 1156,
+      "page": 9,
+      "idx": 110,
+      "w": 90,
+      "h": 82,
+      "itemId": 1871,
+      "name": "Amor de dragones",
+      "nameEn": "Dragon Love"
+    },
+    {
+      "id": 1157,
+      "page": 9,
+      "idx": 111,
+      "w": 92,
+      "h": 82,
+      "itemId": 1872,
+      "name": "Furia Luminosa enamoradiza",
+      "nameEn": "Smitten Light Fury"
+    },
+    {
+      "id": 1158,
+      "page": 9,
+      "idx": 112,
+      "w": 99,
+      "h": 77,
+      "itemId": 1873,
+      "name": "Desdentado confuso",
+      "nameEn": "Confused Toothless"
+    },
+    {
+      "id": 1159,
+      "page": 9,
+      "idx": 113,
+      "w": 90,
+      "h": 82,
+      "itemId": 1874,
+      "name": "Astrid la Valiente",
+      "nameEn": "Brave Astrid"
+    },
+    {
+      "id": 1160,
+      "page": 9,
+      "idx": 114,
+      "w": 91,
+      "h": 89,
+      "itemId": 1875,
+      "name": "Hipo encantador",
+      "nameEn": "Charming Hiccup"
+    },
+    {
+      "id": 1281,
+      "page": 10,
+      "idx": 115,
+      "w": 96,
+      "h": 86,
+      "itemId": 1834,
+      "name": "Furia blindada",
+      "nameEn": "Armored Fury"
+    },
+    {
+      "id": 1282,
+      "page": 10,
+      "idx": 116,
+      "w": 96,
+      "h": 87,
+      "itemId": 1835,
+      "name": "Es un sí",
+      "nameEn": "Hard Yes"
+    },
+    {
+      "id": 1283,
+      "page": 10,
+      "idx": 117,
+      "w": 95,
+      "h": 88,
+      "itemId": 1836,
+      "name": "Rechazo férreo",
+      "nameEn": "Steely Rejection"
+    },
+    {
+      "id": 1284,
+      "page": 10,
+      "idx": 118,
+      "w": 96,
+      "h": 91,
+      "itemId": 1837,
+      "name": "Victoria aplastante",
+      "nameEn": "Shining Victory"
+    },
+    {
+      "id": 1285,
+      "page": 10,
+      "idx": 119,
+      "w": 94,
+      "h": 83,
+      "itemId": 1838,
+      "name": "Ay, mi guantelete...",
+      "nameEn": "Oh My Gauntlet..."
+    },
+    {
+      "id": 1409,
+      "page": 11,
+      "idx": 120,
+      "w": 94,
+      "h": 84,
+      "itemId": 1805,
+      "name": "Shrek seguro de sí mismo",
+      "nameEn": "Confident Shrek"
+    },
+    {
+      "id": 1410,
+      "page": 11,
+      "idx": 121,
+      "w": 94,
+      "h": 84,
+      "itemId": 1807,
+      "name": "Shrek sin palabras",
+      "nameEn": "Speechless Shrek"
+    },
+    {
+      "id": 1411,
+      "page": 11,
+      "idx": 122,
+      "w": 97,
+      "h": 88,
+      "itemId": 1809,
+      "name": "Fiona indignada",
+      "nameEn": "Incensed Fiona"
+    },
+    {
+      "id": 1412,
+      "page": 11,
+      "idx": 123,
+      "w": 92,
+      "h": 85,
+      "itemId": 1811,
+      "name": "Asno encantador",
+      "nameEn": "Charming Donkey"
+    },
+    {
+      "id": 1413,
+      "page": 11,
+      "idx": 124,
+      "w": 93,
+      "h": 85,
+      "itemId": 1813,
+      "name": "Jengibre desamparado",
+      "nameEn": "Helpless Gingy"
+    },
+    {
+      "id": 1414,
+      "page": 11,
+      "idx": 125,
+      "w": 84,
+      "h": 89,
+      "itemId": 1816,
+      "name": "Gato con botas irritado",
+      "nameEn": "Irritated Puss in Boots"
+    },
+    {
+      "id": 1415,
+      "page": 11,
+      "idx": 126,
+      "w": 78,
+      "h": 92,
+      "itemId": 1818,
+      "name": "Arthur triste",
+      "nameEn": "Sad Arthur"
+    },
+    {
+      "id": 1416,
+      "page": 11,
+      "idx": 127,
+      "w": 93,
+      "h": 83,
+      "itemId": 1820,
+      "name": "Pinocho nervioso",
+      "nameEn": "Nervous Pinocchio"
+    },
+    {
+      "id": 1537,
+      "page": 12,
+      "idx": 128,
+      "w": 97,
+      "h": 78,
+      "itemId": 1806,
+      "name": "Shrek feliz",
+      "nameEn": "Happy Shrek"
+    },
+    {
+      "id": 1538,
+      "page": 12,
+      "idx": 129,
+      "w": 95,
+      "h": 84,
+      "itemId": 1808,
+      "name": "Fiona sorprendida",
+      "nameEn": "Shocked Fiona"
+    },
+    {
+      "id": 1539,
+      "page": 12,
+      "idx": 130,
+      "w": 70,
+      "h": 87,
+      "itemId": 1810,
+      "name": "Asno travieso",
+      "nameEn": "Mischievous Donkey"
+    },
+    {
+      "id": 1540,
+      "page": 12,
+      "idx": 131,
+      "w": 87,
+      "h": 86,
+      "itemId": 1812,
+      "name": "Asno asustado",
+      "nameEn": "Startled Donkey"
+    },
+    {
+      "id": 1541,
+      "page": 12,
+      "idx": 132,
+      "w": 78,
+      "h": 89,
+      "itemId": 1814,
+      "name": "Jengibre risueño",
+      "nameEn": "Smirking Gingy"
+    },
+    {
+      "id": 1542,
+      "page": 12,
+      "idx": 133,
+      "w": 95,
+      "h": 88,
+      "itemId": 1815,
+      "name": "Gato con botas lindo",
+      "nameEn": "Cute Puss in Boots"
+    },
+    {
+      "id": 1543,
+      "page": 12,
+      "idx": 134,
+      "w": 98,
+      "h": 84,
+      "itemId": 1817,
+      "name": "Príncipe Encantador en apuros",
+      "nameEn": "Distressed Prince Charming"
+    },
+    {
+      "id": 1544,
+      "page": 12,
+      "idx": 135,
+      "w": 99,
+      "h": 89,
+      "itemId": 1819,
+      "name": "Merlín confuso",
+      "nameEn": "Muddled Merlin"
+    },
+    {
+      "id": 1665,
+      "page": 13,
+      "idx": 200,
+      "w": 100,
+      "h": 82,
+      "itemId": 1778,
+      "name": "Zonda F Coupé en marcha",
+      "nameEn": "Zonda F Coupe Go"
+    },
+    {
+      "id": 1666,
+      "page": 13,
+      "idx": 201,
+      "w": 97,
+      "h": 90,
+      "itemId": 1779,
+      "name": "Zonda F Coupé a toda máquina",
+      "nameEn": "Revved Up Zonda F Coupe"
+    },
+    {
+      "id": 1667,
+      "page": 13,
+      "idx": 202,
+      "w": 96,
+      "h": 87,
+      "itemId": 1780,
+      "name": "Zonda F Coupé derrape",
+      "nameEn": "Zonda F Coupe Drift"
+    },
+    {
+      "id": 1668,
+      "page": 13,
+      "idx": 203,
+      "w": 94,
+      "h": 81,
+      "itemId": 1781,
+      "name": "Piloto con energía",
+      "nameEn": "Energetic Racer"
+    },
+    {
+      "id": 1669,
+      "page": 13,
+      "idx": 204,
+      "w": 98,
+      "h": 82,
+      "itemId": 1782,
+      "name": "Piloto desafiante",
+      "nameEn": "Defiant Racer"
+    },
+    {
+      "id": 1670,
+      "page": 13,
+      "idx": 205,
+      "w": 70,
+      "h": 90,
+      "itemId": 1783,
+      "name": "Piloto con apuro",
+      "nameEn": "Awkward Racer"
+    },
+    {
+      "id": 1793,
+      "page": 14,
+      "idx": 206,
+      "w": 94,
+      "h": 86,
+      "itemId": 1758,
+      "name": "Mirada de Godzilla",
+      "nameEn": "Godzilla's Glare"
+    },
+    {
+      "id": 1794,
+      "page": 14,
+      "idx": 207,
+      "w": 96,
+      "h": 88,
+      "itemId": 1759,
+      "name": "Godzilla enfadado",
+      "nameEn": "Enraged Godzilla"
+    },
+    {
+      "id": 1795,
+      "page": 14,
+      "idx": 208,
+      "w": 96,
+      "h": 88,
+      "itemId": 1760,
+      "name": "Kong impactado",
+      "nameEn": "Feroucious Kong"
+    },
+    {
+      "id": 1796,
+      "page": 14,
+      "idx": 209,
+      "w": 96,
+      "h": 88,
+      "itemId": 1761,
+      "name": "Kong sin palabras",
+      "nameEn": "Speechless Kong"
+    },
+    {
+      "id": 1797,
+      "page": 14,
+      "idx": 210,
+      "w": 94,
+      "h": 84,
+      "itemId": 1762,
+      "name": "Rugido de Kong",
+      "nameEn": "Roaring Kong"
+    },
+    {
+      "id": 1798,
+      "page": 14,
+      "idx": 211,
+      "w": 88,
+      "h": 82,
+      "itemId": 1763,
+      "name": "Amor de Godzilla",
+      "nameEn": "Godzilla Love"
+    },
+    {
+      "id": 1799,
+      "page": 14,
+      "idx": 212,
+      "w": 94,
+      "h": 76,
+      "itemId": 1764,
+      "name": "Godzilla desenfrenado",
+      "nameEn": "Rampaging Godzilla"
+    },
+    {
+      "id": 1800,
+      "page": 14,
+      "idx": 213,
+      "w": 86,
+      "h": 82,
+      "itemId": 1765,
+      "name": "Suko confundido",
+      "nameEn": "Confused Mini Kong"
+    },
+    {
+      "id": 1921,
+      "page": 15,
+      "idx": 214,
+      "w": 94,
+      "h": 83,
+      "itemId": 1738,
+      "name": "Mai Shiranui cariñosa",
+      "nameEn": "Mai Shiranui Love"
+    },
+    {
+      "id": 1922,
+      "page": 15,
+      "idx": 215,
+      "w": 94,
+      "h": 83,
+      "itemId": 1739,
+      "name": "Mai Shiranui sin palabras",
+      "nameEn": "Speechless Mai Shiranui"
+    },
+    {
+      "id": 1923,
+      "page": 15,
+      "idx": 216,
+      "w": 93,
+      "h": 83,
+      "itemId": 1740,
+      "name": "Mai Shiranui arrepentida",
+      "nameEn": "Apologetic Mai Shiranui"
+    },
+    {
+      "id": 1924,
+      "page": 15,
+      "idx": 217,
+      "w": 94,
+      "h": 83,
+      "itemId": 1741,
+      "name": "Mai Shiranui saluda",
+      "nameEn": "Mai Shiranui's Salute"
+    },
+    {
+      "id": 1925,
+      "page": 15,
+      "idx": 218,
+      "w": 94,
+      "h": 83,
+      "itemId": 1742,
+      "name": "Kyo Kusanagi enfadado",
+      "nameEn": "Angry Kyo Kusanagi"
+    },
+    {
+      "id": 1926,
+      "page": 15,
+      "idx": 219,
+      "w": 93,
+      "h": 83,
+      "itemId": 1743,
+      "name": "Kyo Kusanagi lo aprueba",
+      "nameEn": "Kyo Kusanagi Approves"
+    },
+    {
+      "id": 1927,
+      "page": 15,
+      "idx": 220,
+      "w": 93,
+      "h": 83,
+      "itemId": 1744,
+      "name": "Kyo Kusanagi confundido",
+      "nameEn": "Confused Kyo Kusanagi"
+    },
+    {
+      "id": 1928,
+      "page": 15,
+      "idx": 221,
+      "w": 94,
+      "h": 83,
+      "itemId": 1745,
+      "name": "Kyo Kusanagi abatido",
+      "nameEn": "Dejected Kyo Kusanagi"
+    },
+    {
+      "id": 2049,
+      "page": 16,
+      "idx": 222,
+      "w": 92,
+      "h": 84,
+      "itemId": 1714,
+      "name": "Guerrero de terracota conmovido",
+      "nameEn": "Moved Terracotta Warrior"
+    },
+    {
+      "id": 2050,
+      "page": 16,
+      "idx": 223,
+      "w": 93,
+      "h": 84,
+      "itemId": 1715,
+      "name": "Guerrero de terracota enfadado",
+      "nameEn": "Angry Terracotta Warrior"
+    },
+    {
+      "id": 2051,
+      "page": 16,
+      "idx": 224,
+      "w": 91,
+      "h": 83,
+      "itemId": 1716,
+      "name": "Guerrero de terracota modesto",
+      "nameEn": "Modest Terracotta Warrior"
+    },
+    {
+      "id": 2052,
+      "page": 16,
+      "idx": 225,
+      "w": 93,
+      "h": 81,
+      "itemId": 1717,
+      "name": "No escuchen el mal",
+      "nameEn": "Hear No Evil"
+    },
+    {
+      "id": 2053,
+      "page": 16,
+      "idx": 226,
+      "w": 92,
+      "h": 81,
+      "itemId": 1718,
+      "name": "No vean el mal",
+      "nameEn": "See No Evil"
+    },
+    {
+      "id": 2054,
+      "page": 16,
+      "idx": 227,
+      "w": 88,
+      "h": 83,
+      "itemId": 1719,
+      "name": "No pronuncien el mal",
+      "nameEn": "Speak No Evil"
+    },
+    {
+      "id": 2055,
+      "page": 16,
+      "idx": 228,
+      "w": 95,
+      "h": 84,
+      "itemId": 1720,
+      "name": "Silencio de terracota",
+      "nameEn": "Terracotta Silence"
+    },
+    {
+      "id": 2056,
+      "page": 16,
+      "idx": 229,
+      "w": 88,
+      "h": 85,
+      "itemId": 1721,
+      "name": "Aprobación de terracota",
+      "nameEn": "Terracotta Approval"
+    },
+    {
+      "id": 2177,
+      "page": 17,
+      "idx": 230,
+      "w": 93,
+      "h": 86,
+      "itemId": 1681,
+      "name": "Guerrero de terracota serio",
+      "nameEn": "Serious Terracotta Warrior"
+    },
+    {
+      "id": 2178,
+      "page": 17,
+      "idx": 231,
+      "w": 89,
+      "h": 84,
+      "itemId": 1682,
+      "name": "Sí de terracota",
+      "nameEn": "Terracotta Yes"
+    },
+    {
+      "id": 2179,
+      "page": 17,
+      "idx": 232,
+      "w": 86,
+      "h": 82,
+      "itemId": 1683,
+      "name": "No de terracota",
+      "nameEn": "Terracotta No"
+    },
+    {
+      "id": 2180,
+      "page": 17,
+      "idx": 233,
+      "w": 90,
+      "h": 84,
+      "itemId": 1684,
+      "name": "Explorador de terracota",
+      "nameEn": "Terracotta Scout"
+    },
+    {
+      "id": 2181,
+      "page": 17,
+      "idx": 234,
+      "w": 81,
+      "h": 84,
+      "itemId": 1685,
+      "name": "Salida de terracota",
+      "nameEn": "Terracotta Exit"
+    },
+    {
+      "id": 2305,
+      "page": 18,
+      "idx": 235,
+      "w": 90,
+      "h": 81,
+      "itemId": 1668,
+      "name": "Coca-Cola deliciosa",
+      "nameEn": "Tasty Coca-Cola"
+    },
+    {
+      "id": 2306,
+      "page": 18,
+      "idx": 236,
+      "w": 91,
+      "h": 81,
+      "itemId": 1669,
+      "name": "Brindis con Coca-Cola",
+      "nameEn": "Coca-Cola Toast"
+    },
+    {
+      "id": 2307,
+      "page": 18,
+      "idx": 237,
+      "w": 90,
+      "h": 82,
+      "itemId": 1670,
+      "name": "Alegría de Coca-Cola",
+      "nameEn": "Coca-Cola Joy"
+    },
+    {
+      "id": 2308,
+      "page": 18,
+      "idx": 238,
+      "w": 90,
+      "h": 82,
+      "itemId": 1671,
+      "name": "Adrenalina de Coca-Cola",
+      "nameEn": "Coca-Cola Excitement"
+    },
+    {
+      "id": 2309,
+      "page": 18,
+      "idx": 239,
+      "w": 90,
+      "h": 81,
+      "itemId": 1672,
+      "name": "Aprobación de Coca-Cola",
+      "nameEn": "Coca-Cola Approval"
+    },
+    {
+      "id": 2310,
+      "page": 18,
+      "idx": 240,
+      "w": 90,
+      "h": 82,
+      "itemId": 1673,
+      "name": "Bendición de Coca-Cola",
+      "nameEn": "Coca-Cola Luck"
+    },
+    {
+      "id": 2433,
+      "page": 19,
+      "idx": 249,
+      "w": 92,
+      "h": 83,
+      "itemId": 6001,
+      "name": "Fuerza bruta",
+      "nameEn": "I'm The Strongest"
+    },
+    {
+      "id": 2434,
+      "page": 19,
+      "idx": 250,
+      "w": 92,
+      "h": 83,
+      "itemId": 6002,
+      "name": "Paliza",
+      "nameEn": "Beatdown"
+    },
+    {
+      "id": 2435,
+      "page": 19,
+      "idx": 251,
+      "w": 92,
+      "h": 83,
+      "itemId": 6003,
+      "name": "Acepto el desafío",
+      "nameEn": "Challenge Accepted"
+    },
+    {
+      "id": 2436,
+      "page": 19,
+      "idx": 252,
+      "w": 92,
+      "h": 83,
+      "itemId": 6004,
+      "name": "Ponme a prueba",
+      "nameEn": "Try Me"
+    },
+    {
+      "id": 2437,
+      "page": 19,
+      "idx": 253,
+      "w": 92,
+      "h": 83,
+      "itemId": 6005,
+      "name": "Por los pelos",
+      "nameEn": "You Missed"
+    },
+    {
+      "id": 2438,
+      "page": 19,
+      "idx": 254,
+      "w": 92,
+      "h": 83,
+      "itemId": 6006,
+      "name": "En marcha",
+      "nameEn": "Let's Go"
+    },
+    {
+      "id": 2561,
+      "page": 20,
+      "idx": 255,
+      "w": 84,
+      "h": 74,
+      "itemId": 6040,
+      "name": "Carga de Red",
+      "nameEn": "Red's Charge"
+    },
+    {
+      "id": 2562,
+      "page": 20,
+      "idx": 256,
+      "w": 94,
+      "h": 84,
+      "itemId": 6041,
+      "name": "Los pícaros Blues",
+      "nameEn": "The Mischievous Blues"
+    },
+    {
+      "id": 2563,
+      "page": 20,
+      "idx": 257,
+      "w": 92,
+      "h": 76,
+      "itemId": 6042,
+      "name": "Chuck el provocador",
+      "nameEn": "Taunting Chuck"
+    },
+    {
+      "id": 2564,
+      "page": 20,
+      "idx": 258,
+      "w": 90,
+      "h": 76,
+      "itemId": 6043,
+      "name": "Bomb enojado",
+      "nameEn": "Steaming Bomb"
+    },
+    {
+      "id": 2565,
+      "page": 20,
+      "idx": 259,
+      "w": 92,
+      "h": 82,
+      "itemId": 6044,
+      "name": "Encantadora Matilda",
+      "nameEn": "Charming Matilda"
+    },
+    {
+      "id": 2566,
+      "page": 20,
+      "idx": 260,
+      "w": 92,
+      "h": 81,
+      "itemId": 6045,
+      "name": "Cerdo sorprendido",
+      "nameEn": "Surprised Pig"
+    },
+    {
+      "id": 2567,
+      "page": 20,
+      "idx": 261,
+      "w": 82,
+      "h": 75,
+      "itemId": 6046,
+      "name": "Cerdo capataz cansado",
+      "nameEn": "Weary Foreman Pig"
+    },
+    {
+      "id": 2568,
+      "page": 20,
+      "idx": 262,
+      "w": 84,
+      "h": 72,
+      "itemId": 6047,
+      "name": "Cerdo magullado",
+      "nameEn": "Bruised Pig"
+    },
+    {
+      "id": 2689,
+      "page": 21,
+      "idx": 263,
+      "w": 92,
+      "h": 84,
+      "itemId": 6068,
+      "name": "Diana juguetona",
+      "nameEn": "Playful Diana"
+    },
+    {
+      "id": 2690,
+      "page": 21,
+      "idx": 264,
+      "w": 92,
+      "h": 84,
+      "itemId": 6069,
+      "name": "Diana traviesa",
+      "nameEn": "Cheeky Diana"
+    },
+    {
+      "id": 2691,
+      "page": 21,
+      "idx": 265,
+      "w": 92,
+      "h": 84,
+      "itemId": 6070,
+      "name": "Diana malhumorada",
+      "nameEn": "Sulky Diana"
+    },
+    {
+      "id": 2692,
+      "page": 21,
+      "idx": 266,
+      "w": 92,
+      "h": 84,
+      "itemId": 6071,
+      "name": "Sir Paladino emotivo",
+      "nameEn": "Emotional Sir Paladino"
+    },
+    {
+      "id": 2693,
+      "page": 21,
+      "idx": 267,
+      "w": 92,
+      "h": 84,
+      "itemId": 6072,
+      "name": "Rainbow Lily guiñando",
+      "nameEn": "Winking Rainbow Lily"
+    },
+    {
+      "id": 2694,
+      "page": 21,
+      "idx": 268,
+      "w": 92,
+      "h": 84,
+      "itemId": 6073,
+      "name": "Rainbow Lily alegre",
+      "nameEn": "Happy Rainbow Lily"
+    },
+    {
+      "id": 2695,
+      "page": 21,
+      "idx": 269,
+      "w": 92,
+      "h": 84,
+      "itemId": 6074,
+      "name": "Rainbow Lily triste",
+      "nameEn": "Sad Rainbow Lily"
+    },
+    {
+      "id": 2696,
+      "page": 21,
+      "idx": 270,
+      "w": 92,
+      "h": 84,
+      "itemId": 6075,
+      "name": "Sir Paladino confiado",
+      "nameEn": "Confident Sir Paladino"
+    },
+    {
+      "id": 2817,
+      "page": 22,
+      "idx": 271,
+      "w": 97,
+      "h": 82,
+      "itemId": 6113,
+      "name": "Blues calculadores",
+      "nameEn": "The Scheming Blues"
+    },
+    {
+      "id": 2818,
+      "page": 22,
+      "idx": 272,
+      "w": 92,
+      "h": 92,
+      "itemId": 6114,
+      "name": "Rey cerdo enfurecido",
+      "nameEn": "Enraged King Pig"
+    },
+    {
+      "id": 2819,
+      "page": 22,
+      "idx": 273,
+      "w": 96,
+      "h": 90,
+      "itemId": 6115,
+      "name": "Cerdo risueño",
+      "nameEn": "Laughing Pig"
+    },
+    {
+      "id": 2820,
+      "page": 22,
+      "idx": 274,
+      "w": 93,
+      "h": 74,
+      "itemId": 6116,
+      "name": "Vuelo de Red",
+      "nameEn": "Red's Flyby"
+    },
+    {
+      "id": 2821,
+      "page": 22,
+      "idx": 275,
+      "w": 88,
+      "h": 90,
+      "itemId": 6117,
+      "name": "Matilda gritona",
+      "nameEn": "Yelling Matilda"
+    },
+    {
+      "id": 2822,
+      "page": 22,
+      "idx": 276,
+      "w": 102,
+      "h": 90,
+      "itemId": 6118,
+      "name": "Chuck sonriente",
+      "nameEn": "Chuckling Chuck"
+    },
+    {
+      "id": 2945,
+      "page": 23,
+      "idx": 277,
+      "w": 82,
+      "h": 90,
+      "itemId": 6132,
+      "name": "Stellina voladora",
+      "nameEn": "Soaring Stellina"
+    },
+    {
+      "id": 2946,
+      "page": 23,
+      "idx": 278,
+      "w": 84,
+      "h": 92,
+      "itemId": 6133,
+      "name": "Stellina bailarina",
+      "nameEn": "Dancing Stellina"
+    },
+    {
+      "id": 2947,
+      "page": 23,
+      "idx": 279,
+      "w": 80,
+      "h": 90,
+      "itemId": 6134,
+      "name": "Stellina confundida",
+      "nameEn": "Confused Stellina"
+    },
+    {
+      "id": 2948,
+      "page": 23,
+      "idx": 280,
+      "w": 88,
+      "h": 88,
+      "itemId": 6135,
+      "name": "Stellina durmiente",
+      "nameEn": "Sleeping Stellina"
+    },
+    {
+      "id": 2949,
+      "page": 23,
+      "idx": 281,
+      "w": 82,
+      "h": 88,
+      "itemId": 6136,
+      "name": "Stellina disfrutona",
+      "nameEn": "Relaxing Stellina"
+    },
+    {
+      "id": 3073,
+      "page": 24,
+      "idx": 291,
+      "w": 91,
+      "h": 88,
+      "itemId": 6180,
+      "name": null,
+      "nameEn": null
+    },
+    {
+      "id": 3074,
+      "page": 24,
+      "idx": 292,
+      "w": 81,
+      "h": 83,
+      "itemId": 6181,
+      "name": "Choca esos cinco, Bumblebee",
+      "nameEn": "Bumblebee High Five"
+    },
+    {
+      "id": 3075,
+      "page": 24,
+      "idx": 293,
+      "w": 94,
+      "h": 82,
+      "itemId": 6182,
+      "name": "Elita enamorada",
+      "nameEn": "Smitten Elita"
+    },
+    {
+      "id": 3076,
+      "page": 24,
+      "idx": 294,
+      "w": 80,
+      "h": 80,
+      "itemId": 6183,
+      "name": "Rugido de Grimlock",
+      "nameEn": "Grimlock Roar"
+    },
+    {
+      "id": 3077,
+      "page": 24,
+      "idx": 295,
+      "w": 90,
+      "h": 84,
+      "itemId": 6184,
+      "name": "El objetivo de Megatron",
+      "nameEn": "Megatron's Target"
+    },
+    {
+      "id": 3078,
+      "page": 24,
+      "idx": 296,
+      "w": 90,
+      "h": 82,
+      "itemId": 6185,
+      "name": "Starscream posando",
+      "nameEn": "Posing Starscream"
+    },
+    {
+      "id": 3079,
+      "page": 24,
+      "idx": 297,
+      "w": 92,
+      "h": 80,
+      "itemId": 6186,
+      "name": "Escrutinio de Shockwave",
+      "nameEn": "Shockwave's Scrutiny"
+    },
+    {
+      "id": 3080,
+      "page": 24,
+      "idx": 298,
+      "w": 90,
+      "h": 87,
+      "itemId": 6187,
+      "name": "Soundwave sin palabras",
+      "nameEn": "Speechless Soundwave"
+    }
+  ]
+}

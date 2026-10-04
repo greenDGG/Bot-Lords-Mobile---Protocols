@@ -1,5 +1,23 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { MISSION_IDS } from '../data/extravagant-mission-ids';
+import {
+  buildSweepHex,
+  chapterForSweepIdx,
+  eliteSweepIdx,
+  getChapter,
+  getEliteStage,
+  getHeroStagesData,
+  getHeroStagesSync,
+  normalSweepIdx,
+  parseSweepHex,
+  setHeroStagesData,
+  stageForSweepIdx,
+  sweepChapters,
+  sweepEtapaLabel,
+  sweepStaminaCost,
+  sweepTipoLabel,
+  type SweepSel,
+} from '../data/hero-stages';
 
 const HERO_LIST: Record<number, string> = {
   1: 'Guardian',
@@ -88,6 +106,13 @@ export function Section({ title, children }: { title: string; children: React.Re
   );
 }
 
+/** Monstruito mínimo para armar el selector de la sección "Monstruitos". */
+export interface ConfigFamiliar {
+  petId: number;
+  name: string;
+  skills: { id: number; name?: string; type?: 'passive' | 'active' }[];
+}
+
 interface ConfigPanelProps {
   config: any;
   socket: any;
@@ -96,9 +121,11 @@ interface ConfigPanelProps {
   /** Cuando se pasa, guardar aplica SOLO los campos modificados
    *  (delta) a estas cuentas en vez de guardar la config completa. */
   applyTo?: number[];
+  /** Monstruitos de la cuenta (para elegir cuáles usan skills activas). */
+  familiars?: ConfigFamiliar[];
 }
 
-export default function ConfigPanel({ config, socket, iggId, colors, applyTo }: ConfigPanelProps) {
+export default function ConfigPanel({ config, socket, iggId, colors, applyTo, familiars }: ConfigPanelProps) {
   const [draft, setDraft] = useState<any>(config);
   const [saved, setSaved] = useState(false);
   const [changed, setChanged] = useState(false);
@@ -160,6 +187,24 @@ export default function ConfigPanel({ config, socket, iggId, colors, applyTo }: 
     onChange: (v: any) => touch(path, Boolean(v)),
   });
 
+  const selectedPets: number[] = getDeep(draft, 'familiarSkills.pets') || [];
+  const [newPetId, setNewPetId] = useState('');
+
+  const [heroStagesDoc, setHeroStagesDoc] = useState<any>(() => getHeroStagesSync());
+  useEffect(() => {
+    if (heroStagesDoc) return;
+    const onData = (d: any) => {
+      setHeroStagesData(d);
+      setHeroStagesDoc(d);
+    };
+    socket?.on?.('heroStages', onData);
+    socket?.emit?.('getHeroStages');
+    getHeroStagesData().then(d => setHeroStagesDoc(d));
+    return () => {
+      socket?.off?.('heroStages', onData);
+    };
+  }, [socket, heroStagesDoc]);
+
   return (
     <div style={{
       background: colors.surface, border: `1px solid ${colors.border}`,
@@ -178,8 +223,6 @@ export default function ConfigPanel({ config, socket, iggId, colors, applyTo }: 
 
       <Section title="General">
         <Toggle label="Inicio automático" {...bool('autoStart')} />
-        <TextInput label="Reset diario" {...set('dailyResetTime')} />
-        <NumInput label="Límite entrenamiento" {...set('limitTrain')} />
         <NumInput label="Reconexión (s)" {...set('reconnectTime')} />
         <Toggle label="Auto Ayuda" {...bool('sendHelp')} />
         <Toggle label="War Mode" {...bool('warMode')} />
@@ -190,8 +233,6 @@ export default function ConfigPanel({ config, socket, iggId, colors, applyTo }: 
       <Section title="Entrenamiento">
         <Toggle label="Activo" {...bool('train.enable')} />
         <TextInput label="Tipo" {...set('train.type')} />
-        <NumInput label="Velocidad" {...set('train.velTrain')} />
-        <NumInput label="Subsidios %" {...set('train.subsidiosPorcentaje')} />
       </Section>
 
       <Section title="Escudo">
@@ -246,6 +287,11 @@ export default function ConfigPanel({ config, socket, iggId, colors, applyTo }: 
       <Section title="Misiones">
         <Toggle label="Admin" {...bool('adminQuest.enable')} />
         <Toggle label="Gremio" {...bool('guildQuest.enable')} />
+      </Section>
+
+      <Section title="Emoticonos">
+        <Toggle label="Enviar 1 al día (misión diaria)" {...bool('sendEmoji.enable')} />
+        <NumInput label="Próximo (unix)" {...set('sendEmoji.next')} />
       </Section>
 
       <Section title="Límite de Recursos">
@@ -304,19 +350,136 @@ export default function ConfigPanel({ config, socket, iggId, colors, applyTo }: 
 
       <Section title="Barrido (Sweep)">
         <Toggle label="Activar barrido automático" {...bool('sweep.enable')} />
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 4 }}>
-          <span style={{ fontSize: 13 }}>Payload hex:</span>
-          <input
-            type="text"
-            value={getDeep(draft, 'sweep.payload') || ''}
-            onChange={e => touch('sweep.payload', e.target.value)}
-            placeholder="0202010001"
-            style={{ width: 140, padding: '4px 8px', fontSize: 13, fontFamily: 'monospace', background: colors.surface, color: colors.text, border: `1px solid ${colors.border}`, borderRadius: 4 }}
-          />
-        </div>
-        <div style={{ fontSize: 12, color: '#888', marginTop: 4 }}>
-          Formato: tipo(01=x1,02=x10) etapa(01=Normal,02=Elite,03=Desafío) capítulo unknown
-        </div>
+        {(() => {
+          const raw = parseSweepHex(getDeep(draft, 'sweep.payload') || '');
+          const parsed = raw && [1, 2].includes(raw.tipo) && [1, 2, 3].includes(raw.etapa)
+            && chapterForSweepIdx(raw.etapa, raw.idx) !== null
+            ? raw
+            : null;
+          const sel: SweepSel = parsed || { tipo: 2, etapa: 2, idx: 1 };
+          const isNormal = sel.etapa === 1;
+          const chapterId = chapterForSweepIdx(sel.etapa, sel.idx) ?? 1;
+          const stage = stageForSweepIdx(sel.etapa, sel.idx) ?? 1;
+          const position = isNormal ? null : stage;
+          const chapter = getChapter(chapterId);
+          const elite = position ? getEliteStage(chapterId, position) : undefined;
+          const mainNormal = isNormal && stage % 3 === 0 ? getEliteStage(chapterId, stage / 3) : undefined;
+          const cost = sweepStaminaCost(sel.tipo, sel.etapa, sel.idx);
+          const baseCost = cost / (sel.tipo === 2 ? 10 : 1);
+          const apply = (patch: Partial<SweepSel>) => touch('sweep.payload', buildSweepHex({ ...sel, ...patch }));
+          const changeEtapa = (nueva: number) => {
+            if (nueva === sel.etapa) return;
+            const idx = nueva === 1
+              ? normalSweepIdx(chapterId, stage * 3)
+              : eliteSweepIdx(chapterId, Math.max(1, Math.ceil(stage / 3)));
+            touch('sweep.payload', buildSweepHex({ ...sel, etapa: nueva, idx }));
+          };
+          const selStyle: React.CSSProperties = {
+            padding: '4px 6px', fontSize: 12, background: colors.surface,
+            color: colors.text, border: `1px solid ${colors.border}`, borderRadius: 4,
+          };
+          const lblStyle: React.CSSProperties = { fontSize: 13, display: 'flex', alignItems: 'center', gap: 6 };
+          const etapas = isNormal ? Array.from({ length: 18 }, (_, i) => i + 1) : [1, 2, 3, 4, 5, 6];
+          const etapaLabel = (s: number) => {
+            if (isNormal) {
+              const main = s % 3 === 0 ? getEliteStage(chapterId, s / 3) : undefined;
+              return `${chapterId}-${s}${main ? ` · main (${main.heroName} en Élite)` : ''}`;
+            }
+            const e = getEliteStage(chapterId, s);
+            return `${chapterId}-${s * 3}${e ? ` · ${e.heroName}` : ''}`;
+          };
+          const stageLabel = isNormal ? `${chapterId}-${stage}` : `${chapterId}-${stage * 3}`;
+          return (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 4 }}>
+              <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+                <label style={lblStyle}>
+                  Barrido:
+                  <select value={sel.tipo} onChange={e => apply({ tipo: Number(e.target.value) })} style={selStyle}>
+                    <option value={1}>x1</option>
+                    <option value={2}>x10</option>
+                  </select>
+                </label>
+                <label style={lblStyle}>
+                  Modo:
+                  <select value={sel.etapa} onChange={e => changeEtapa(Number(e.target.value))} style={selStyle}>
+                    <option value={1}>Normal</option>
+                    <option value={2}>Elite</option>
+                    <option value={3}>Desafío</option>
+                  </select>
+                </label>
+              </div>
+              <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+                <label style={lblStyle}>
+                  Capítulo:
+                  <select
+                    value={chapterId}
+                    onChange={e => apply({ idx: isNormal
+                      ? normalSweepIdx(Number(e.target.value), stage)
+                      : eliteSweepIdx(Number(e.target.value), stage) })}
+                    style={selStyle}
+                  >
+                    {sweepChapters().length > 0
+                      ? sweepChapters().map(c => (
+                          <option key={c.id} value={c.id}>{`${c.id} — ${c.name} (nv ${c.needLevel})`}</option>
+                        ))
+                      : <option value={chapterId}>{`capítulo ${chapterId} (esperando datos…)`}</option>}
+                  </select>
+                </label>
+                <label style={lblStyle}>
+                  Etapa:
+                  <select
+                    value={stage}
+                    onChange={e => apply({ idx: isNormal
+                      ? normalSweepIdx(chapterId, Number(e.target.value))
+                      : eliteSweepIdx(chapterId, Number(e.target.value)) })}
+                    style={selStyle}
+                  >
+                    {etapas.map(s => (
+                      <option key={s} value={s}>{etapaLabel(s)}</option>
+                    ))}
+                  </select>
+                </label>
+                {!isNormal && (
+                  <label style={lblStyle}>
+                    Héroe:
+                    <select
+                      value={elite?.heroId ?? 0}
+                      onChange={e => {
+                        const found = (chapter?.elite || []).find(x => x.heroId === Number(e.target.value));
+                        if (found) apply({ idx: eliteSweepIdx(chapterId, found.position) });
+                      }}
+                      style={selStyle}
+                    >
+                      {(chapter?.elite || []).map(x => (
+                        <option key={x.heroId} value={x.heroId}>{x.heroName}</option>
+                      ))}
+                    </select>
+                  </label>
+                )}
+              </div>
+              <div style={{ fontSize: 12, color: '#888' }}>
+                Gasta <strong style={{ color: '#fbbf24' }}>{cost}</strong> resistencia
+                {sel.tipo === 2 ? ` (10 × ${baseCost})` : ''} · {sweepTipoLabel(sel.tipo)} ·{' '}
+                {sweepEtapaLabel(sel.etapa)} · etapa {stageLabel}
+                {elite && !isNormal
+                  ? ` · ${elite.heroName} → medalla #${elite.medalItemId} · enemigo nivel ${elite.enemyLevel}`
+                  : ''}
+                {mainNormal ? ` · aquí cae ${mainNormal.heroName} en modo Élite` : ''}
+                {chapter ? ` · mín. nivel ${chapter.needLevel}` : ''}
+              </div>
+              {!parsed && (
+                <div style={{ fontSize: 12, color: '#f87171' }}>
+                  Payload inválido: <code style={{ fontFamily: 'monospace' }}>{String(getDeep(draft, 'sweep.payload') || '(vacío)')}</code>
+                  {' — se muestran valores por defecto; al mover cualquier selector se reescribe.'}
+                </div>
+              )}
+              <div style={{ fontSize: 12, color: '#888' }}>
+                Payload 1805: <code style={{ fontFamily: 'monospace', color: colors.text }}>{buildSweepHex(sel)}</code>
+                {' — [tipo][modo][idx: normal 1..144 = (cap-1)*18+etapa, elite 1..48 = (cap-1)*6+posición][00][01]'}
+              </div>
+            </div>
+          );
+        })()}
       </Section>
 
       <Section title="Caza (monstruos 2488)">
@@ -433,6 +596,63 @@ export default function ConfigPanel({ config, socket, iggId, colors, applyTo }: 
         </div>
         <div style={{ fontSize: 12, color: '#888', marginTop: 4 }}>
           Las demás misiones se eliminan automáticamente (solo si están desbloqueadas)
+        </div>
+      </Section>
+
+      <Section title="Monstruitos (skills activas)">
+        <Toggle label="Usar skills activas automáticamente" {...bool('familiarSkills.enable')} />
+        <div style={{ fontSize: 13, color: '#888' }}>
+          Monstruitos cuyas skills activas dispara el bot (8226) cuando no tienen cooldown:
+        </div>
+        {familiars && familiars.length > 0 ? (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+            {familiars.map(f => {
+              const actives = (f.skills || []).filter(s => s.type === 'active');
+              if (actives.length === 0) return null;
+              const checked = selectedPets.includes(f.petId);
+              return (
+                <label key={f.petId} style={{ display: 'flex', gap: 8, alignItems: 'center', cursor: 'pointer', fontSize: 13 }}>
+                  <input
+                    type="checkbox"
+                    checked={checked}
+                    onChange={e => touch('familiarSkills.pets', e.target.checked ? [...selectedPets, f.petId] : selectedPets.filter(p => p !== f.petId))}
+                    style={{ accentColor: '#4ade80' }}
+                  />
+                  <span>{f.name} (#{f.petId})</span>
+                  <span style={{ color: '#888', fontSize: 12 }}>{actives.map(s => s.name).join(' · ')}</span>
+                </label>
+              );
+            })}
+          </div>
+        ) : (
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, alignItems: 'center' }}>
+            {selectedPets.map(id => (
+              <span key={id} style={{ display: 'flex', gap: 4, alignItems: 'center', border: '1px solid #444', borderRadius: 4, padding: '2px 6px' }}>
+                pet {id}
+                <button onClick={() => touch('familiarSkills.pets', selectedPets.filter(p => p !== id))} style={{ cursor: 'pointer' }}>X</button>
+              </span>
+            ))}
+            <input
+              value={newPetId}
+              onChange={e => setNewPetId(e.target.value)}
+              placeholder="petId"
+              style={{ width: 80, padding: '2px 6px' }}
+            />
+            <button
+              onClick={() => {
+                const n = parseInt(newPetId, 10);
+                if (n > 0 && !selectedPets.includes(n)) touch('familiarSkills.pets', [...selectedPets, n]);
+                setNewPetId('');
+              }}
+              style={{ padding: '2px 8px', cursor: 'pointer' }}
+            >
+              + Agregar
+            </button>
+          </div>
+        )}
+        <div style={{ fontSize: 12, color: '#888' }}>
+          Sólo skills activas sin cooldown (8231); las ofensivas además necesitan fatiga (8230).
+          Un intento rechazado no se repite en 10 min.
         </div>
       </Section>
 

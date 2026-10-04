@@ -27,6 +27,19 @@ const RES_ROWS = [
 
 type ResKey = (typeof RES_ROWS)[number]['key'];
 
+/**
+ * key del recurso (la que se manda al backend en `amounts`) → clave de
+ * `RESOURCE_ITEM_IDS` en items.json (inglés). Sin esto `bagSum()` miraba
+ * `ids['trigo']`, que no existe: sólo `mineral` sumaba la bolsa.
+ */
+const BAG_IDS_KEY: Record<ResKey, string> = {
+  trigo: 'wheat',
+  piedra: 'stone',
+  madera: 'wood',
+  mineral: 'mineral',
+  oro: 'gold',
+};
+
 const formatRes = (v: number) => {
   if (v >= 1e9) return (v / 1e9).toFixed(1) + 'B';
   if (v >= 1e6) return (v / 1e6).toFixed(1) + 'M';
@@ -86,8 +99,8 @@ export default function SupplyModal({ socket, iggIds, players, resources, invent
   const storeSum = (field: string) =>
     iggIds.reduce((acc, id) => acc + ((resources[id] as any)?.[field] || 0), 0);
 
-  const bagSum = (resKey: string) => {
-    const itemIds = items.ids[resKey] || [];
+  const bagSum = (resKey: ResKey) => {
+    const itemIds = items.ids[BAG_IDS_KEY[resKey]] || [];
     if (itemIds.length === 0) return 0;
     let total = 0;
     for (const id of iggIds) {

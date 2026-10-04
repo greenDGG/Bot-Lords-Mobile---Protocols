@@ -5,6 +5,7 @@ import { trainTroops } from '../features/train-troops';
 import { buildItemBytes } from '../features/bag-helper';
 import { calcTimeSeconds, calcCost, branchName } from '../parsers/troops.parser';
 import { calcSimpleDeficit, useItemsForResource } from './action-helpers';
+import { getBarracksCapacity, getSubsidyPct, getTrainSpeedPct } from '../features/player-stats';
 
 export class RefineManaAction implements BotAction {
   name = 'refineMana';
@@ -77,16 +78,31 @@ export class TrainAction implements BotAction {
     const tier = parseInt(cfg.type[1], 10);
     if (type < 0 || type > 3 || tier < 0 || tier > 3) return false;
 
-    const limitTrain = (bot.config as any).limitTrain || 0;
-    if (limitTrain <= 0) { bot.bot.log('[ACTION] limitTrain=0, no se entrena'); return false; }
-    const count = limitTrain;
-    const timePerUnit = calcTimeSeconds(tier, cfg.velTrain);
-    const totalSec = timePerUnit * count;
-    const cost = calcCost(type, tier, count, cfg.subsidiosPorcentaje);
+    const stats = bot.playerStats;
+    const capacity = getBarracksCapacity(stats);
+    if (capacity <= 0) {
+      bot.bot.log('[ACTION] Sin datos de capacidad de cuartel (playerStats), no se entrena');
+      return false;
+    }
+    const speedPct = getTrainSpeedPct(stats);
+    const subsidyPct = getSubsidyPct(stats, type, tier);
+    const timePerUnit = calcTimeSeconds(tier, speedPct);
 
+    // Máximo lote pagaderable con los recursos actuales (sin items).
+    const av = bot.resTracker;
+    const fit = (need: number, have: number) => (need > 0 ? Math.floor(Math.max(0, have) / need) : Number.MAX_SAFE_INTEGER);
+    const unitCost = calcCost(type, tier, 1, subsidyPct);
+    const maxAffordable = Math.min(
+      fit(unitCost.wheat, av.wheat), fit(unitCost.wood, av.wood), fit(unitCost.stone, av.stone),
+      fit(unitCost.ore, av.ore), fit(unitCost.gold, av.gold),
+    );
+
+    // Lote = capacidad del cuartel; si no entran recursos, se cubre el déficit
+    // con items de bolsa y, si tampoco alcanzan, se reduce al máximo pagaderable.
+    let count = capacity;
+    let cost = calcCost(type, tier, count, subsidyPct);
     let itemBytes: Buffer | undefined;
-    const costConsumed = bot.resTracker.tryConsume(cost.wheat, cost.wood, cost.stone, cost.ore, cost.gold);
-    if (!costConsumed) {
+    if (!bot.resTracker.tryConsume(cost.wheat, cost.wood, cost.stone, cost.ore, cost.gold)) {
       const deficit = calcSimpleDeficit(bot.resTracker, cost.wheat, cost.wood, cost.stone, cost.ore, cost.gold);
       if (!deficit) {
         bot.bot.log('[ACTION] Recursos insuficientes para entrenar');
@@ -94,16 +110,28 @@ export class TrainAction implements BotAction {
       }
       itemBytes = buildItemBytes(bot.inventory, deficit.wheat, deficit.wood, deficit.stone, deficit.ore, deficit.gold);
       if (itemBytes.length === 0) {
-        bot.bot.log('[ACTION] Sin items en bolsa para cubrir déficit de entrenamiento');
-        return false;
+        count = Math.min(capacity, maxAffordable);
+        if (count <= 0) {
+          bot.bot.log('[ACTION] Recursos insuficientes para entrenar');
+          return false;
+        }
+        cost = calcCost(type, tier, count, subsidyPct);
+        itemBytes = undefined;
+        if (!bot.resTracker.tryConsume(cost.wheat, cost.wood, cost.stone, cost.ore, cost.gold)) {
+          bot.bot.log('[ACTION] Recursos insuficientes para entrenar');
+          return false;
+        }
+        bot.bot.log(`[ACTION] Recursos justos: lote reducido a x${count} (capacidad ${capacity})`);
+      } else {
+        bot.bot.log(`[ACTION] Usando ${itemBytes.length / 4} items de bolsa para entrenar`);
       }
-      bot.bot.log(`[ACTION] Usando ${itemBytes.length / 4} items de bolsa para entrenar`);
     }
+    const totalSec = timePerUnit * count;
     this.trainType = type;
     this.trainTier = tier;
     this.trainEnd = Date.now() + totalSec * 1000;
 
-    bot.bot.log(`[ACTION] Entrenando ${branchName(type)} T${tier + 1} x${count} (termina ${new Date(this.trainEnd).toLocaleTimeString()}, ${totalSec.toFixed(0)}s totales)`);
+    bot.bot.log(`[ACTION] Entrenando ${branchName(type)} T${tier + 1} x${count} (vel +${speedPct}%, subsidio ${subsidyPct}%, termina ${new Date(this.trainEnd).toLocaleTimeString()}, ${totalSec.toFixed(0)}s totales)`);
     trainTroops(bot.bot, type, tier, count, this.trainEnd, itemBytes);
     await new Promise(r => setTimeout(r, 2000));
     return true;

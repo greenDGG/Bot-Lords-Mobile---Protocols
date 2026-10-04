@@ -7,6 +7,7 @@ import { setDesKey, hasKey, decryptFull } from '../network/crypto';
 import { configService } from '../../config/config.service';
 import { parseCargoShip, CargoShipData } from '../models/cargo-ship.types';
 import { ProxyAuthBytes, loadProxyAuthBytes } from '../features/proxy-auth-config';
+import { emojiIdx, getEmoji } from '../data/emojis-db';
 
 export type LogFn = (msg: string) => void;
 export type StatusFn = (online: boolean) => void;
@@ -528,6 +529,16 @@ export class BotEngine extends EventEmitter {
       this.log(`[GUERRA] 2483 recibido (${body.length}b)`);
     }
 
+    // 2473 - confirmación del 2472 (envío de tropas a la agrupación)
+    if (proto === 2473) {
+      this.resolveReply(2473, body);
+      this.log(`[GUERRA] 2473 recibido (${body.length}b)`);
+    }
+
+    if (proto === 1407) this.resolveReply(1407, body);
+
+    if (proto === 2414) this.resolveReply(2414, body);
+
     // 6302 - barco de carga
     if (proto === 6302) {
       const ship = parseCargoShip(body);
@@ -700,6 +711,30 @@ export class BotEngine extends EventEmitter {
     textBytes.copy(body, off);
     this.sendCommandPacket(3001, body, true);
     this.log(`[CHAT] canal=${channel === 1 ? 'gremio' : 'mundo'} "${text}"`);
+  }
+
+  /**
+   * 3001 con un emoticono (misma cabecera que sendChat pero tipo 0x6D).
+   * Layout verificado contra captura real:
+   *   [u8 canal][u8 0x6D][u8 0x00][u16 len=4][u16 emojiId][u16 idx]
+   * El `idx` es el orden del emoji en su pagina (EMOJI.txt); el servidor lo
+   * devuelve igual en el 3003. Ej.: `01 6d 00 04 00 a202 5e00` = id 674 idx 94.
+   */
+  sendEmoji(emojiId: number, channel = 1): boolean {
+    if (!this.online || !this.game.connected) { this.log('[-] No conectado'); return false; }
+    const def = getEmoji(emojiId);
+    if (!def) { this.log(`[CHAT] Emoticono ${emojiId} desconocido`); return false; }
+    const body = Buffer.alloc(9);
+    let off = 0;
+    body[off++] = channel;
+    body[off++] = 0x6d;
+    body[off++] = 0x00;
+    body.writeUInt16LE(4, off); off += 2;
+    body.writeUInt16LE(def.id, off); off += 2;
+    body.writeUInt16LE(emojiIdx(def.id), off);
+    this.sendCommandPacket(3001, body, true);
+    this.log(`[CHAT] canal=${channel === 1 ? 'gremio' : 'mundo'} emoticono ${def.id} "${def.name ?? def.nameEn ?? ''}"`);
+    return true;
   }
 
   // ── Disconnect ──

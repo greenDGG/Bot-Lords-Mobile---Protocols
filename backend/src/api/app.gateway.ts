@@ -24,6 +24,9 @@ import { COSTUME_DB } from '../bot/data/costume-db';
 import { TALENT_DB, BRANCHES } from '../bot/data/talent-db';
 import { BUILDING_DB } from '../bot/data/building-db';
 import { EFFECT_DEFS } from '../bot/data/effect-db';
+import { buildFamiliarViews } from '../bot/data/familiars-db';
+import { buildArtifactViews, buildSetViews } from '../bot/data/artifacts-db';
+import { DAILY_MISSION_CHESTS, dailyMissionInfo, dailyMissionState, maxDailyPa } from '../bot/data/daily-missions-db';
 import { acceptGuildApplication, rejectGuildApplication } from '../bot/commands/guild-accept-reject.commands';
 import { DiscordNotificationService } from '../discord/discord-notification.service';
 import { EventRewardData } from '../bot/models/event-rewards.types';
@@ -31,6 +34,8 @@ import { huntCoordinator } from '../bot/models/hunt-coordinator';
 import { distributeTotal } from '../bot/features/supply-distribute';
 import { getBagTotalValue } from '../bot/features/bag-helper';
 import { computePlayerStats } from '../bot/features/player-stats';
+import { serverNowSec } from '../utils/clock-sync';
+import { useFamiliarSkill } from '../bot/commands/familiar-skill.commands';
 import { serializeHeroes } from '../bot/models/heroes.types';
 
 /** Nombre de recurso del supply → clave de BAG_ITEMS / getBagTotalValue */
@@ -51,9 +56,42 @@ const TECHS_CATALOG = {
   ),
 };
 
+const SWEEP_DATA = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'bot', 'data', 'hero-stages.json'), 'utf-8'));
+
 function getItemName(itemId: number): string {
   const item = ITEMS_DB[String(itemId)];
   return item?.name || `Item ${itemId}`;
+}
+
+/**
+ * Estado del "Diario" (3144/3143) ya enriquecido para el frontend: PA, cofres
+ * con sus umbrales y cada contador con descripción, objetivo y estado
+ * ('claimed' = reclamada | 'complete' = completa sin reclamar | 'progress').
+ */
+function serializeDailyMissions(instance: BotInstance) {
+  const cache = instance.getDailyMissions();
+  if (!cache) return null;
+  return {
+    pa: cache.pa,
+    chestMask: cache.chestMask,
+    missionRank: cache.missionRank,
+    maxPa: maxDailyPa(cache.missionRank),
+    chests: DAILY_MISSION_CHESTS,
+    missions: cache.missions.map(m => {
+      const info = dailyMissionInfo(m.id);
+      return {
+        id: m.id,
+        value: m.value,
+        requirement: info?.requirement ?? 0,
+        energy: info?.energy ?? 0,
+        icon: info?.icon ?? 0,
+        desc: info?.desc || `Misión ${m.id}`,
+        hint: info?.hint ?? null,
+        param: info?.param ?? 0,
+        state: dailyMissionState(m.id, m.value),
+      };
+    }),
+  };
 }
 
 /** Catálogo de construcciones (sólo lo que necesita el frontend; sin efectos por nivel: van en `effects`). */
@@ -168,6 +206,11 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage('getTechs')
   handleGetTechs(client: Socket): void {
     client.emit('techs', TECHS_CATALOG);
+  }
+
+  @SubscribeMessage('getHeroStages')
+  handleGetHeroStages(client: Socket): void {
+    client.emit('heroStages', SWEEP_DATA);
   }
 
   @SubscribeMessage('getRunningBots')
@@ -328,6 +371,8 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
       const info = instance.playerInfo
         ? {
             ...instance.playerInfo,
+            energy: instance.getCurrentEnergy(),
+            energyMax: instance.getEnergyMax(),
             currentResistencia: instance.getCurrentResistencia(),
             resistenciaMax: instance.getResistenciaMax(),
             energyRegen: instance.getEnergyRegen(),
@@ -391,6 +436,27 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
     instance.on('ownMarchesUpdated', () => {
       this.server.emit('ownMarches', { iggId, marches: instance.ownMarches || null });
     });
+    instance.on('familiarsUpdated', () => {
+      const f = instance.familiars;
+      this.server.emit('familiars', {
+        iggId,
+        list: f ? buildFamiliarViews(f) : [],
+        playerStats: instance.playerStats || computePlayerStats(instance),
+        cooldowns: f?.cooldowns ?? [],
+        fatigue: f?.fatigue ?? null,
+        buffs: f?.buffs ?? [],
+      });
+    });
+    instance.on('artifactsUpdated', () => {
+      this.server.emit('artifacts', {
+        iggId,
+        artifacts: {
+          list: buildArtifactViews(instance.artifacts),
+          sets: buildSetViews(instance.artifacts),
+        },
+        playerStats: instance.playerStats || computePlayerStats(instance),
+      });
+    });
     instance.marchQueue.on('enqueued', () => {
       this.server.emit('marchQueueUpdated', { iggId, queue: instance.marchQueue.all.map(e => ({ id: e.id, type: e.type, status: e.status, createdAt: e.createdAt, sentAt: e.sentAt, ackedAt: e.ackedAt, completedAt: e.completedAt, error: e.error, meta: e.meta })) });
     });
@@ -420,7 +486,11 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
       this.server.emit('coliseum', { iggId, state: instance.coliseumState || null });
     });
     instance.on('heroListUpdated', (heroes) => {
-      this.server.emit('heroes', { iggId, heroes: serializeHeroes(heroes) });
+      this.server.emit('heroes', {
+        iggId,
+        heroes: serializeHeroes(heroes),
+        playerStats: instance.playerStats || computePlayerStats(instance),
+      });
     });
     instance.on('missionsUpdated', () => {
       this.server.emit('missions', { iggId, missions: instance.missions || null });
@@ -430,6 +500,9 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
     });
     instance.on('fdgExtensionUpdated', () => {
       this.server.emit('fdgExtension', { iggId, fdgExtension: instance.fdgExtension || null });
+    });
+    instance.on('dailyMissionsUpdated', () => {
+      this.server.emit('dailyMissions', { iggId, dailyMissions: serializeDailyMissions(instance) });
     });
     instance.on('buffsUpdated', () => {
       const shield = instance.buffs.shield;
@@ -556,7 +629,13 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
     client.emit('botData', {
       iggId: payload.iggId,
       playerInfo: instance.playerInfo
-        ? { ...instance.playerInfo, currentResistencia: instance.getCurrentResistencia(), resistenciaMax: instance.getResistenciaMax() }
+        ? {
+            ...instance.playerInfo,
+            energy: instance.getCurrentEnergy(),
+            energyMax: instance.getEnergyMax(),
+            currentResistencia: instance.getCurrentResistencia(),
+            resistenciaMax: instance.getResistenciaMax(),
+          }
         : null,
       resources: instance.resources,
       shield: shield ? { remaining: shield.remaining, name: shield.def.name } : null,
@@ -566,6 +645,14 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
       hospitalState: instance.hospitalState || null,
       incomingMarches: instance.serializableMarches(),
       ownMarches: instance.ownMarches || null,
+      familiars: instance.familiars ? buildFamiliarViews(instance.familiars) : [],
+      familiarCooldowns: instance.familiars?.cooldowns ?? [],
+      familiarFatigue: instance.familiars?.fatigue ?? null,
+      familiarBuffs: instance.familiars?.buffs ?? [],
+      artifacts: {
+        list: buildArtifactViews(instance.artifacts),
+        sets: buildSetViews(instance.artifacts),
+      },
       marchHistory: instance.marchHistory || [],
       eventDefs: instance.eventDefs || [],
       eventClaims: Array.from(instance.eventClaims.values()),
@@ -588,6 +675,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
       heroes: serializeHeroes(instance.heroes || []),
       missions: instance.missions || null,
       missionRecords: instance.missionRecords || null,
+      dailyMissions: serializeDailyMissions(instance),
       fdgExtension: instance.fdgExtension || null,
       config: instance.config,
       mapTiles: serializeMapTiles(Array.from(instance.mapTiles.values())),
@@ -685,6 +773,39 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const body = Buffer.from('5d04010000000000000000000000', 'hex');
     instance.bot.sendEncrypted(1406, body);
     instance.bot.log('[LÍDER] Usando fruta de reanimación...');
+  }
+
+  @SubscribeMessage('useFamiliarSkill')
+  handleUseFamiliarSkill(client: Socket, payload: { iggId: number; petId: number; skillId: number; force?: boolean }): void {
+    const instance = this.accountManager.instances.get(payload.iggId);
+    if (!instance) { client.emit('error', { message: 'Bot no encontrado' }); return; }
+    if (!instance.bot.isOnline) { client.emit('error', { message: 'Bot no conectado' }); return; }
+
+    const cd = instance.familiars?.cooldowns?.find(c => c.skillId === payload.skillId);
+    const now = serverNowSec();
+    if (!payload.force && cd && cd.availableAt > now) {
+      client.emit('familiarSkillResult', {
+        iggId: payload.iggId,
+        petId: payload.petId,
+        skillId: payload.skillId,
+        sent: false,
+        reason: 'cooldown',
+        availableAt: cd.availableAt,
+        remainingSec: cd.availableAt - now,
+      });
+      return;
+    }
+
+    const pi = instance.playerInfo;
+    if (!pi) { client.emit('error', { message: 'Sin datos de personaje' }); return; }
+    useFamiliarSkill(instance.bot, payload.petId, payload.skillId, { x: pi.castleX, y: pi.castleY });
+    instance.bot.log(`[MONSTRUITOS] Uso de skill ${payload.skillId} (pet ${payload.petId})${payload.force ? ' (force)' : ''}`);
+    client.emit('familiarSkillResult', {
+      iggId: payload.iggId,
+      petId: payload.petId,
+      skillId: payload.skillId,
+      sent: true,
+    });
   }
 
   @SubscribeMessage('requestWarData')
@@ -1381,7 +1502,7 @@ function deepMerge(target: any, source: any): void {
 }
 
 /** Convierte un objeto anidado en paths con puntos para $set de Mongo
- *  (ej: { train: { velTrain: 5 } } → { 'train.velTrain': 5 }).
+ *  (ej: { train: { type: '03' } } → { 'train.type': '03' }).
  *  Evita que se reemplacen sub-documentos enteros al guardar configs parciales. */
 function flattenConfig(obj: any, prefix = '', out: Record<string, any> = {}): Record<string, any> {
   for (const key of Object.keys(obj)) {

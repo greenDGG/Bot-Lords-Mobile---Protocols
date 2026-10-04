@@ -34,6 +34,10 @@ import { handle3610 } from './event-rewards.handler';
 import { handle2489, handle2490, handle2491, handle2492 } from './hunt.handler';
 import { handle9861, handle9862, handle9865, handle9867, handle9868 } from './lucky-card.handler';
 import { handle7004 } from './maze.handler';
+import { handle8210, handle8227, handle8230, handle8231, handle8232, handle8245 } from './familiar.handler';
+import { handle9771 } from './artifact.handler';
+import { handle3143, handle3144 } from './daily-mission.handler';
+import { handleQuickBattle } from './sweep.handler';
 
 type Handler = (bot: BotInstance, body: Buffer, mp: MessagePacket) => void;
 
@@ -70,6 +74,8 @@ const HANDLERS: Record<number, Handler> = {
   2802: handleGuildInfo,
   3003: handleChatMessages,
   3112: handle3112,
+  3143: handle3143,
+  3144: handle3144,
   3125: handleVipChest,
   3201: handleResearch,
   3208: handleResearchEvent,
@@ -95,6 +101,14 @@ const HANDLERS: Record<number, Handler> = {
   2859: handleGuildNotification,
   2826: handleGuildApplications,
   3610: handle3610,
+  8210: handle8210,
+  8227: handle8227,
+  8230: handle8230,
+  8231: handle8231,
+  8232: handle8232,
+  8245: handle8245,
+  9771: handle9771,
+  1806: handleQuickBattle,
 };
 
 export function dispatchPacket(bot: BotInstance, mp: MessagePacket): void {

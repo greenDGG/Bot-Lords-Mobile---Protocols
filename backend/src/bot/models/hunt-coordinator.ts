@@ -5,15 +5,28 @@ import { EventEmitter } from 'events';
  *
  * El 2488 no tiene proto de "unirse a un ataque": la coordinación es puramente
  * lógica del lado del bot. Cada tile con un monstruo en caza es un "squad"
- * (un `HuntSquad`), y el número de bots que deben golpearlo por vuelta se
- * calcula con el HP real (0-100, siempre lo del servidor vía 2201/2220) y el
- * daño medio observado en los 2220 de HP:
+ * (un `HuntSquad`), y quién va / quién se queda se decide con el HP real
+ * (0-100, siempre lo del servidor vía 2201/2220) y el **daño de cada bot**
+ * observado en los 2220 de HP (`iggId:nivel`):
  *
- *   needed = ceil(hpRestante * 1.05 / dañoMedio)   [1 .. policy.max]
+ *   needed = ceil(hpRestante * 1.05 / MEJOR daño entre los miembros)  [1 .. policy.max]
+ *
+ * El "mejor daño" (y no el promedio) es lo que hace que, con un bicho al 4%,
+ * mande UNO solo: si el de 6% lo mata de un golpe, `needed = 1` y el resto
+ * queda "surplus". Reglas de quién entra / quién se va:
+ *
+ *   - `canClaim`/`hasRoom`: si `needed` cupos están tomados pero YO puedo
+ *     matar de un golpe y NINGÚN miembro está confirmado como matador, me uno
+ *     igual (el que mata no se pierde un bicho por llegar tarde).
+ *   - `canHit`:
+ *       · otro bot ACTIVO (en vuelo) ya lo remata → `surplus` (no dupliques).
+ *       · `active >= needed` y yo no aporto nada nuevo → `surplus`.
+ *       · `active >= needed` pero nadie activo puede matar y yo sí → OK
+ *         (mi golpe hace falta aunque el cupo parezca cubierto).
  *
  * Sin datos de daño se asume 1 golpe (manda 1 bot y aprende). Un bot que ya
- * está cubierto por otros (`active >= needed`) queda "surplus": se libera y
- * va a por otro bicho en vez de gastar energía de más.
+ * está cubierto por otros queda "surplus": se libera y va a por otro bicho en
+ * vez de gastar energía de más.
  *
  * `needed` es también el máximo de miembros, con una excepción: si el squad
  * ya está lleno y a sus miembros les queda poca energía para cubrir todos los
@@ -71,13 +84,19 @@ export interface HuntSquad {
 export interface HitGate {
   ok: boolean;
   reason?: 'dead' | 'surplus';
-  /** golpes que faltan para matar al bicho */
+  /** golpes que faltan para matar al bicho (con el MEJOR daño del squad) */
   needed: number;
   /** miembros ocupados (golpe en vuelta/espera) que no soy yo */
   active: number;
   hp: number;
-  /** daño medio en % por golpe; 0 = sin datos todavía */
+  /** daño medio en % por golpe (sólo informativo en el log) */
   avgDamage: number;
+  /** mi daño en % de HP por golpe; 0 = sin datos todavía */
+  myDamage: number;
+  /** ¿mi golpe bastaría para matar al bicho? */
+  canKill: boolean;
+  /** mejor daño entre los bots ACTIVOS (en vuelo) que no soy yo */
+  activeDamage: number;
 }
 
 export interface SquadView {
@@ -127,18 +146,33 @@ class HuntCoordinator extends EventEmitter {
     sq.policy = policy;
     if (sq.members.has(iggId)) return { ok: true };
     if (sq.members.size >= this.needed(sq)) {
+      // Cupos tomados, salvo que YO mate de un golpe y nadie del squad esté
+      // confirmado como matador: el que remata no se pierde este bicho.
+      if (this.iamTheKiller(iggId, sq)) return { ok: true };
       return { ok: false, message: `Otro bot ya está cazando ese bicho (HP ${sq.hp.toFixed(0)}%)` };
     }
     return { ok: true };
   }
 
   /** ¿Hay lugar para un bot más en el squad del tile? (para elegir candidatos) */
-  hasRoom(tileId: number, policy: SquadPolicy): boolean {
+  hasRoom(tileId: number, policy: SquadPolicy, iggId?: number): boolean {
     const sq = this.peek(tileId);
     if (!sq) return true;
     if (sq.members.size === 0) return true;
     sq.policy = policy;
-    return sq.members.size < this.needed(sq);
+    if (sq.members.size < this.needed(sq)) return true;
+    return iggId !== undefined && this.iamTheKiller(iggId, sq);
+  }
+
+  /**
+   * Este bot remata de un golpe (daño propio >= HP) y ningún miembro del
+   * squad está confirmado como matador → merece el cupo aunque `needed = 1`.
+   */
+  private iamTheKiller(iggId: number, sq: HuntSquad): boolean {
+    if (sq.hp <= 0) return false;
+    const mine = this.myDamage(iggId, sq.level);
+    if (mine <= 0 || mine < sq.hp) return false;
+    return this.bestDamage(sq) < sq.hp;
   }
 
   /** Registra la sonda de un bot (BotInstance, al crear la instancia). */
@@ -197,12 +231,20 @@ class HuntCoordinator extends EventEmitter {
 
   /**
    * Decisión de golpe. `ok:false` con reason 'surplus' → este bot no hace
-   * falta (otros ya cubren los golpes que faltan): libere y vaya a otro bicho.
-   * 'dead' → el HP compartido ya llegó a 0.
+   * falta (otros ya cubren los golpes que faltan, o alguien activo ya lo
+   * remata): libere y vaya a otro bicho. 'dead' → el HP compartido ya llegó
+   * a 0. Reglas (en este orden):
+   *
+   *   1. otro bot ACTIVO ya remata el bicho (su daño >= HP) → sobro.
+   *   2. `active >= needed` (los cupos están cubiertos) → sobro, salvo que
+   *      nadie de los activos pueda matar y yo sí: entonces mi golpe hace
+   *      falta y sigo.
    */
   canHit(iggId: number, tileId: number, policy: SquadPolicy): HitGate {
     const sq = this.squads.get(tileId);
-    if (!sq) return { ok: true, needed: 0, active: 0, hp: 0, avgDamage: 0 };
+    if (!sq) {
+      return { ok: true, needed: 0, active: 0, hp: 0, avgDamage: 0, myDamage: 0, canKill: false, activeDamage: 0 };
+    }
     this.prune(sq);
     sq.policy = policy;
     const now = Date.now();
@@ -210,14 +252,36 @@ class HuntCoordinator extends EventEmitter {
     if (me) me.updatedAt = now;
     const needed = this.needed(sq);
     const avgDamage = this.avgDamage(sq);
-    if (sq.hp <= 0) return { ok: false, reason: 'dead', needed, active: 0, hp: sq.hp, avgDamage };
+    const myDamage = this.myDamage(iggId, sq.level);
+    const canKill = sq.hp > 0 && myDamage >= sq.hp;
+    if (sq.hp <= 0) {
+      return { ok: false, reason: 'dead', needed, active: 0, hp: sq.hp, avgDamage, myDamage, canKill, activeDamage: 0 };
+    }
     let active = 0;
+    let activeDamage = 0;
     for (const m of sq.members.values()) {
       if (m.iggId === iggId) continue;
-      if (m.busyUntil > now) active++;
+      if (m.busyUntil > now) {
+        active++;
+        activeDamage = Math.max(activeDamage, this.myDamage(m.iggId, sq.level));
+      }
     }
-    if (active >= needed) return { ok: false, reason: 'surplus', needed, active, hp: sq.hp, avgDamage };
-    return { ok: true, needed, active, hp: sq.hp, avgDamage };
+    const gate = (ok: boolean, reason?: 'dead' | 'surplus'): HitGate => ({
+      ok,
+      reason,
+      needed,
+      active,
+      hp: sq.hp,
+      avgDamage,
+      myDamage,
+      canKill,
+      activeDamage,
+    });
+    // 1. alguien en vuelo ya lo remata solo → mi golpe sobra
+    if (activeDamage >= sq.hp) return gate(false, 'surplus');
+    // 2. cupos cubiertos, salvo que nadie pueda matar y yo sí
+    if (active >= needed && !(canKill && activeDamage < sq.hp)) return gate(false, 'surplus');
+    return gate(true);
   }
 
   /** Vista para la UI (una línea por bicho en caza). */
@@ -357,7 +421,7 @@ class HuntCoordinator extends EventEmitter {
     this.damageByLevel.clear();
   }
 
-  /** Golpes necesarios para matar al bicho (0-100 / daño medio por golpe). */
+  /** Golpes necesarios para matar al bicho (0-100 / MEJOR daño por golpe). */
   private needed(sq: HuntSquad): number {
     if (sq.hp <= 0) return 0;
     if (!sq.policy.enable) return 1;
@@ -373,9 +437,36 @@ class HuntCoordinator extends EventEmitter {
   /** Golpes que faltan para matar, sin tope de cupos. */
   private rawHits(sq: HuntSquad): number {
     if (sq.hp <= 0) return 0;
-    const avg = this.avgDamage(sq);
-    if (avg <= 0) return 1;
-    return Math.max(1, Math.ceil((sq.hp * 1.05) / avg));
+    // El MEJOR daño (no el promedio): si alguien del squad hace 6% y el
+    // bicho queda al 4%, basta UN golpe — el promedio lo disimulaba y
+    // mandaba 2-3 bots a lo que remata uno.
+    const best = this.bestDamage(sq);
+    if (best <= 0) return 1;
+    return Math.max(1, Math.ceil((sq.hp * 1.05) / best));
+  }
+
+  /**
+   * Mejor daño (% de HP por golpe) entre los miembros del squad. 0 si
+   * nadie del squad ha golpeado ese nivel todavía.
+   */
+  private bestDamage(sq: HuntSquad): number {
+    let best = 0;
+    for (const m of sq.members.values()) {
+      best = Math.max(best, this.myDamage(m.iggId, sq.level));
+    }
+    return best;
+  }
+
+  /**
+   * Daño observado de UN bot en este nivel (% de HP por golpe), de sus
+   * propios 2220. 0 = sin datos (sin historial propio no se asume nada: el
+   * histórico global del nivel mezclaría bots de fuerzas distintas).
+   */
+  private myDamage(iggId: number, level: number): number {
+    const arr = this.damageByBot.get(`${iggId}:${level}`);
+    if (!arr?.length) return 0;
+    const samples = arr.slice(-DAMAGE_SAMPLE);
+    return samples.reduce((a, b) => a + b, 0) / samples.length;
   }
 
   /**

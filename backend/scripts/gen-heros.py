@@ -13,6 +13,13 @@ Entradas (tablas .bytes extraidas con UnityPy de Table.unity3d + stringtables de
                         u16[0]  id
                         u16[1]  nameKey         (0 en la 1a habilidad de cada héroe)
                         u16[3]  descKey          (descripción con colores del cliente)
+                        u16[5]  type            (11/12 = skill con efecto "buff":
+                                                 u16[9] effectId + u16[11] valor;
+                                                 1546 = Tactics/activa de daño)
+                        u16[9]  effectId         (id en effect.bytes / effects.json)
+                        u16[11] value            (valor en grado Common/Blanco;
+                                                  '%' = milésimas de %, es decir
+                                                  value/1000 = % en blanco)
   heroplaylist.bytes -> 11 B/fila, u16[0] id: lista canónica de héroes (215 ids)
   stringtable_{eng,spa}[2].bytes -> key -> texto
 
@@ -25,6 +32,10 @@ Notas:
     héroe 1 = Golpe fatal + Potenciador PS infantería + Gestión suministro de comida
     + Potenciador ATQ infantería.
   * Se limpian los tags <color=...> de las descripciones.
+  * Las skills buff (u16[5] 11/12) exportan effectId + value: son las pasivas
+    (económicas o de tropa) que escalan con el grado del héroe
+    (Blanco x1, Verde x2, Azul x4, Morado x8, Oro x20). El slot 0 es siempre
+    la Tactics (activa al mandar tropas) y no lleva efecto de stat.
   * Las columnas numéricas de stats propias (ATQ/DEF/HP, crecimiento, etc.) NO se
     exportan: aún no están identificadas de forma fiable.
 
@@ -128,12 +139,19 @@ def main():
     skill_rows = load_rows(os.path.join(args.alltables, "skills.bytes"), SKILL_RS)
     skills_by_id = {}
     for row in skill_rows:
-        sid, name_key, _flag, desc_key = struct.unpack_from("<4H", row, 0)
-        skills_by_id[sid] = {
+        u = struct.unpack_from("<39H", row, 0)
+        sid, name_key, desc_key = u[0], u[1], u[3]
+        info = {
             "name": clean(nm_es(name_key)),
             "nameEn": clean(nm_en(name_key)),
             "desc": clean(nm_es(desc_key)),
         }
+        # Sólo las skills tipo buff (u16[5] 11/12) llevan effectId + valor base:
+        # el resto (Tactics, activas de daño) no sirven para los stats.
+        if u[5] in (11, 12) and u[9]:
+            info["effectId"] = u[9]
+            info["value"] = u[11]
+        skills_by_id[sid] = info
 
     heroes = {}
     total = 0

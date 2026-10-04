@@ -1,0 +1,5554 @@
+{
+  "source": "LordsBot-Release/GameAssets (Pet + PetSkill + PetSkillValue + Effect + PetCombatSkill)",
+  "pets": {
+    "1": {
+      "id": 1,
+      "name": "Esgrimista",
+      "nameEn": "Fencer",
+      "rare": 5,
+      "army": "inf",
+      "talent": 0,
+      "skills": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "2": {
+      "id": 2,
+      "name": "Gladiador",
+      "nameEn": "Gladiator",
+      "rare": 5,
+      "army": "inf",
+      "talent": 0,
+      "skills": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "3": {
+      "id": 3,
+      "name": "Cazador",
+      "nameEn": "Huntsman",
+      "rare": 5,
+      "army": "inf",
+      "talent": 0,
+      "skills": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "4": {
+      "id": 4,
+      "name": "Arquero élite",
+      "nameEn": "Ranger",
+      "rare": 5,
+      "army": "inf",
+      "talent": 0,
+      "skills": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "5": {
+      "id": 5,
+      "name": "Mago patrullero",
+      "nameEn": "Patrol Mage",
+      "rare": 5,
+      "army": "inf",
+      "talent": 0,
+      "skills": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "6": {
+      "id": 6,
+      "name": "Elementalista",
+      "nameEn": "Elementalist",
+      "rare": 5,
+      "army": "inf",
+      "talent": 0,
+      "skills": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "7": {
+      "id": 7,
+      "name": "Chico robot",
+      "nameEn": "Bot Boy",
+      "rare": 5,
+      "army": "inf",
+      "talent": 0,
+      "skills": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "8": {
+      "id": 8,
+      "name": "Jaziek",
+      "nameEn": "Jaziek",
+      "rare": 1,
+      "army": "cav",
+      "talent": 5,
+      "skills": [
+        59,
+        0,
+        0,
+        0
+      ]
+    },
+    "9": {
+      "id": 9,
+      "name": "Sinestrus",
+      "nameEn": "Darkhand",
+      "rare": 5,
+      "army": "inf",
+      "talent": 0,
+      "skills": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "10": {
+      "id": 10,
+      "name": "Yeti",
+      "nameEn": "Yeti",
+      "rare": 1,
+      "army": "cav",
+      "talent": 10,
+      "skills": [
+        67,
+        0,
+        0,
+        0
+      ]
+    },
+    "11": {
+      "id": 11,
+      "name": "Magus",
+      "nameEn": "Magus",
+      "rare": 3,
+      "army": "art",
+      "talent": 26,
+      "skills": [
+        39,
+        38,
+        79,
+        0
+      ]
+    },
+    "12": {
+      "id": 12,
+      "name": "Hechicero",
+      "nameEn": "Sorcerer",
+      "rare": 2,
+      "army": "art",
+      "talent": 15,
+      "skills": [
+        11,
+        76,
+        0,
+        0
+      ]
+    },
+    "13": {
+      "id": 13,
+      "name": "Cabeza hueca",
+      "nameEn": "Bonehead",
+      "rare": 2,
+      "army": "inf",
+      "talent": 19,
+      "skills": [
+        31,
+        74,
+        0,
+        0
+      ]
+    },
+    "14": {
+      "id": 14,
+      "name": "Soldado fantasma",
+      "nameEn": "Wraith Soldier",
+      "rare": 5,
+      "army": "inf",
+      "talent": 0,
+      "skills": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "15": {
+      "id": 15,
+      "name": "Matón",
+      "nameEn": "Bruiser",
+      "rare": 5,
+      "army": "inf",
+      "talent": 0,
+      "skills": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "16": {
+      "id": 16,
+      "name": "Cíclope",
+      "nameEn": "Cyclops",
+      "rare": 5,
+      "army": "inf",
+      "talent": 0,
+      "skills": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "17": {
+      "id": 17,
+      "name": "Baum",
+      "nameEn": "Oakroot",
+      "rare": 1,
+      "army": "inf",
+      "talent": 2,
+      "skills": [
+        62,
+        0,
+        0,
+        0
+      ]
+    },
+    "18": {
+      "id": 18,
+      "name": "Magmalius",
+      "nameEn": "Magmalord",
+      "rare": 1,
+      "army": "art",
+      "talent": 3,
+      "skills": [
+        60,
+        0,
+        0,
+        0
+      ]
+    },
+    "19": {
+      "id": 19,
+      "name": "Conchaspina",
+      "nameEn": "Terraspike",
+      "rare": 1,
+      "army": "inf",
+      "talent": 7,
+      "skills": [
+        64,
+        0,
+        0,
+        0
+      ]
+    },
+    "20": {
+      "id": 20,
+      "name": "Pargo",
+      "nameEn": "Snapper",
+      "rare": 5,
+      "army": "inf",
+      "talent": 0,
+      "skills": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "21": {
+      "id": 21,
+      "name": "Bubbler",
+      "nameEn": "Bubbler",
+      "rare": 5,
+      "army": "inf",
+      "talent": 0,
+      "skills": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "22": {
+      "id": 22,
+      "name": "Scalevín",
+      "nameEn": "Scalefry",
+      "rare": 5,
+      "army": "inf",
+      "talent": 0,
+      "skills": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "23": {
+      "id": 23,
+      "name": "Mutanus",
+      "nameEn": "Rotgill",
+      "rare": 5,
+      "army": "inf",
+      "talent": 0,
+      "skills": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "24": {
+      "id": 24,
+      "name": "Gnomo",
+      "nameEn": "Gnome",
+      "rare": 1,
+      "army": "art",
+      "talent": 8,
+      "skills": [
+        63,
+        0,
+        0,
+        0
+      ]
+    },
+    "25": {
+      "id": 25,
+      "name": "Chamán topo",
+      "nameEn": "Mole Shaman",
+      "rare": 3,
+      "army": "inf",
+      "talent": 27,
+      "skills": [
+        35,
+        21,
+        88,
+        0
+      ]
+    },
+    "26": {
+      "id": 26,
+      "name": "Ingeniero",
+      "nameEn": "Engineer",
+      "rare": 1,
+      "army": "inf",
+      "talent": 4,
+      "skills": [
+        61,
+        0,
+        0,
+        0
+      ]
+    },
+    "27": {
+      "id": 27,
+      "name": "Maestro bestia",
+      "nameEn": "Beastmaster",
+      "rare": 1,
+      "army": "cav",
+      "talent": 9,
+      "skills": [
+        66,
+        0,
+        0,
+        0
+      ]
+    },
+    "28": {
+      "id": 28,
+      "name": "Tempestizo",
+      "nameEn": "Tempestite",
+      "rare": 3,
+      "army": "all",
+      "talent": 32,
+      "skills": [
+        10,
+        43,
+        70,
+        0
+      ]
+    },
+    "29": {
+      "id": 29,
+      "name": "Aquarion",
+      "nameEn": "Aquiris",
+      "rare": 2,
+      "army": "all",
+      "talent": 6,
+      "skills": [
+        32,
+        71,
+        0,
+        0
+      ]
+    },
+    "30": {
+      "id": 30,
+      "name": "Terrizo",
+      "nameEn": "Territe",
+      "rare": 2,
+      "army": "all",
+      "talent": 1,
+      "skills": [
+        34,
+        91,
+        0,
+        0
+      ]
+    },
+    "31": {
+      "id": 31,
+      "name": "Pyris",
+      "nameEn": "Pyris",
+      "rare": 3,
+      "army": "all",
+      "talent": 16,
+      "skills": [
+        75,
+        42,
+        78,
+        0
+      ]
+    },
+    "32": {
+      "id": 32,
+      "name": "Arpía",
+      "nameEn": "Harpy",
+      "rare": 2,
+      "army": "inf",
+      "talent": 20,
+      "skills": [
+        33,
+        77,
+        0,
+        0
+      ]
+    },
+    "33": {
+      "id": 33,
+      "name": "Strix",
+      "nameEn": "Strix",
+      "rare": 2,
+      "army": "cav",
+      "talent": 14,
+      "skills": [
+        65,
+        73,
+        0,
+        0
+      ]
+    },
+    "34": {
+      "id": 34,
+      "name": "Máquina explosiva",
+      "nameEn": "Boom Engine",
+      "rare": 5,
+      "army": "inf",
+      "talent": 0,
+      "skills": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "35": {
+      "id": 35,
+      "name": "Reclu.",
+      "nameEn": "Hire",
+      "rare": 5,
+      "army": "cav",
+      "talent": 40,
+      "skills": [
+        55,
+        22,
+        99,
+        0
+      ]
+    },
+    "36": {
+      "id": 36,
+      "name": "Gargantúa",
+      "nameEn": "Gargantua",
+      "rare": 5,
+      "army": "cav",
+      "talent": 38,
+      "skills": [
+        51,
+        48,
+        94,
+        0
+      ]
+    },
+    "37": {
+      "id": 37,
+      "name": "Máquina Calabaza",
+      "nameEn": "Pumpkinator",
+      "rare": 5,
+      "army": "inf",
+      "talent": 0,
+      "skills": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "38": {
+      "id": 38,
+      "name": "Bestia de la nieve",
+      "nameEn": "Snow Beast",
+      "rare": 4,
+      "army": "art",
+      "talent": 34,
+      "skills": [
+        29,
+        5,
+        87,
+        0
+      ]
+    },
+    "39": {
+      "id": 39,
+      "name": "Guiverno de jade",
+      "nameEn": "Jade Wyrm",
+      "rare": 5,
+      "army": "all",
+      "talent": 36,
+      "skills": [
+        102,
+        103,
+        104,
+        0
+      ]
+    },
+    "40": {
+      "id": 40,
+      "name": "Grifo",
+      "nameEn": "Gryphon",
+      "rare": 4,
+      "army": "all",
+      "talent": 21,
+      "skills": [
+        36,
+        19,
+        84,
+        0
+      ]
+    },
+    "41": {
+      "id": 41,
+      "name": "Megalarva",
+      "nameEn": "Mega Maggot",
+      "rare": 4,
+      "army": "all",
+      "talent": 11,
+      "skills": [
+        2,
+        6,
+        89,
+        0
+      ]
+    },
+    "42": {
+      "id": 42,
+      "name": "Terrospín",
+      "nameEn": "Terrorthorn",
+      "rare": 5,
+      "army": "inf",
+      "talent": 0,
+      "skills": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "43": {
+      "id": 43,
+      "name": "Drider infernal",
+      "nameEn": "Hell Drider",
+      "rare": 5,
+      "army": "all",
+      "talent": 31,
+      "skills": [
+        7,
+        47,
+        83,
+        0
+      ]
+    },
+    "44": {
+      "id": 44,
+      "name": "Noceros",
+      "nameEn": "Noceros",
+      "rare": 3,
+      "army": "cav",
+      "talent": 22,
+      "skills": [
+        46,
+        4,
+        90,
+        0
+      ]
+    },
+    "45": {
+      "id": 45,
+      "name": "La Muerte",
+      "nameEn": "Grim Reaper",
+      "rare": 5,
+      "army": "inf",
+      "talent": 0,
+      "skills": [
+        18,
+        13,
+        101,
+        0
+      ]
+    },
+    "46": {
+      "id": 46,
+      "name": "Saberfang",
+      "nameEn": "Saberfang",
+      "rare": 4,
+      "army": "cav",
+      "talent": 33,
+      "skills": [
+        8,
+        14,
+        80,
+        0
+      ]
+    },
+    "47": {
+      "id": 47,
+      "name": "Titán de Marea",
+      "nameEn": "Tidal Titan",
+      "rare": 5,
+      "army": "inf",
+      "talent": 0,
+      "skills": [
+        56,
+        17,
+        93,
+        0
+      ]
+    },
+    "48": {
+      "id": 48,
+      "name": "Buen Apetito",
+      "nameEn": "Bon Appeti",
+      "rare": 5,
+      "army": "inf",
+      "talent": 41,
+      "skills": [
+        49,
+        50,
+        100,
+        0
+      ]
+    },
+    "49": {
+      "id": 49,
+      "name": "Abeja Reina",
+      "nameEn": "Queen Bee",
+      "rare": 5,
+      "army": "art",
+      "talent": 39,
+      "skills": [
+        57,
+        44,
+        97,
+        0
+      ]
+    },
+    "50": {
+      "id": 50,
+      "name": "AlaNegra",
+      "nameEn": "Blackwing",
+      "rare": 5,
+      "army": "art",
+      "talent": 37,
+      "skills": [
+        16,
+        45,
+        92,
+        0
+      ]
+    },
+    "51": {
+      "id": 51,
+      "name": "Caballo de Troya",
+      "nameEn": "Mecha Trojan",
+      "rare": 5,
+      "army": "inf",
+      "talent": 0,
+      "skills": [
+        15,
+        41,
+        98,
+        0
+      ]
+    },
+    "52": {
+      "id": 52,
+      "name": "Goblin",
+      "nameEn": "Goblin",
+      "rare": 3,
+      "army": "cav",
+      "talent": 24,
+      "skills": [
+        12,
+        24,
+        68,
+        0
+      ]
+    },
+    "53": {
+      "id": 53,
+      "name": "El mal Gorgojo",
+      "nameEn": "Evil Weevil",
+      "rare": 2,
+      "army": "all",
+      "talent": 12,
+      "skills": [
+        25,
+        69,
+        0,
+        0
+      ]
+    },
+    "54": {
+      "id": 54,
+      "name": "Tótem",
+      "nameEn": "Totempest",
+      "rare": 2,
+      "army": "art",
+      "talent": 13,
+      "skills": [
+        26,
+        72,
+        0,
+        0
+      ]
+    },
+    "55": {
+      "id": 55,
+      "name": "Rocoso",
+      "nameEn": "Bouldur",
+      "rare": 2,
+      "army": "cav",
+      "talent": 17,
+      "skills": [
+        27,
+        85,
+        0,
+        0
+      ]
+    },
+    "56": {
+      "id": 56,
+      "name": "Kan-grejo",
+      "nameEn": "Krabby",
+      "rare": 2,
+      "army": "all",
+      "talent": 18,
+      "skills": [
+        28,
+        1,
+        0,
+        0
+      ]
+    },
+    "57": {
+      "id": 57,
+      "name": "Huey Hops",
+      "nameEn": "Huey Hops",
+      "rare": 5,
+      "army": "inf",
+      "talent": 42,
+      "skills": [
+        53,
+        20,
+        95,
+        0
+      ]
+    },
+    "58": {
+      "id": 58,
+      "name": "Acaparador",
+      "nameEn": "Hoarder",
+      "rare": 4,
+      "army": "inf",
+      "talent": 35,
+      "skills": [
+        37,
+        40,
+        86,
+        0
+      ]
+    },
+    "59": {
+      "id": 59,
+      "name": "Gemming Duendecillo",
+      "nameEn": "Gemming Gremlin",
+      "rare": 3,
+      "army": "inf",
+      "talent": 23,
+      "skills": [
+        3,
+        30,
+        81,
+        0
+      ]
+    },
+    "60": {
+      "id": 60,
+      "name": "Truco Estrella",
+      "nameEn": "Trickstar",
+      "rare": 3,
+      "army": "art",
+      "talent": 25,
+      "skills": [
+        9,
+        23,
+        82,
+        0
+      ]
+    },
+    "61": {
+      "id": 61,
+      "name": "Caballero fantasma",
+      "nameEn": "Phantom Knight",
+      "rare": 5,
+      "army": "inf",
+      "talent": 0,
+      "skills": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "62": {
+      "id": 62,
+      "name": "Guardián del arca",
+      "nameEn": "Coffer Guardian",
+      "rare": 5,
+      "army": "inf",
+      "talent": 0,
+      "skills": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "63": {
+      "id": 63,
+      "name": "Necrosis",
+      "nameEn": "Necrosis",
+      "rare": 5,
+      "army": "inf",
+      "talent": 0,
+      "skills": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "64": {
+      "id": 64,
+      "name": "Moái Milenario",
+      "nameEn": "Hardrox",
+      "rare": 5,
+      "army": "inf",
+      "talent": 0,
+      "skills": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "65": {
+      "id": 65,
+      "name": "Chamán vudú",
+      "nameEn": "Voodoo Shaman",
+      "rare": 5,
+      "army": "inf",
+      "talent": 0,
+      "skills": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "66": {
+      "id": 66,
+      "name": "Búho carroñero",
+      "nameEn": "Hootclaw",
+      "rare": 5,
+      "army": "inf",
+      "talent": 0,
+      "skills": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "67": {
+      "id": 67,
+      "name": "Reclu.",
+      "nameEn": "Hire",
+      "rare": 5,
+      "army": "inf",
+      "talent": 43,
+      "skills": [
+        0,
+        0,
+        0,
+        0
+      ]
+    }
+  },
+  "skills": {
+    "1": {
+      "id": 1,
+      "name": "Resolución Rocosa",
+      "nameEn": "Rocky Resolve",
+      "maxLevel": 10,
+      "type": "passive",
+      "effectId": 304,
+      "effectText": "Potenciador EXP jugador +",
+      "effectTextEn": "Player EXP Boost +",
+      "effectDesc": "Potenc. EXP jugador",
+      "effectDescEn": "Player EXP Boost",
+      "effectUnit": "%",
+      "values": [
+        300,
+        350,
+        400,
+        450,
+        500,
+        550,
+        600,
+        700,
+        800,
+        1000
+      ],
+      "unit": 0
+    },
+    "2": {
+      "id": 2,
+      "name": "Motivación",
+      "nameEn": "Motivation",
+      "maxLevel": 10,
+      "type": "passive",
+      "effectId": 266,
+      "effectText": "Capacidad del cuartel +",
+      "effectTextEn": "Barracks Capacity +",
+      "effectDesc": "Aumenta la capacidad del cuartel",
+      "effectDescEn": "Increases Barracks Capacity",
+      "effectUnit": "",
+      "values": [
+        500,
+        750,
+        1000,
+        1500,
+        2000,
+        2500,
+        3000,
+        3500,
+        4000,
+        5000
+      ],
+      "unit": 1
+    },
+    "3": {
+      "id": 3,
+      "name": "Manos ocupadas",
+      "nameEn": "Busy Hands",
+      "maxLevel": 10,
+      "type": "passive",
+      "effectId": 248,
+      "effectText": "Vel. construcción +",
+      "effectTextEn": "Construction Speed +",
+      "effectDesc": "Aumenta la velocidad de construcción",
+      "effectDescEn": "Increases Construction speed",
+      "effectUnit": "%",
+      "values": [
+        100,
+        125,
+        150,
+        175,
+        200,
+        225,
+        250,
+        300,
+        350,
+        500
+      ],
+      "unit": 0
+    },
+    "4": {
+      "id": 4,
+      "name": "Bombardeo Atronador",
+      "nameEn": "Thundering Blitz",
+      "maxLevel": 10,
+      "type": "passive",
+      "effectId": 202,
+      "effectText": "ATQ caballería +",
+      "effectTextEn": "Cavalry ATK +",
+      "effectDesc": "Aumenta el ATQ de la caballería",
+      "effectDescEn": "Increases Cavalry ATK",
+      "effectUnit": "%",
+      "values": [
+        300,
+        350,
+        400,
+        450,
+        500,
+        550,
+        600,
+        700,
+        800,
+        1000
+      ],
+      "unit": 0
+    },
+    "5": {
+      "id": 5,
+      "name": "Escudo Helado",
+      "nameEn": "Frost Shield",
+      "maxLevel": 10,
+      "type": "passive",
+      "effectId": 208,
+      "effectText": "DEF de artillería +",
+      "effectTextEn": "Ranged DEF +",
+      "effectDesc": "Aumenta la DEF de artillería",
+      "effectDescEn": "Increases Ranged DEF",
+      "effectUnit": "%",
+      "values": [
+        300,
+        350,
+        400,
+        450,
+        500,
+        550,
+        600,
+        700,
+        800,
+        1000
+      ],
+      "unit": 0
+    },
+    "6": {
+      "id": 6,
+      "name": "Caparazón Duro",
+      "nameEn": "Tough Carapace",
+      "maxLevel": 10,
+      "type": "passive",
+      "effectId": 206,
+      "effectText": "DEF de infantería +",
+      "effectTextEn": "Infantry DEF +",
+      "effectDesc": "Aumenta la DEF de la infantería",
+      "effectDescEn": "Increases Infantry DEF",
+      "effectUnit": "%",
+      "values": [
+        300,
+        350,
+        400,
+        450,
+        500,
+        550,
+        600,
+        700,
+        800,
+        1000
+      ],
+      "unit": 0
+    },
+    "7": {
+      "id": 7,
+      "name": "Espíritu Infernal",
+      "nameEn": "Hellish Spirit",
+      "maxLevel": 10,
+      "type": "passive",
+      "effectId": 211,
+      "effectText": "PS máx. infantería +",
+      "effectTextEn": "Infantry Max HP +",
+      "effectDesc": "Aumenta los PS máx. de la infantería",
+      "effectDescEn": "Increases Infantry Max HP",
+      "effectUnit": "%",
+      "values": [
+        200,
+        250,
+        300,
+        350,
+        400,
+        500,
+        600,
+        700,
+        800,
+        1000
+      ],
+      "unit": 0
+    },
+    "8": {
+      "id": 8,
+      "name": "Depredador Rápido",
+      "nameEn": "Swift Predator",
+      "maxLevel": 10,
+      "type": "passive",
+      "effectId": 241,
+      "effectText": "Vel. viaje cacería de monstruos +",
+      "effectTextEn": "Monster Hunt Travel Speed +",
+      "effectDesc": "Aumenta la vel. viaje de cacería de monstruos",
+      "effectDescEn": "Increases Monster Hunt Travel Speed",
+      "effectUnit": "%",
+      "values": [
+        500,
+        625,
+        750,
+        875,
+        1000,
+        1250,
+        1500,
+        1750,
+        2000,
+        2500
+      ],
+      "unit": 0
+    },
+    "9": {
+      "id": 9,
+      "name": "Intelecto Estelar",
+      "nameEn": "Stellar Intellect",
+      "maxLevel": 10,
+      "type": "passive",
+      "effectId": 249,
+      "effectText": "Vel. investigación +",
+      "effectTextEn": "Research Speed +",
+      "effectDesc": "Aumenta la velocidad de investigación",
+      "effectDescEn": "Increases Research speed",
+      "effectUnit": "%",
+      "values": [
+        100,
+        125,
+        150,
+        175,
+        200,
+        225,
+        250,
+        300,
+        350,
+        500
+      ],
+      "unit": 0
+    },
+    "10": {
+      "id": 10,
+      "name": "Guardia Aéreo",
+      "nameEn": "Aero Guard",
+      "maxLevel": 10,
+      "type": "passive",
+      "effectId": 313,
+      "effectText": "DEF muralla +",
+      "effectTextEn": "Wall DEF +",
+      "effectDesc": "Aumenta la DEF de la muralla",
+      "effectDescEn": "Increases Wall DEF",
+      "effectUnit": "%",
+      "values": [
+        400,
+        500,
+        600,
+        700,
+        800,
+        1000,
+        1200,
+        1400,
+        1600,
+        2000
+      ],
+      "unit": 0
+    },
+    "11": {
+      "id": 11,
+      "name": "Fuerza Veloz",
+      "nameEn": "Speed Force",
+      "maxLevel": 10,
+      "type": "passive",
+      "effectId": 302,
+      "effectText": "Vel. viaje tropas aliadas +",
+      "effectTextEn": "Allied Troops Travel Speed +",
+      "effectDesc": "Aumenta la vel. viaje tropas aliadas",
+      "effectDescEn": "Increases Allied Troops Travel Speed",
+      "effectUnit": "%",
+      "values": [
+        500,
+        625,
+        750,
+        875,
+        1000,
+        1250,
+        1500,
+        1750,
+        2000,
+        2500
+      ],
+      "unit": 0
+    },
+    "12": {
+      "id": 12,
+      "name": "Frenesí de Cosecha",
+      "nameEn": "Harvest Frenzy",
+      "maxLevel": 10,
+      "type": "passive",
+      "effectId": 254,
+      "effectText": "Vel. de recolección +",
+      "effectTextEn": "Gathering Speed +",
+      "effectDesc": "Incrementa velocidad de recolección.\nNo es aplicable a Mineral de Gemas.",
+      "effectDescEn": "Increases Gathering speed\nNot applicable for Gem Lodes.",
+      "effectUnit": "%",
+      "values": [
+        500,
+        625,
+        750,
+        875,
+        1000,
+        1250,
+        1500,
+        1750,
+        2000,
+        2500
+      ],
+      "unit": 0
+    },
+    "13": {
+      "id": 13,
+      "name": "Contrato Alma",
+      "nameEn": "Soul Contract",
+      "maxLevel": 10,
+      "type": "passive",
+      "effectId": 213,
+      "effectText": "PS máx. artillería +",
+      "effectTextEn": "Ranged Max HP +",
+      "effectDesc": "Aumenta los PS máx. de artillería",
+      "effectDescEn": "Increases Ranged Max HP",
+      "effectUnit": "%",
+      "values": [
+        300,
+        350,
+        400,
+        450,
+        500,
+        550,
+        600,
+        700,
+        800,
+        1000
+      ],
+      "unit": 0
+    },
+    "14": {
+      "id": 14,
+      "name": "Espíritu Salvaje",
+      "nameEn": "Wild Spirit",
+      "maxLevel": 10,
+      "type": "passive",
+      "effectId": 207,
+      "effectText": "DEF de caballería +",
+      "effectTextEn": "Cavalry DEF +",
+      "effectDesc": "Aumenta la DEF de la caballería",
+      "effectDescEn": "Increases Cavalry DEF",
+      "effectUnit": "%",
+      "values": [
+        300,
+        350,
+        400,
+        450,
+        500,
+        550,
+        600,
+        700,
+        800,
+        1000
+      ],
+      "unit": 0
+    },
+    "15": {
+      "id": 15,
+      "name": "Poderoso Semental",
+      "nameEn": "Mighty Stallion",
+      "maxLevel": 10,
+      "type": "passive",
+      "effectId": 212,
+      "effectText": "PS máx. caballería +",
+      "effectTextEn": "Cavalry Max HP +",
+      "effectDesc": "Aumenta los PS máx. de la caballería",
+      "effectDescEn": "Increases Cavalry Max HP",
+      "effectUnit": "%",
+      "values": [
+        200,
+        250,
+        300,
+        350,
+        400,
+        500,
+        600,
+        700,
+        800,
+        1000
+      ],
+      "unit": 0
+    },
+    "16": {
+      "id": 16,
+      "name": "Explosión de almas",
+      "nameEn": "Soulburst",
+      "maxLevel": 10,
+      "type": "passive",
+      "effectId": 216,
+      "effectText": "ATQ de ejército +",
+      "effectTextEn": "Army ATK +",
+      "effectDesc": "Aumenta el ATQ del ejército",
+      "effectDescEn": "Increases Army ATK",
+      "effectUnit": "%",
+      "values": [
+        100,
+        125,
+        150,
+        175,
+        200,
+        225,
+        250,
+        300,
+        350,
+        500
+      ],
+      "unit": 0
+    },
+    "17": {
+      "id": 17,
+      "name": "Muro de Agua",
+      "nameEn": "Water Wall",
+      "maxLevel": 10,
+      "type": "passive",
+      "effectId": 217,
+      "effectText": "DEF de ejército +",
+      "effectTextEn": "Army DEF +",
+      "effectDesc": "Aumenta DEF del ejército",
+      "effectDescEn": "Increases Army DEF",
+      "effectUnit": "%",
+      "values": [
+        300,
+        350,
+        400,
+        450,
+        500,
+        550,
+        600,
+        700,
+        800,
+        1000
+      ],
+      "unit": 0
+    },
+    "18": {
+      "id": 18,
+      "name": "Alma Veloz",
+      "nameEn": "Swift Soul",
+      "maxLevel": 10,
+      "type": "passive",
+      "effectId": 220,
+      "effectText": "Velocidad de viaje +",
+      "effectTextEn": "Travel Speed +",
+      "effectDesc": "Aumenta vel. viaje ejército de coalición",
+      "effectDescEn": "Increases Army Travel Speed",
+      "effectUnit": "%",
+      "values": [
+        200,
+        250,
+        300,
+        350,
+        400,
+        500,
+        600,
+        700,
+        800,
+        1000
+      ],
+      "unit": 0
+    },
+    "19": {
+      "id": 19,
+      "name": "Aprendizaje Rápido",
+      "nameEn": "Quick Learner",
+      "maxLevel": 10,
+      "type": "passive",
+      "effectId": 251,
+      "effectText": "Vel. entrenamiento +",
+      "effectTextEn": "Training Speed +",
+      "effectDesc": "Aumenta la velocidad de entrenamiento",
+      "effectDescEn": "Increases Training speed",
+      "effectUnit": "%",
+      "values": [
+        100,
+        125,
+        150,
+        175,
+        200,
+        225,
+        250,
+        300,
+        350,
+        500
+      ],
+      "unit": 0
+    },
+    "20": {
+      "id": 20,
+      "name": "Anímate",
+      "nameEn": "Buck Up",
+      "maxLevel": 10,
+      "type": "passive",
+      "effectId": 218,
+      "effectText": "PS máx. ejército +",
+      "effectTextEn": "Army Max HP +",
+      "effectDesc": "Aumenta PS máx. ejército",
+      "effectDescEn": "Increases Army Max HP",
+      "effectUnit": "%",
+      "values": [
+        300,
+        350,
+        400,
+        450,
+        500,
+        550,
+        600,
+        700,
+        800,
+        1000
+      ],
+      "unit": 0
+    },
+    "21": {
+      "id": 21,
+      "name": "Poder de Nuez",
+      "nameEn": "Nutty Power",
+      "maxLevel": 10,
+      "type": "passive",
+      "effectId": 201,
+      "effectText": "ATQ infantería +",
+      "effectTextEn": "Infantry ATK +",
+      "effectDesc": "Aumenta el ATQ de la infantería",
+      "effectDescEn": "Increases Infantry ATK",
+      "effectUnit": "%",
+      "values": [
+        300,
+        350,
+        400,
+        450,
+        500,
+        550,
+        600,
+        700,
+        800,
+        1000
+      ],
+      "unit": 0
+    },
+    "22": {
+      "id": 22,
+      "name": "Explosión Glacial",
+      "nameEn": "Glacial Blast",
+      "maxLevel": 10,
+      "type": "passive",
+      "effectId": 216,
+      "effectText": "ATQ de ejército +",
+      "effectTextEn": "Army ATK +",
+      "effectDesc": "Aumenta el ATQ del ejército",
+      "effectDescEn": "Increases Army ATK",
+      "effectUnit": "%",
+      "values": [
+        100,
+        125,
+        150,
+        175,
+        200,
+        225,
+        250,
+        300,
+        350,
+        500
+      ],
+      "unit": 0
+    },
+    "23": {
+      "id": 23,
+      "name": "Asistencia Astral",
+      "nameEn": "Astral Assistance",
+      "maxLevel": 10,
+      "type": "passive",
+      "effectId": 203,
+      "effectText": "ATQ artillería +",
+      "effectTextEn": "Ranged ATK +",
+      "effectDesc": "Aumenta el ATQ de artillería",
+      "effectDescEn": "Increases Ranged ATK",
+      "effectUnit": "%",
+      "values": [
+        300,
+        350,
+        400,
+        450,
+        500,
+        550,
+        600,
+        700,
+        800,
+        1000
+      ],
+      "unit": 0
+    },
+    "24": {
+      "id": 24,
+      "name": "Acaparador de Oro",
+      "nameEn": "Gold Hoarder",
+      "maxLevel": 10,
+      "type": "passive",
+      "effectId": 246,
+      "effectText": "Producción de oro +",
+      "effectTextEn": "Gold Production +",
+      "effectDesc": "Aumenta producción de oro",
+      "effectDescEn": "Increases Gold Production",
+      "effectUnit": "%",
+      "values": [
+        1000,
+        1200,
+        1400,
+        1600,
+        1800,
+        2000,
+        2250,
+        2500,
+        3000,
+        3500
+      ],
+      "unit": 0
+    },
+    "25": {
+      "id": 25,
+      "name": "Acaparador de Comida",
+      "nameEn": "Food Hoarder",
+      "maxLevel": 10,
+      "type": "passive",
+      "effectId": 242,
+      "effectText": "Producción de comida +",
+      "effectTextEn": "Food Production +",
+      "effectDesc": "Aumenta la producción de comida",
+      "effectDescEn": "Increases Food Production",
+      "effectUnit": "%",
+      "values": [
+        700,
+        875,
+        1050,
+        1225,
+        1400,
+        1750,
+        2100,
+        2450,
+        2800,
+        3500
+      ],
+      "unit": 0
+    },
+    "26": {
+      "id": 26,
+      "name": "Acaparador de Madera",
+      "nameEn": "Timber Hoarder",
+      "maxLevel": 10,
+      "type": "passive",
+      "effectId": 244,
+      "effectText": "Producción de madera +",
+      "effectTextEn": "Timber Production +",
+      "effectDesc": "Aumenta la producción de madera",
+      "effectDescEn": "Increases Timber Production",
+      "effectUnit": "%",
+      "values": [
+        700,
+        875,
+        1050,
+        1225,
+        1400,
+        1750,
+        2100,
+        2450,
+        2800,
+        3500
+      ],
+      "unit": 0
+    },
+    "27": {
+      "id": 27,
+      "name": "Acaparador de Piedra",
+      "nameEn": "Stone Hoarder",
+      "maxLevel": 10,
+      "type": "passive",
+      "effectId": 243,
+      "effectText": "Producción de piedra +",
+      "effectTextEn": "Stone Production +",
+      "effectDesc": "Aumenta la producción de piedra",
+      "effectDescEn": "Increases Stone Production",
+      "effectUnit": "%",
+      "values": [
+        700,
+        875,
+        1050,
+        1225,
+        1400,
+        1750,
+        2100,
+        2450,
+        2800,
+        3500
+      ],
+      "unit": 0
+    },
+    "28": {
+      "id": 28,
+      "name": "Acaparador de Mineral",
+      "nameEn": "Ore Hoarder",
+      "maxLevel": 10,
+      "type": "passive",
+      "effectId": 245,
+      "effectText": "Producción de mineral +",
+      "effectTextEn": "Ore Production +",
+      "effectDesc": "Aumenta producción de mineral",
+      "effectDescEn": "Increases Ore Production",
+      "effectUnit": "%",
+      "values": [
+        700,
+        875,
+        1050,
+        1225,
+        1400,
+        1750,
+        2100,
+        2450,
+        2800,
+        3500
+      ],
+      "unit": 0
+    },
+    "29": {
+      "id": 29,
+      "name": "Golpe de Suelo",
+      "nameEn": "Pound the Ground",
+      "maxLevel": 10,
+      "type": "passive",
+      "effectId": 340,
+      "effectText": "La coalición de Fortaleza Oscura - Velocidad del viaje del ejército +",
+      "effectTextEn": "Darknest Coalition - Army Travel Speed +",
+      "effectDesc": "Aumenta la Velocidad de Viaje para Ejércitos de Coaliciones de Fortaleza Oscura (Agrupación de Capitanes)",
+      "effectDescEn": "Increases Travel Speed for Darknest Coalition Army (Rally Captain only)",
+      "effectUnit": "%",
+      "values": [
+        500,
+        625,
+        750,
+        875,
+        1000,
+        1250,
+        1500,
+        1750,
+        2000,
+        2500
+      ],
+      "unit": 0
+    },
+    "30": {
+      "id": 30,
+      "name": "Carga Explosiva",
+      "nameEn": "Loded Up",
+      "maxLevel": 10,
+      "type": "passive",
+      "effectId": 255,
+      "effectText": "Vel. de recolección de gemas +",
+      "effectTextEn": "Gem Gathering Speed +",
+      "effectDesc": "Aumenta la velocidad de Recolección para la Veta de Gemas",
+      "effectDescEn": "Increases Gathering speed for Gem Lodes",
+      "effectUnit": "%",
+      "values": [
+        300,
+        350,
+        400,
+        450,
+        500,
+        550,
+        600,
+        700,
+        800,
+        1000
+      ],
+      "unit": 0
+    },
+    "31": {
+      "id": 31,
+      "name": "Ánima Original",
+      "nameEn": "Animated",
+      "maxLevel": 10,
+      "type": "passive",
+      "effectId": 366,
+      "effectText": "Capacidad Máx de Ánima +",
+      "effectTextEn": "Max Anima Storage +",
+      "effectDesc": "Incrementa Capacidad Máx de Ánima",
+      "effectDescEn": "Increases Max Anima Storage",
+      "effectUnit": "%",
+      "values": [
+        400,
+        500,
+        600,
+        700,
+        800,
+        1000,
+        1200,
+        1400,
+        1600,
+        2000
+      ],
+      "unit": 0
+    },
+    "32": {
+      "id": 32,
+      "name": "Ánima Explosiva",
+      "nameEn": "Overflow",
+      "maxLevel": 10,
+      "type": "passive",
+      "effectId": 365,
+      "effectText": "Producción de Ánima",
+      "effectTextEn": "Anima Production +",
+      "effectDesc": "Incrementa la Producción de Ánima",
+      "effectDescEn": "Increases Anima Production",
+      "effectUnit": "%",
+      "values": [
+        800,
+        1000,
+        1200,
+        1400,
+        1600,
+        2000,
+        2400,
+        2800,
+        3200,
+        4000
+      ],
+      "unit": 0
+    },
+    "33": {
+      "id": 33,
+      "name": "Cubierto de Nubes",
+      "nameEn": "Cloud Cover",
+      "maxLevel": 10,
+      "type": "passive",
+      "effectId": 346,
+      "effectText": "Capacidad de Albergue +",
+      "effectTextEn": "Shelter Capacity +",
+      "effectDesc": "Incrementa la Capacidad de Albergue",
+      "effectDescEn": "Increases Shelter Capacity",
+      "effectUnit": "",
+      "values": [
+        5000,
+        7500,
+        10000,
+        15000,
+        20000,
+        25000,
+        30000,
+        35000,
+        40000,
+        50000
+      ],
+      "unit": 1
+    },
+    "34": {
+      "id": 34,
+      "name": "Rompe Hielos",
+      "nameEn": "Ground Breaker",
+      "maxLevel": 10,
+      "type": "passive",
+      "effectId": 360,
+      "effectText": "Acelerar Fusión (Pactos) +",
+      "effectTextEn": "Merging Speed (Pacts) +",
+      "effectDesc": "Incrementa velocidad de Fusión de Pactos",
+      "effectDescEn": "Increases Merging Speed for Pacts",
+      "effectUnit": "%",
+      "values": [
+        400,
+        500,
+        600,
+        700,
+        800,
+        1000,
+        1200,
+        1400,
+        1600,
+        2000
+      ],
+      "unit": 0
+    },
+    "35": {
+      "id": 35,
+      "name": "Remedio Natural",
+      "nameEn": "Natural Remedy",
+      "maxLevel": 10,
+      "type": "passive",
+      "effectId": 337,
+      "effectText": "Capacidad de enfermería +",
+      "effectTextEn": "Infirmary Capacity +",
+      "effectDesc": "Aumenta la capacidad de la enfermería",
+      "effectDescEn": "Increases Infirmary Capacity",
+      "effectUnit": "%",
+      "values": [
+        100,
+        125,
+        150,
+        175,
+        200,
+        225,
+        250,
+        300,
+        350,
+        500
+      ],
+      "unit": 0
+    },
+    "36": {
+      "id": 36,
+      "name": "Soporte de Aire",
+      "nameEn": "Air Support",
+      "maxLevel": 10,
+      "type": "passive",
+      "effectId": 275,
+      "effectText": "Tamaño máx. tropa aliada +",
+      "effectTextEn": "Max Allied Army Size +",
+      "effectDesc": "Aumenta el tamaño máx. tropa aliada",
+      "effectDescEn": "Increases max Allied Army size",
+      "effectUnit": "",
+      "values": [
+        5000,
+        7500,
+        10000,
+        15000,
+        20000,
+        25000,
+        30000,
+        35000,
+        40000,
+        50000
+      ],
+      "unit": 1
+    },
+    "37": {
+      "id": 37,
+      "name": "Expansión de Tesorería",
+      "nameEn": "Trove Expansion",
+      "maxLevel": 10,
+      "type": "passive",
+      "effectId": 278,
+      "effectText": "Depósito máximo +",
+      "effectTextEn": "Max Deposit +",
+      "effectDesc": "Aumenta el depósito máximo",
+      "effectDescEn": "Increases Max Deposit",
+      "effectUnit": "",
+      "values": [
+        2000,
+        2500,
+        3000,
+        3500,
+        4000,
+        5000,
+        6000,
+        7000,
+        8000,
+        10000
+      ],
+      "unit": 1
+    },
+    "38": {
+      "id": 38,
+      "name": "Ofrenda de Sacrificio",
+      "nameEn": "Sacrificial Offering",
+      "maxLevel": 10,
+      "type": "passive",
+      "effectId": 315,
+      "effectText": "Acelerador de Duración potenc. caract. Altar +",
+      "effectTextEn": "Altar Stat Boost Duration +",
+      "effectDesc": "Aumenta la duración del potenciamiento de las características del Altar.",
+      "effectDescEn": "Increases Altar Stat Boost Duration",
+      "effectUnit": "minutos",
+      "values": [
+        30,
+        60,
+        90,
+        120,
+        150,
+        180,
+        210,
+        240,
+        270,
+        360
+      ],
+      "unit": 1
+    },
+    "39": {
+      "id": 39,
+      "name": "Cautiverio Místico",
+      "nameEn": "Mystic Bonds",
+      "maxLevel": 10,
+      "type": "passive",
+      "effectId": 357,
+      "effectText": "Fusionando Pacto +",
+      "effectTextEn": "Pact Merging +",
+      "effectDesc": "Incrementa número de pactos que puedes fusionar",
+      "effectDescEn": "Increases the number of Pacts you can merge",
+      "effectUnit": "",
+      "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "unit": 1
+    },
+    "40": {
+      "id": 40,
+      "name": "Manos Hábiles",
+      "nameEn": "Skillful Hands",
+      "maxLevel": 10,
+      "type": "passive",
+      "effectId": 372,
+      "effectText": "Acelerar Fusión (Piedras de Habilidad) +",
+      "effectTextEn": "Merging Speed (Skillstones) +",
+      "effectDesc": "Incrementa velocidad de Fusión para PH",
+      "effectDescEn": "Increases Merging Speed for Skillstones",
+      "effectUnit": "%",
+      "values": [
+        600,
+        700,
+        800,
+        900,
+        1000,
+        1100,
+        1200,
+        1400,
+        1600,
+        2000
+      ],
+      "unit": 0
+    },
+    "41": {
+      "id": 41,
+      "name": "Cuenta con ello",
+      "nameEn": "Bet On It",
+      "maxLevel": 10,
+      "type": "passive",
+      "effectId": 350,
+      "effectText": "DEF Ejército (Furia de Batalla) +",
+      "effectTextEn": "Army DEF (Battle Fury) +",
+      "effectDesc": "Incrementa la DEF de Ejército cuando la Furia de Batalla está activa",
+      "effectDescEn": "Increases Army DEF when Battle Fury is active",
+      "effectUnit": "%",
+      "values": [
+        300,
+        350,
+        400,
+        450,
+        500,
+        550,
+        600,
+        700,
+        800,
+        1000
+      ],
+      "unit": 0
+    },
+    "42": {
+      "id": 42,
+      "name": "Crisol",
+      "nameEn": "Melting Pot",
+      "maxLevel": 10,
+      "type": "passive",
+      "effectId": 339,
+      "effectText": "Reduce el Tiempo de Transmutación en",
+      "effectTextEn": "Reduces Transmutation Time by",
+      "effectDesc": "Reduce tiempo de transmutación",
+      "effectDescEn": "Reduces Transmutation Time",
+      "effectUnit": "%",
+      "values": [
+        300,
+        350,
+        400,
+        450,
+        500,
+        550,
+        600,
+        700,
+        800,
+        1000
+      ],
+      "unit": 0
+    },
+    "43": {
+      "id": 43,
+      "name": "Segundo Viento",
+      "nameEn": "Second Wind",
+      "maxLevel": 10,
+      "type": "passive",
+      "effectId": 317,
+      "effectText": "Reclu.",
+      "effectTextEn": "Hire",
+      "effectDesc": "Aumenta la vel. recuperación de energía",
+      "effectDescEn": "Increases Energy Regain Speed",
+      "effectUnit": "%",
+      "values": [
+        300,
+        350,
+        400,
+        450,
+        500,
+        550,
+        600,
+        700,
+        800,
+        1000
+      ],
+      "unit": 0
+    },
+    "44": {
+      "id": 44,
+      "name": "Mata Zumbido",
+      "nameEn": "Buzz Kill",
+      "maxLevel": 10,
+      "type": "passive",
+      "effectId": 203,
+      "effectText": "ATQ artillería +",
+      "effectTextEn": "Ranged ATK +",
+      "effectDesc": "Aumenta el ATQ de artillería",
+      "effectDescEn": "Increases Ranged ATK",
+      "effectUnit": "%",
+      "values": [
+        300,
+        350,
+        400,
+        450,
+        500,
+        550,
+        600,
+        700,
+        800,
+        1000
+      ],
+      "unit": 0
+    },
+    "45": {
+      "id": 45,
+      "name": "Mala Sangre",
+      "nameEn": "Bad Blood",
+      "maxLevel": 10,
+      "type": "passive",
+      "effectId": 351,
+      "effectText": "PS Ejército (Furia de Batalla) +",
+      "effectTextEn": "Army HP (Battle Fury) +",
+      "effectDesc": "Incrementa el PS de Ejército cuando la Furia de Batalla está activa",
+      "effectDescEn": "Increases Army HP when Battle Fury is active",
+      "effectUnit": "%",
+      "values": [
+        300,
+        350,
+        400,
+        450,
+        500,
+        550,
+        600,
+        700,
+        800,
+        1000
+      ],
+      "unit": 0
+    },
+    "46": {
+      "id": 46,
+      "name": "Bestia de Carga",
+      "nameEn": "Beast of Burden",
+      "maxLevel": 10,
+      "type": "passive",
+      "effectId": 219,
+      "effectText": "Capacidad ejército +",
+      "effectTextEn": "Army Capacity +",
+      "effectDesc": "Aumenta la capacidad del ejército",
+      "effectDescEn": "Increases Army Capacity",
+      "effectUnit": "%",
+      "values": [
+        700,
+        875,
+        1050,
+        1225,
+        1400,
+        1750,
+        2100,
+        2450,
+        2800,
+        3500
+      ],
+      "unit": 0
+    },
+    "47": {
+      "id": 47,
+      "name": "Fuga de la Prisión",
+      "nameEn": "Prison Break",
+      "maxLevel": 10,
+      "type": "passive",
+      "effectId": 374,
+      "effectText": "Escapada de Líder +",
+      "effectTextEn": "Leader Escape +",
+      "effectDesc": "Incrementa la posibilidad de huida de tu Líder",
+      "effectDescEn": "Increases the chance of your Leader escaping",
+      "effectUnit": "%",
+      "values": [
+        200,
+        250,
+        300,
+        350,
+        400,
+        500,
+        600,
+        700,
+        800,
+        1000
+      ],
+      "unit": 0
+    },
+    "48": {
+      "id": 48,
+      "name": "Gran Disparo",
+      "nameEn": "Big Shot",
+      "maxLevel": 10,
+      "type": "passive",
+      "effectId": 202,
+      "effectText": "ATQ caballería +",
+      "effectTextEn": "Cavalry ATK +",
+      "effectDesc": "Aumenta el ATQ de la caballería",
+      "effectDescEn": "Increases Cavalry ATK",
+      "effectUnit": "%",
+      "values": [
+        300,
+        350,
+        400,
+        450,
+        500,
+        550,
+        600,
+        700,
+        800,
+        1000
+      ],
+      "unit": 0
+    },
+    "49": {
+      "id": 49,
+      "name": "Angel Guardián",
+      "nameEn": "Guardian Angel",
+      "maxLevel": 10,
+      "type": "passive",
+      "effectId": 201,
+      "effectText": "ATQ infantería +",
+      "effectTextEn": "Infantry ATK +",
+      "effectDesc": "Aumenta el ATQ de la infantería",
+      "effectDescEn": "Increases Infantry ATK",
+      "effectUnit": "%",
+      "values": [
+        200,
+        250,
+        300,
+        350,
+        400,
+        500,
+        600,
+        700,
+        800,
+        1000
+      ],
+      "unit": 0
+    },
+    "50": {
+      "id": 50,
+      "name": "Aura Radiante",
+      "nameEn": "Radiant Aura",
+      "maxLevel": 10,
+      "type": "passive",
+      "effectId": 303,
+      "effectText": "ATQ de ejército de coalición +",
+      "effectTextEn": "Coalition Army ATK +",
+      "effectDesc": "Aumenta el ATQ del ejército de coalición",
+      "effectDescEn": "Increases Coalition Army ATK",
+      "effectUnit": "%",
+      "values": [
+        300,
+        350,
+        400,
+        450,
+        500,
+        550,
+        600,
+        700,
+        800,
+        1000
+      ],
+      "unit": 0
+    },
+    "51": {
+      "id": 51,
+      "name": "Capa Protectora",
+      "nameEn": "Protective Layer",
+      "maxLevel": 10,
+      "type": "passive",
+      "effectId": 207,
+      "effectText": "DEF de caballería +",
+      "effectTextEn": "Cavalry DEF +",
+      "effectDesc": "Aumenta la DEF de la caballería",
+      "effectDescEn": "Increases Cavalry DEF",
+      "effectUnit": "%",
+      "values": [
+        400,
+        500,
+        600,
+        700,
+        800,
+        1000,
+        1200,
+        1400,
+        1600,
+        2000
+      ],
+      "unit": 0
+    },
+    "52": {
+      "id": 52,
+      "name": "Fúria de Flama",
+      "nameEn": "Flame Fury",
+      "maxLevel": 10,
+      "type": "passive",
+      "effectId": 349,
+      "effectText": "ATQ Ejército (Furia de Batalla) +",
+      "effectTextEn": "Army ATK (Battle Fury) +",
+      "effectDesc": "Incrementa el ATQ de Ejército cuando la Furia de Batalla está activa",
+      "effectDescEn": "Increases Army ATK when Battle Fury is active",
+      "effectUnit": "%",
+      "values": [
+        300,
+        350,
+        400,
+        450,
+        500,
+        550,
+        600,
+        700,
+        800,
+        1000
+      ],
+      "unit": 0
+    },
+    "53": {
+      "id": 53,
+      "name": "Cáscara de Escudo",
+      "nameEn": "Shell Shield",
+      "maxLevel": 10,
+      "type": "passive",
+      "effectId": 208,
+      "effectText": "DEF de artillería +",
+      "effectTextEn": "Ranged DEF +",
+      "effectDesc": "Aumenta la DEF de artillería",
+      "effectDescEn": "Increases Ranged DEF",
+      "effectUnit": "%",
+      "values": [
+        400,
+        500,
+        600,
+        700,
+        800,
+        1000,
+        1200,
+        1400,
+        1600,
+        2000
+      ],
+      "unit": 0
+    },
+    "54": {
+      "id": 54,
+      "name": "Escamas de Dragón",
+      "nameEn": "Dragon Scaled",
+      "maxLevel": 10,
+      "type": "passive",
+      "effectId": 213,
+      "effectText": "PS máx. artillería +",
+      "effectTextEn": "Ranged Max HP +",
+      "effectDesc": "Aumenta los PS máx. de artillería",
+      "effectDescEn": "Increases Ranged Max HP",
+      "effectUnit": "%",
+      "values": [
+        200,
+        250,
+        300,
+        350,
+        400,
+        500,
+        600,
+        700,
+        800,
+        1000
+      ],
+      "unit": 0
+    },
+    "55": {
+      "id": 55,
+      "name": "Escudo de Hielo",
+      "nameEn": "Ice Shield",
+      "maxLevel": 10,
+      "type": "passive",
+      "effectId": 206,
+      "effectText": "DEF de infantería +",
+      "effectTextEn": "Infantry DEF +",
+      "effectDesc": "Aumenta la DEF de la infantería",
+      "effectDescEn": "Increases Infantry DEF",
+      "effectUnit": "%",
+      "values": [
+        400,
+        500,
+        600,
+        700,
+        800,
+        1000,
+        1200,
+        1400,
+        1600,
+        2000
+      ],
+      "unit": 0
+    },
+    "56": {
+      "id": 56,
+      "name": "Fuente de Juventud",
+      "nameEn": "Fountain of Youth",
+      "maxLevel": 10,
+      "type": "passive",
+      "effectId": 211,
+      "effectText": "PS máx. infantería +",
+      "effectTextEn": "Infantry Max HP +",
+      "effectDesc": "Aumenta los PS máx. de la infantería",
+      "effectDescEn": "Increases Infantry Max HP",
+      "effectUnit": "%",
+      "values": [
+        200,
+        250,
+        300,
+        350,
+        400,
+        500,
+        600,
+        700,
+        800,
+        1000
+      ],
+      "unit": 0
+    },
+    "57": {
+      "id": 57,
+      "name": "Palabras Melosas",
+      "nameEn": "Honeyed Words",
+      "maxLevel": 10,
+      "type": "passive",
+      "effectId": 212,
+      "effectText": "PS máx. caballería +",
+      "effectTextEn": "Cavalry Max HP +",
+      "effectDesc": "Aumenta los PS máx. de la caballería",
+      "effectDescEn": "Increases Cavalry Max HP",
+      "effectUnit": "%",
+      "values": [
+        200,
+        250,
+        300,
+        350,
+        400,
+        500,
+        600,
+        700,
+        800,
+        1000
+      ],
+      "unit": 0
+    },
+    "58": {
+      "id": 58,
+      "name": "Construcción Trampa",
+      "nameEn": "Trap Builder",
+      "maxLevel": 10,
+      "type": "passive",
+      "effectId": 252,
+      "effectText": "Vel. construcción trampas +",
+      "effectTextEn": "Trap-building Speed +",
+      "effectDesc": "Aumenta la velocidad de construcción de trampa",
+      "effectDescEn": "Increases Trap-building speed",
+      "effectUnit": "%",
+      "values": [
+        800,
+        900,
+        1000,
+        1100,
+        1200,
+        1300,
+        1400,
+        1500,
+        1700,
+        2000
+      ],
+      "unit": 0
+    },
+    "59": {
+      "id": 59,
+      "name": "Guardián de Almacén",
+      "nameEn": "Vault Keeper",
+      "maxLevel": 10,
+      "type": "passive",
+      "effectId": 312,
+      "effectText": "Capacidad Almacén +",
+      "effectTextEn": "Vault Storage +",
+      "effectDesc": "Amplía la cámara de almacenamiento.",
+      "effectDescEn": "Increases Vault Storage.",
+      "effectUnit": "%",
+      "values": [
+        200,
+        250,
+        300,
+        350,
+        400,
+        500,
+        600,
+        700,
+        800,
+        1000
+      ],
+      "unit": 0
+    },
+    "60": {
+      "id": 60,
+      "name": "Rocas Rodantes",
+      "nameEn": "Rolling Stones",
+      "maxLevel": 10,
+      "type": "passive",
+      "effectId": 243,
+      "effectText": "Producción de piedra +",
+      "effectTextEn": "Stone Production +",
+      "effectDesc": "Aumenta la producción de piedra",
+      "effectDescEn": "Increases Stone Production",
+      "effectUnit": "%",
+      "values": [
+        500,
+        625,
+        750,
+        875,
+        1000,
+        1250,
+        1500,
+        1750,
+        2000,
+        2500
+      ],
+      "unit": 0
+    },
+    "61": {
+      "id": 61,
+      "name": "Prospecto de Mineral",
+      "nameEn": "Ore Prospector",
+      "maxLevel": 10,
+      "type": "passive",
+      "effectId": 245,
+      "effectText": "Producción de mineral +",
+      "effectTextEn": "Ore Production +",
+      "effectDesc": "Aumenta producción de mineral",
+      "effectDescEn": "Increases Ore Production",
+      "effectUnit": "%",
+      "values": [
+        500,
+        625,
+        750,
+        875,
+        1000,
+        1250,
+        1500,
+        1750,
+        2000,
+        2500
+      ],
+      "unit": 0
+    },
+    "62": {
+      "id": 62,
+      "name": "Leñador",
+      "nameEn": "Lumberjack",
+      "maxLevel": 10,
+      "type": "passive",
+      "effectId": 244,
+      "effectText": "Producción de madera +",
+      "effectTextEn": "Timber Production +",
+      "effectDesc": "Aumenta la producción de madera",
+      "effectDescEn": "Increases Timber Production",
+      "effectUnit": "%",
+      "values": [
+        500,
+        625,
+        750,
+        875,
+        1000,
+        1250,
+        1500,
+        1750,
+        2000,
+        2500
+      ],
+      "unit": 0
+    },
+    "63": {
+      "id": 63,
+      "name": "Asesoría Financiera",
+      "nameEn": "Financial Advice",
+      "maxLevel": 10,
+      "type": "passive",
+      "effectId": 246,
+      "effectText": "Producción de oro +",
+      "effectTextEn": "Gold Production +",
+      "effectDesc": "Aumenta producción de oro",
+      "effectDescEn": "Increases Gold Production",
+      "effectUnit": "%",
+      "values": [
+        500,
+        625,
+        750,
+        875,
+        1000,
+        1250,
+        1500,
+        1750,
+        2000,
+        2500
+      ],
+      "unit": 0
+    },
+    "64": {
+      "id": 64,
+      "name": "Fertilizante",
+      "nameEn": "Fertilizer",
+      "maxLevel": 10,
+      "type": "passive",
+      "effectId": 242,
+      "effectText": "Producción de comida +",
+      "effectTextEn": "Food Production +",
+      "effectDesc": "Aumenta la producción de comida",
+      "effectDescEn": "Increases Food Production",
+      "effectUnit": "%",
+      "values": [
+        500,
+        625,
+        750,
+        875,
+        1000,
+        1250,
+        1500,
+        1750,
+        2000,
+        2500
+      ],
+      "unit": 0
+    },
+    "65": {
+      "id": 65,
+      "name": "Mochila de Sangre",
+      "nameEn": "Blood Bag",
+      "maxLevel": 10,
+      "type": "passive",
+      "effectId": 253,
+      "effectText": "Vel. curación en enfermería +",
+      "effectTextEn": "Infirmary Healing Speed +",
+      "effectDesc": "Aumenta la vel. curación en enfermería",
+      "effectDescEn": "Increases Infirmary Healing Speed",
+      "effectUnit": "%",
+      "values": [
+        500,
+        625,
+        750,
+        875,
+        1000,
+        1250,
+        1500,
+        1750,
+        2000,
+        2500
+      ],
+      "unit": 0
+    },
+    "66": {
+      "id": 66,
+      "name": "Ruta de Tradeo",
+      "nameEn": "Trade Route",
+      "maxLevel": 10,
+      "type": "passive",
+      "effectId": 239,
+      "effectText": "Vel. viaje tropas de suministro +",
+      "effectTextEn": "Supply Troops Travel Speed +",
+      "effectDesc": "Aumenta vel. viaje tropas de suministro",
+      "effectDescEn": "Increases Supply Troops' Travel Speed",
+      "effectUnit": "%",
+      "values": [
+        500,
+        625,
+        750,
+        875,
+        1000,
+        1250,
+        1500,
+        1750,
+        2000,
+        2500
+      ],
+      "unit": 0
+    },
+    "67": {
+      "id": 67,
+      "name": "Sé Salvaje",
+      "nameEn": "Go Wild",
+      "maxLevel": 10,
+      "type": "passive",
+      "effectId": 240,
+      "effectText": "Vel. viaje tropas recolectoras +",
+      "effectTextEn": "Gathering Troops Travel Speed +",
+      "effectDesc": "Aumenta vel. viaje tropas recolectoras",
+      "effectDescEn": "Increases Gathering Troops' Travel Speed",
+      "effectUnit": "%",
+      "values": [
+        500,
+        625,
+        750,
+        875,
+        1000,
+        1250,
+        1500,
+        1750,
+        2000,
+        2500
+      ],
+      "unit": 0
+    },
+    "68": {
+      "id": 68,
+      "name": "Buscador de Oro",
+      "nameEn": "Gold Digger",
+      "maxLevel": 10,
+      "type": "active",
+      "subject": 1,
+      "fatigue": 0,
+      "desc": "Obtienes %c～%a Oro.",
+      "descEn": "Get %c～%a Gold.",
+      "params": {
+        "a": {
+          "values": [
+            2000000,
+            3000000,
+            4000000,
+            5000000,
+            6000000,
+            7000000,
+            8000000,
+            9000000,
+            10000000,
+            12000000
+          ],
+          "unit": 1
+        },
+        "b": {
+          "values": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "unit": 0
+        },
+        "c": {
+          "values": [
+            1000000,
+            1500000,
+            2000000,
+            2500000,
+            3000000,
+            3500000,
+            4000000,
+            4500000,
+            5000000,
+            6000000
+          ],
+          "unit": 1
+        }
+      }
+    },
+    "69": {
+      "id": 69,
+      "name": "Deseos de Cosecha",
+      "nameEn": "Gather Round",
+      "maxLevel": 10,
+      "type": "active",
+      "subject": 1,
+      "fatigue": 0,
+      "desc": "Obtienes %b hora(s) valor de recursos.",
+      "descEn": "Get %b hour(s) worth of resources.",
+      "params": {
+        "b": {
+          "values": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "unit": 1
+        }
+      }
+    },
+    "70": {
+      "id": 70,
+      "name": "Aire Fresco",
+      "nameEn": "Fresh Air",
+      "maxLevel": 10,
+      "type": "active",
+      "subject": 1,
+      "fatigue": 0,
+      "desc": "Obtienes %b Tropas de nivel 1 aleatoriamente.",
+      "descEn": "Get %b random Tier 1 troops.",
+      "params": {
+        "b": {
+          "values": [
+            3000,
+            4000,
+            5000,
+            6000,
+            7000,
+            8000,
+            9000,
+            12500,
+            15000,
+            20000
+          ],
+          "unit": 1
+        },
+        "c": {
+          "values": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "unit": 1
+        }
+      }
+    },
+    "71": {
+      "id": 71,
+      "name": "Refrescado",
+      "nameEn": "Refreshed",
+      "maxLevel": 10,
+      "type": "active",
+      "subject": 1,
+      "fatigue": 0,
+      "desc": "Obtienes %c～%a Energía.",
+      "descEn": "Get %c～%a STA.",
+      "params": {
+        "a": {
+          "values": [
+            50,
+            55,
+            60,
+            65,
+            70,
+            75,
+            80,
+            85,
+            90,
+            120
+          ],
+          "unit": 1
+        },
+        "b": {
+          "values": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "unit": 0
+        },
+        "c": {
+          "values": [
+            15,
+            20,
+            25,
+            30,
+            35,
+            40,
+            45,
+            50,
+            55,
+            60
+          ],
+          "unit": 1
+        }
+      }
+    },
+    "72": {
+      "id": 72,
+      "name": "Barco a la Vista",
+      "nameEn": "Ship Ahoy",
+      "maxLevel": 10,
+      "type": "active",
+      "subject": 1,
+      "fatigue": 0,
+      "desc": "Refresca el Barco de carga inmediatamente.",
+      "descEn": "Refreshes the Cargo Ship immediately."
+    },
+    "73": {
+      "id": 73,
+      "name": "Arreglo Rápido",
+      "nameEn": "Quick Fix",
+      "maxLevel": 10,
+      "type": "passive",
+      "effectId": 305,
+      "effectText": "Reduce tiempo espera ejecución en",
+      "effectTextEn": "Reduces Execution Wait Time by",
+      "effectDesc": "Reduce el tiempo de espera de ejecución",
+      "effectDescEn": "Reduces Execution Wait Time:",
+      "effectUnit": "minutos",
+      "values": [
+        1800,
+        3600,
+        5400,
+        7200,
+        9000,
+        10800,
+        12600,
+        14400,
+        16200,
+        21600
+      ],
+      "unit": 2
+    },
+    "74": {
+      "id": 74,
+      "name": "Listo para Luchar",
+      "nameEn": "Ready to Rumble",
+      "maxLevel": 10,
+      "type": "active",
+      "subject": 1,
+      "fatigue": 0,
+      "desc": "Obtén %b entrada(s) del Coliseo de héroes",
+      "descEn": "Get %b Hero Colosseum entries.",
+      "params": {
+        "b": {
+          "values": [
+            3,
+            3,
+            4,
+            4,
+            5,
+            5,
+            6,
+            6,
+            7,
+            10
+          ],
+          "unit": 1
+        }
+      }
+    },
+    "75": {
+      "id": 75,
+      "name": "Fuegos Amistosos",
+      "nameEn": "Friendly Fires",
+      "maxLevel": 10,
+      "type": "passive",
+      "effectId": 352,
+      "effectText": "Suministros extra +",
+      "effectTextEn": "Extra Supplies +",
+      "effectDesc": "Incrementa los recursos obtenidos de [Suministros Extras]",
+      "effectDescEn": "Increases resources obtained from [Extra Supplies]",
+      "effectUnit": "%",
+      "values": [
+        400,
+        500,
+        600,
+        700,
+        800,
+        1000,
+        1200,
+        1400,
+        1600,
+        2000
+      ],
+      "unit": 0
+    },
+    "76": {
+      "id": 76,
+      "name": "Magia Oscura",
+      "nameEn": "Dark Magic",
+      "maxLevel": 10,
+      "type": "active",
+      "subject": 1,
+      "fatigue": 0,
+      "desc": "Completa al instante una transmutación en curso.",
+      "descEn": "Instantly completes an ongoing transmutation."
+    },
+    "77": {
+      "id": 77,
+      "name": "Primera Clase",
+      "nameEn": "First Class",
+      "maxLevel": 10,
+      "type": "active",
+      "subject": 1,
+      "fatigue": 0,
+      "desc": "Obtienes %c Aleatoriamente Artículos de Puntos VIP.",
+      "descEn": "Get %c random VIP Point items.",
+      "params": {
+        "b": {
+          "values": [
+            166,
+            166,
+            166,
+            166,
+            166,
+            166,
+            166,
+            166,
+            166,
+            166
+          ],
+          "unit": 0
+        },
+        "c": {
+          "values": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            2,
+            2,
+            2,
+            2,
+            3
+          ],
+          "unit": 1
+        }
+      }
+    },
+    "78": {
+      "id": 78,
+      "name": "Sendero Ardiente",
+      "nameEn": "Blazing Trail",
+      "maxLevel": 10,
+      "type": "active",
+      "subject": 2,
+      "fatigue": 1,
+      "desc": "Matar %e~%c tropas en Cuartel Enemigo (no se puede exceder %b% el número total de tropas). Las tropas de Menor Nivel serán objetivo primero.",
+      "descEn": "Kills %e~%c troops in an enemy's Barracks (will not exceed %b% of the total number of troops). Lower Tier troops will be targeted first.",
+      "params": {
+        "a": {
+          "values": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "unit": 0
+        },
+        "b": {
+          "values": [
+            500,
+            500,
+            500,
+            500,
+            500,
+            500,
+            500,
+            500,
+            500,
+            500
+          ],
+          "unit": 0
+        },
+        "c": {
+          "values": [
+            5000,
+            5500,
+            6000,
+            6500,
+            7000,
+            7500,
+            8000,
+            8500,
+            10000,
+            12500
+          ],
+          "unit": 1
+        },
+        "e": {
+          "values": [
+            3000,
+            3500,
+            4000,
+            4500,
+            5000,
+            5500,
+            6000,
+            6500,
+            7000,
+            7500
+          ],
+          "unit": 1
+        }
+      }
+    },
+    "79": {
+      "id": 79,
+      "name": "Asistencia Oscura",
+      "nameEn": "Dark Assistance",
+      "maxLevel": 10,
+      "type": "active",
+      "subject": 1,
+      "fatigue": 0,
+      "desc": "Llena la barra de ayuda para la investigación en curso.",
+      "descEn": "Fills up Help bar for ongoing research.",
+      "params": {
+        "b": {
+          "values": [
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2
+          ],
+          "unit": 0
+        }
+      }
+    },
+    "80": {
+      "id": 80,
+      "name": "Cazador Terrestre",
+      "nameEn": "Hunting Ground",
+      "maxLevel": 10,
+      "type": "active",
+      "subject": 1,
+      "fatigue": 0,
+      "desc": "Añade %b Cazar en una Fila dentro de %a min. No puedes exceder el límite de Cazas en una Fila.",
+      "descEn": "Adds %b Hunts in a Row once within %a mins. Cannot exceed Hunts in a Row limit.",
+      "params": {
+        "a": {
+          "values": [
+            15,
+            15,
+            15,
+            15,
+            15,
+            15,
+            15,
+            15,
+            15,
+            15
+          ],
+          "unit": 1
+        },
+        "b": {
+          "values": [
+            7,
+            7,
+            8,
+            8,
+            9,
+            9,
+            10,
+            11,
+            12,
+            15
+          ],
+          "unit": 1
+        }
+      }
+    },
+    "81": {
+      "id": 81,
+      "name": "Golpe de la Fortuna",
+      "nameEn": "Stroke of Fortune",
+      "maxLevel": 10,
+      "type": "active",
+      "subject": 1,
+      "fatigue": 0,
+      "desc": "Otorga %c～%a Gemas",
+      "descEn": "Grants %c～%a Gems.",
+      "params": {
+        "a": {
+          "values": [
+            600,
+            800,
+            900,
+            1000,
+            1200,
+            1500,
+            1800,
+            2100,
+            2400,
+            3000
+          ],
+          "unit": 1
+        },
+        "b": {
+          "values": [
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2
+          ],
+          "unit": 0
+        },
+        "c": {
+          "values": [
+            300,
+            400,
+            500,
+            600,
+            700,
+            800,
+            900,
+            1000,
+            1200,
+            1500
+          ],
+          "unit": 1
+        },
+        "d": {
+          "values": [
+            241,
+            242,
+            243,
+            244,
+            245,
+            246,
+            247,
+            248,
+            249,
+            250
+          ],
+          "unit": 0
+        }
+      }
+    },
+    "82": {
+      "id": 82,
+      "name": "Estrellas de la Suerte",
+      "nameEn": "Lucky Stars",
+      "maxLevel": 10,
+      "type": "active",
+      "subject": 1,
+      "fatigue": 0,
+      "desc": "Otorga %c aleatoriamente el artículo Estrellas Sagradas.",
+      "descEn": "Grants %c random Holy Star items.",
+      "params": {
+        "b": {
+          "values": [
+            167,
+            167,
+            167,
+            167,
+            167,
+            167,
+            167,
+            167,
+            167,
+            167
+          ],
+          "unit": 0
+        },
+        "c": {
+          "values": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            2,
+            2,
+            2,
+            2,
+            3
+          ],
+          "unit": 1
+        }
+      }
+    },
+    "83": {
+      "id": 83,
+      "name": "Convocatoria",
+      "nameEn": "Convocation",
+      "maxLevel": 10,
+      "type": "active",
+      "subject": 1,
+      "fatigue": 0,
+      "desc": "Otorga %b tropas aleatorias desde el nivel más elevado disponible (solamente de nivel 1 a 4).",
+      "descEn": "Grants %b random troops from the highest Tier available to you (T1 to T4 only).",
+      "params": {
+        "b": {
+          "values": [
+            3000,
+            4000,
+            5000,
+            6000,
+            7000,
+            8000,
+            9000,
+            10500,
+            12500,
+            15000
+          ],
+          "unit": 1
+        },
+        "c": {
+          "values": [
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2
+          ],
+          "unit": 0
+        }
+      }
+    },
+    "84": {
+      "id": 84,
+      "name": "Camino a Casa",
+      "nameEn": "Homeward Bind",
+      "maxLevel": 10,
+      "type": "active",
+      "subject": 1,
+      "fatigue": 0,
+      "desc": "Vuelve a reunir a todas las tropas donde %bs (no incluye Tropas de Agrupación).",
+      "descEn": "Recalls all troops within %bs (does not include Coalition Troops).",
+      "params": {
+        "b": {
+          "values": [
+            50,
+            40,
+            35,
+            30,
+            26,
+            22,
+            18,
+            14,
+            10,
+            6
+          ],
+          "unit": 1
+        }
+      }
+    },
+    "85": {
+      "id": 85,
+      "name": "Fuera de Tiempo",
+      "nameEn": "Overtime",
+      "maxLevel": 10,
+      "type": "active",
+      "subject": 1,
+      "fatigue": 0,
+      "desc": "Rellena la barra de ayudas de construcción.",
+      "descEn": "Maxes out Help bar for ongoing construction.",
+      "params": {
+        "b": {
+          "values": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "unit": 0
+        }
+      }
+    },
+    "86": {
+      "id": 86,
+      "name": "Día de Pago",
+      "nameEn": "Pay Day",
+      "maxLevel": 10,
+      "type": "active",
+      "subject": 1,
+      "fatigue": 0,
+      "desc": "Otorga %c Joyas Aleatorias.",
+      "descEn": "Grants %c random Jewels.",
+      "params": {
+        "b": {
+          "values": [
+            168,
+            168,
+            168,
+            168,
+            168,
+            168,
+            168,
+            168,
+            168,
+            168
+          ],
+          "unit": 0
+        },
+        "c": {
+          "values": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            2,
+            2,
+            2,
+            2,
+            3
+          ],
+          "unit": 1
+        }
+      }
+    },
+    "87": {
+      "id": 87,
+      "name": "Mensajero Experimentado",
+      "nameEn": "Seasoned Courier",
+      "maxLevel": 10,
+      "type": "active",
+      "subject": 1,
+      "fatigue": 0,
+      "desc": "Incrementa Capacidad de Suministro en %c% por %a mins.",
+      "descEn": "Increases Supply Capacity by %c% for %a mins.",
+      "params": {
+        "a": {
+          "values": [
+            60,
+            60,
+            60,
+            60,
+            60,
+            60,
+            60,
+            60,
+            60,
+            60
+          ],
+          "unit": 1
+        },
+        "b": {
+          "values": [
+            378,
+            378,
+            378,
+            378,
+            378,
+            378,
+            378,
+            378,
+            378,
+            378
+          ],
+          "unit": 0
+        },
+        "c": {
+          "values": [
+            5000,
+            7500,
+            10000,
+            12500,
+            15000,
+            17500,
+            20000,
+            22500,
+            25000,
+            30000
+          ],
+          "unit": 0
+        }
+      }
+    },
+    "88": {
+      "id": 88,
+      "name": "Reparación Rápida",
+      "nameEn": "Rapid Repair",
+      "maxLevel": 10,
+      "type": "active",
+      "subject": 1,
+      "fatigue": 0,
+      "desc": "Repara %b% PS Muralla.",
+      "descEn": "Repairs %b% Wall HP.",
+      "params": {
+        "b": {
+          "values": [
+            1000,
+            1250,
+            1500,
+            1750,
+            2000,
+            2500,
+            3000,
+            3500,
+            4000,
+            5000
+          ],
+          "unit": 0
+        }
+      }
+    },
+    "89": {
+      "id": 89,
+      "name": "Contaminante",
+      "nameEn": "Contaminate",
+      "maxLevel": 10,
+      "type": "active",
+      "subject": 2,
+      "fatigue": 2,
+      "desc": "Reduce la producción de recursos del enemigo en %c% por %a mins.",
+      "descEn": "Reduces an enemy's resource production by %c% for %a mins.",
+      "params": {
+        "a": {
+          "values": [
+            30,
+            60,
+            90,
+            120,
+            150,
+            180,
+            210,
+            240,
+            270,
+            360
+          ],
+          "unit": 1
+        },
+        "b": {
+          "values": [
+            376,
+            376,
+            376,
+            376,
+            376,
+            376,
+            376,
+            376,
+            376,
+            376
+          ],
+          "unit": 0
+        },
+        "c": {
+          "values": [
+            1000,
+            1500,
+            2000,
+            2500,
+            3000,
+            3500,
+            4000,
+            5000,
+            6500,
+            9500
+          ],
+          "unit": 0
+        }
+      }
+    },
+    "90": {
+      "id": 90,
+      "name": "En un Toque",
+      "nameEn": "In a Flash",
+      "maxLevel": 10,
+      "type": "active",
+      "subject": 1,
+      "fatigue": 0,
+      "desc": "Completa la recolección de %b ejércitos de recolección al azar (no aplicable para vetas de gemas, yacimientos de energón y el Reino ilusorio, no otorga puntos del evento).",
+      "descEn": "Completes gathering for %b random Gathering Armies (not applicable for Gem Lodes, Energon Lodes, and Mirage Realm, does not grant event points).",
+      "params": {
+        "b": {
+          "values": [
+            1,
+            1,
+            1,
+            2,
+            2,
+            2,
+            3,
+            3,
+            4,
+            5
+          ],
+          "unit": 1
+        }
+      }
+    },
+    "91": {
+      "id": 91,
+      "name": "Terremoto",
+      "nameEn": "Nether Quake",
+      "maxLevel": 10,
+      "type": "active",
+      "subject": 1,
+      "fatigue": 0,
+      "desc": "Otorga una cantidad aleatoria de Fragmentos %c veces (%a~%e Fragmentos cada vez)",
+      "descEn": "Grants a random amount of Fragments %c times (%a~%e Fragments each time)",
+      "params": {
+        "a": {
+          "values": [
+            5,
+            5,
+            5,
+            5,
+            5,
+            5,
+            5,
+            5,
+            5,
+            5
+          ],
+          "unit": 1
+        },
+        "b": {
+          "values": [
+            169,
+            169,
+            169,
+            169,
+            169,
+            169,
+            169,
+            169,
+            169,
+            169
+          ],
+          "unit": 0
+        },
+        "c": {
+          "values": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            2,
+            2,
+            2,
+            2,
+            3
+          ],
+          "unit": 1
+        },
+        "e": {
+          "values": [
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30
+          ],
+          "unit": 1
+        }
+      }
+    },
+    "92": {
+      "id": 92,
+      "name": "Fuego Infernal",
+      "nameEn": "Hellfire",
+      "maxLevel": 10,
+      "type": "active",
+      "subject": 1,
+      "fatigue": 0,
+      "desc": "Tus tropas invasoras matarán automáticamente %c% de las Tropas Heridas de tu enemigo (incluye Tropas Guarnecidas y Tropas Aliadas). Efectivo dentro de %a mins, 1 batalla solo.",
+      "descEn": "Your Invading Troops will automatically kill %c% of your enemy's Wounded Troops (includes Garrisoned Troops and Allied Troops). Effective within %a mins, 1 battle only.",
+      "params": {
+        "a": {
+          "values": [
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30
+          ],
+          "unit": 1
+        },
+        "c": {
+          "values": [
+            3500,
+            3800,
+            4100,
+            4500,
+            4900,
+            5300,
+            5900,
+            6500,
+            7500,
+            10000
+          ],
+          "unit": 0
+        }
+      }
+    },
+    "93": {
+      "id": 93,
+      "name": "Marea Alta",
+      "nameEn": "High Tide",
+      "maxLevel": 10,
+      "type": "active",
+      "subject": 1,
+      "fatigue": 0,
+      "desc": "Reubica el Territorio enemigo después de un ataque exitoso. Efectivo por %a minutos, se activa solo una vez.",
+      "descEn": "Relocates an enemy Turf after a successful attack. Effective for %a mins, activates only once.",
+      "params": {
+        "a": {
+          "values": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            10,
+            15
+          ],
+          "unit": 1
+        }
+      }
+    },
+    "94": {
+      "id": 94,
+      "name": "Gracia Salvadora",
+      "nameEn": "Saving Grace",
+      "maxLevel": 10,
+      "type": "active",
+      "subject": 1,
+      "fatigue": 0,
+      "desc": "Extiende duración de la misión de Fiesta Gremial en %b%. Afecta sólo en misiones aceptadas o expiradas.",
+      "descEn": "Extends Guild Fest quest duration by %b%. Only affects claimed or expired quests.",
+      "params": {
+        "b": {
+          "values": [
+            1000,
+            1000,
+            1000,
+            1000,
+            1200,
+            1400,
+            1600,
+            1800,
+            2000,
+            3000
+          ],
+          "unit": 0
+        }
+      }
+    },
+    "95": {
+      "id": 95,
+      "name": "Conejo Pícaro",
+      "nameEn": "Rascally Rabbit",
+      "maxLevel": 10,
+      "type": "active",
+      "subject": 1,
+      "fatigue": 0,
+      "desc": "Una vez que se active esta habilidad, tu líder será capaz de escapar una vez si es capturado en la batalla dentro de los siguientes %a minutos.\n(No tendrá ningún efecto si la habilidad se activa después de la captura)",
+      "descEn": "Once this skill is activated, your Leader will be able to escape once if they are captured in battle within the next %a mins.\n(Will not have any effect if skill is activated after Leader is captured)",
+      "params": {
+        "a": {
+          "values": [
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30
+          ],
+          "unit": 1
+        }
+      }
+    },
+    "96": {
+      "id": 96,
+      "name": "Bendición Ardiente",
+      "nameEn": "Fiery Blessing",
+      "maxLevel": 10,
+      "type": "active",
+      "subject": 1,
+      "fatigue": 0,
+      "desc": "Disipa %b Habilidades aleatorias de Monstruos",
+      "descEn": "Dispels %b random Familiar Skills.",
+      "params": {
+        "b": {
+          "values": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            2
+          ],
+          "unit": 1
+        }
+      }
+    },
+    "97": {
+      "id": 97,
+      "name": "Aguijón venenoso",
+      "nameEn": "Poison Sting",
+      "maxLevel": 10,
+      "type": "active",
+      "subject": 2,
+      "fatigue": 3,
+      "desc": "Hace que %e tropas de un Cuartel enemigo (nivel aleatorio; no puede superar un total de %g% tropas en el Cuartel; no da puntos de evento) sean enviadas a la Enfermería cada 10 min, y reduce el ATQ del Ejército en un %c% durante %a min.",
+      "descEn": "Causes %e troops in an enemy's Barracks (random tier; will not exceed %g% of total troops in the Barracks, and does not grant event points) to be sent to the Infirmary every 10 mins, and reduces enemy's Army ATK by %c% for %a mins.",
+      "params": {
+        "a": {
+          "values": [
+            60,
+            70,
+            80,
+            90,
+            100,
+            120,
+            140,
+            160,
+            180,
+            240
+          ],
+          "unit": 1
+        },
+        "b": {
+          "values": [
+            221,
+            221,
+            221,
+            221,
+            221,
+            221,
+            221,
+            221,
+            221,
+            221
+          ],
+          "unit": 0
+        },
+        "c": {
+          "values": [
+            300,
+            350,
+            400,
+            475,
+            550,
+            650,
+            750,
+            875,
+            1000,
+            1500
+          ],
+          "unit": 0
+        },
+        "e": {
+          "values": [
+            3000,
+            3500,
+            4000,
+            4500,
+            5000,
+            5750,
+            6500,
+            7250,
+            8000,
+            10000
+          ],
+          "unit": 1
+        },
+        "g": {
+          "values": [
+            125,
+            125,
+            125,
+            125,
+            125,
+            125,
+            125,
+            125,
+            125,
+            125
+          ],
+          "unit": 0
+        }
+      }
+    },
+    "98": {
+      "id": 98,
+      "name": "Caballo de Troya",
+      "nameEn": "Trojan Horse",
+      "maxLevel": 10,
+      "type": "active",
+      "subject": 1,
+      "fatigue": 0,
+      "desc": "Aumenta el Tamaño de Agrupación Ejército Max. en %c por %a mins.",
+      "descEn": "Increases Max Coalition Army Size by %c for %a mins.",
+      "params": {
+        "a": {
+          "values": [
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30,
+            30
+          ],
+          "unit": 1
+        },
+        "b": {
+          "values": [
+            379,
+            379,
+            379,
+            379,
+            379,
+            379,
+            379,
+            379,
+            379,
+            379
+          ],
+          "unit": 0
+        },
+        "c": {
+          "values": [
+            30000,
+            35000,
+            40000,
+            45000,
+            50000,
+            60000,
+            70000,
+            80000,
+            100000,
+            125000
+          ],
+          "unit": 1
+        }
+      }
+    },
+    "99": {
+      "id": 99,
+      "name": "Mordisco Helado",
+      "nameEn": "Frost Bite",
+      "maxLevel": 10,
+      "type": "active",
+      "subject": 2,
+      "fatigue": 4,
+      "desc": "Aumenta el tiempo de viaje de un enemigo en %c%. Dura %a mins. (No afecta a las tropas que están actualmente en viaje).",
+      "descEn": "Increases an enemy's Travel Time by %c%. Lasts %a mins. (Does not affect troops that are currently on the move.)",
+      "params": {
+        "a": {
+          "values": [
+            30,
+            30,
+            30,
+            40,
+            40,
+            40,
+            50,
+            50,
+            50,
+            60
+          ],
+          "unit": 1
+        },
+        "b": {
+          "values": [
+            377,
+            377,
+            377,
+            377,
+            377,
+            377,
+            377,
+            377,
+            377,
+            377
+          ],
+          "unit": 0
+        },
+        "c": {
+          "values": [
+            5000,
+            7000,
+            9000,
+            11000,
+            13000,
+            15000,
+            18000,
+            21000,
+            25000,
+            30000
+          ],
+          "unit": 0
+        }
+      }
+    },
+    "100": {
+      "id": 100,
+      "name": "Retribución Divina",
+      "nameEn": "Divine Retribution",
+      "maxLevel": 10,
+      "type": "active",
+      "subject": 2,
+      "fatigue": 5,
+      "desc": "Destruye %b％～%c％ de todos los recursos en un Territorio enemigo. Destruye un Máx. de %a de cada recurso.",
+      "descEn": "Destroys %b％～%c％ of all resources in an enemy's Turf. Destroys a max. of %a of each resource.",
+      "params": {
+        "a": {
+          "values": [
+            20000000,
+            24000000,
+            28000000,
+            34000000,
+            40000000,
+            48000000,
+            56000000,
+            66000000,
+            76000000,
+            100000000
+          ],
+          "unit": 1
+        },
+        "b": {
+          "values": [
+            700,
+            700,
+            700,
+            700,
+            700,
+            700,
+            700,
+            700,
+            700,
+            700
+          ],
+          "unit": 0
+        },
+        "c": {
+          "values": [
+            1500,
+            1500,
+            1500,
+            1500,
+            1500,
+            1500,
+            1500,
+            1500,
+            1500,
+            1500
+          ],
+          "unit": 0
+        }
+      }
+    },
+    "101": {
+      "id": 101,
+      "name": "Beso de la Muerte",
+      "nameEn": "Kiss of Death",
+      "maxLevel": 10,
+      "type": "active",
+      "subject": 2,
+      "fatigue": 6,
+      "desc": "Matar %e~%c tropas en Cuartel Enemigo (no se puede exceder %b% el número total de tropas). Las tropas de Mayor Nivel serán objetivo primero.",
+      "descEn": "Kills %e~%c troops in an enemy's Barracks (will not exceed %b％ of the total number of troops). Higher Tier troops will be targeted first.",
+      "params": {
+        "a": {
+          "values": [
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2
+          ],
+          "unit": 0
+        },
+        "b": {
+          "values": [
+            500,
+            500,
+            500,
+            500,
+            500,
+            500,
+            500,
+            500,
+            500,
+            500
+          ],
+          "unit": 0
+        },
+        "c": {
+          "values": [
+            17500,
+            20000,
+            22500,
+            25000,
+            27500,
+            30000,
+            35000,
+            40000,
+            45000,
+            50000
+          ],
+          "unit": 1
+        },
+        "e": {
+          "values": [
+            6000,
+            7500,
+            9000,
+            10500,
+            12000,
+            13500,
+            15000,
+            16500,
+            18000,
+            20000
+          ],
+          "unit": 1
+        }
+      }
+    },
+    "102": {
+      "id": 102,
+      "name": "Bendición ardiente- Infantería",
+      "nameEn": "Fiery Blessing- Infantry",
+      "maxLevel": 10,
+      "type": "passive",
+      "effectId": 456,
+      "effectText": "Refuerzo de ATQ infantería a artillería+",
+      "effectTextEn": "Infantry-Ranged Counter Boost+",
+      "effectDesc": "Aumenta el daño causado por las unidades de infantería a las unidades de artillería enemigas y disminuye el daño causado por las unidades de artillería enemigas a las unidades de infantería.",
+      "effectDescEn": "Increases DMG dealt by Infantry units to enemy Ranged units, and decreases DMG dealt by enemy Ranged units to Infantry units",
+      "effectUnit": "%",
+      "values": [
+        450,
+        525,
+        600,
+        675,
+        750,
+        825,
+        900,
+        1050,
+        1200,
+        1500
+      ],
+      "unit": 0
+    },
+    "103": {
+      "id": 103,
+      "name": "Bendición ardiente- Artillería",
+      "nameEn": "Fiery Blessing- Ranged",
+      "maxLevel": 10,
+      "type": "passive",
+      "effectId": 458,
+      "effectText": "Refuerzo de ATQ artillería a caballería+",
+      "effectTextEn": "Ranged-Cavalry Counter Boost+",
+      "effectDesc": "Aumenta el daño causado por las unidades de artillería a las unidades de caballería enemigas y disminuye el daño causado por las unidades de caballería enemigas a las unidades de artillería.",
+      "effectDescEn": "Increases DMG dealt by Ranged units to enemy Cavalry units, and decreases DMG dealt by enemy Cavalry units to Ranged units",
+      "effectUnit": "%",
+      "values": [
+        450,
+        525,
+        600,
+        675,
+        750,
+        825,
+        900,
+        1050,
+        1200,
+        1500
+      ],
+      "unit": 0
+    },
+    "104": {
+      "id": 104,
+      "name": "Bendición ardiente- Caballería",
+      "nameEn": "Fiery Blessing- Cavalry",
+      "maxLevel": 10,
+      "type": "passive",
+      "effectId": 457,
+      "effectText": "Refuerzo de ATQ caballería a infantería+",
+      "effectTextEn": "Cavalry-Infantry Counter Boost+",
+      "effectDesc": "Aumenta el daño causado por las unidades de caballería a las unidades de infantería enemigas y disminuye el daño causado por las unidades de infantería enemigas a las unidades de caballería.",
+      "effectDescEn": "Increases DMG dealt by Cavalry units to enemy Infantry units, and decreases DMG dealt by enemy Infantry units to Cavalry units",
+      "effectUnit": "%",
+      "values": [
+        450,
+        525,
+        600,
+        675,
+        750,
+        825,
+        900,
+        1050,
+        1200,
+        1500
+      ],
+      "unit": 0
+    },
+    "105": {
+      "id": 105,
+      "name": "Aguijón venenoso",
+      "nameEn": "Poison Sting",
+      "maxLevel": 10,
+      "type": "active",
+      "subject": 2,
+      "fatigue": 6,
+      "desc": "Hace que %e tropas de un Cuartel enemigo (nivel aleatorio; no puede superar un total de %g% tropas en el Cuartel; no da puntos de evento) sean enviadas a la Enfermería cada 10 min, y reduce el ATQ del Ejército en un %c% durante %a min.",
+      "descEn": "Causes %e troops in an enemy's Barracks (random tier; will not exceed %g% of total troops in the Barracks, and does not grant event points) to be sent to the Infirmary every 10 mins, and reduces enemy's Army ATK by %c% for %a mins.",
+      "params": {
+        "a": {
+          "values": [
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2
+          ],
+          "unit": 0
+        },
+        "b": {
+          "values": [
+            500,
+            500,
+            500,
+            500,
+            500,
+            500,
+            500,
+            500,
+            500,
+            500
+          ],
+          "unit": 0
+        },
+        "c": {
+          "values": [
+            17500,
+            20000,
+            22500,
+            25000,
+            27500,
+            30000,
+            35000,
+            40000,
+            45000,
+            50000
+          ],
+          "unit": 1
+        },
+        "e": {
+          "values": [
+            6000,
+            7500,
+            9000,
+            10500,
+            12000,
+            13500,
+            15000,
+            16500,
+            18000,
+            20000
+          ],
+          "unit": 1
+        }
+      }
+    },
+    "106": {
+      "id": 106,
+      "name": "Mordisco Helado",
+      "nameEn": "Frost Bite",
+      "maxLevel": 10,
+      "type": "active",
+      "subject": 2,
+      "fatigue": 6,
+      "desc": "Aumenta el tiempo de viaje de un enemigo en %c%. Dura %a mins. (No afecta a las tropas que están actualmente en viaje).",
+      "descEn": "Increases an enemy's Travel Time by %c%. Lasts %a mins. (Does not affect troops that are currently on the move.)",
+      "params": {
+        "a": {
+          "values": [
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2
+          ],
+          "unit": 0
+        },
+        "b": {
+          "values": [
+            500,
+            500,
+            500,
+            500,
+            500,
+            500,
+            500,
+            500,
+            500,
+            500
+          ],
+          "unit": 0
+        },
+        "c": {
+          "values": [
+            17500,
+            20000,
+            22500,
+            25000,
+            27500,
+            30000,
+            35000,
+            40000,
+            45000,
+            50000
+          ],
+          "unit": 1
+        },
+        "e": {
+          "values": [
+            6000,
+            7500,
+            9000,
+            10500,
+            12000,
+            13500,
+            15000,
+            16500,
+            18000,
+            20000
+          ],
+          "unit": 1
+        }
+      }
+    },
+    "107": {
+      "id": 107,
+      "name": "Retribución Divina",
+      "nameEn": "Divine Retribution",
+      "maxLevel": 10,
+      "type": "active",
+      "subject": 2,
+      "fatigue": 6,
+      "desc": "Destruye %b％～%c％ de todos los recursos en un Territorio enemigo. Destruye un Máx. de %a de cada recurso.",
+      "descEn": "Destroys %b％～%c％ of all resources in an enemy's Turf. Destroys a max. of %a of each resource.",
+      "params": {
+        "a": {
+          "values": [
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2
+          ],
+          "unit": 0
+        },
+        "b": {
+          "values": [
+            500,
+            500,
+            500,
+            500,
+            500,
+            500,
+            500,
+            500,
+            500,
+            500
+          ],
+          "unit": 0
+        },
+        "c": {
+          "values": [
+            17500,
+            20000,
+            22500,
+            25000,
+            27500,
+            30000,
+            35000,
+            40000,
+            45000,
+            50000
+          ],
+          "unit": 1
+        },
+        "e": {
+          "values": [
+            6000,
+            7500,
+            9000,
+            10500,
+            12000,
+            13500,
+            15000,
+            16500,
+            18000,
+            20000
+          ],
+          "unit": 1
+        }
+      }
+    },
+    "108": {
+      "id": 108,
+      "name": "Beso de la Muerte",
+      "nameEn": "Kiss of Death",
+      "maxLevel": 10,
+      "type": "active",
+      "subject": 2,
+      "fatigue": 6,
+      "desc": "Matar %e~%c tropas en Cuartel Enemigo (no se puede exceder %b% el número total de tropas). Las tropas de Mayor Nivel serán objetivo primero.",
+      "descEn": "Kills %e~%c troops in an enemy's Barracks (will not exceed %b％ of the total number of troops). Higher Tier troops will be targeted first.",
+      "params": {
+        "a": {
+          "values": [
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2
+          ],
+          "unit": 0
+        },
+        "b": {
+          "values": [
+            500,
+            500,
+            500,
+            500,
+            500,
+            500,
+            500,
+            500,
+            500,
+            500
+          ],
+          "unit": 0
+        },
+        "c": {
+          "values": [
+            17500,
+            20000,
+            22500,
+            25000,
+            27500,
+            30000,
+            35000,
+            40000,
+            45000,
+            50000
+          ],
+          "unit": 1
+        },
+        "e": {
+          "values": [
+            6000,
+            7500,
+            9000,
+            10500,
+            12000,
+            13500,
+            15000,
+            16500,
+            18000,
+            20000
+          ],
+          "unit": 1
+        }
+      }
+    }
+  },
+  "talents": {
+    "1": {
+      "id": 1,
+      "name": "Terremoto",
+      "nameEn": "Earthquake",
+      "desc": "Al inicio de la batalla, reduce la DEF del Ejército enemigo en un %d%",
+      "pct": [
+        1.5,
+        2.0,
+        3.0,
+        4.0,
+        5.0,
+        6.5,
+        8.0,
+        9.5,
+        12.0,
+        15.0
+      ]
+    },
+    "2": {
+      "id": 2,
+      "name": "Podredumbre",
+      "nameEn": "Ruthless Rot",
+      "desc": "Al inicio de la batalla, reduce la DEF de la Infantería enemiga en un %d%",
+      "pct": [
+        4.0,
+        5.6,
+        8.0,
+        11.2,
+        14.4,
+        17.6,
+        21.6,
+        25.6,
+        32.0,
+        40.0
+      ]
+    },
+    "3": {
+      "id": 3,
+      "name": "Abrasar",
+      "nameEn": "Scorching Sear",
+      "desc": "Al inicio de la batalla, reduce los PS máx. de la Artillería enemiga en un %d%",
+      "pct": [
+        4.0,
+        5.6,
+        8.0,
+        11.2,
+        14.4,
+        17.6,
+        21.6,
+        25.6,
+        32.0,
+        40.0
+      ]
+    },
+    "4": {
+      "id": 4,
+      "name": "Presenten armas",
+      "nameEn": "Suit Up",
+      "desc": "Al inicio de la batalla, aumenta el ATQ de la Infantería en un %d%",
+      "pct": [
+        1.5,
+        2.0,
+        3.0,
+        4.0,
+        5.0,
+        6.5,
+        8.0,
+        9.5,
+        12.0,
+        15.0
+      ]
+    },
+    "5": {
+      "id": 5,
+      "name": "Filo letal",
+      "nameEn": "Deadly Slash",
+      "desc": "Al inicio de la batalla, reduce los PS máx. de la Caballería enemiga en un %d%",
+      "pct": [
+        4.0,
+        5.6,
+        8.0,
+        11.2,
+        14.4,
+        17.6,
+        21.6,
+        25.6,
+        32.0,
+        40.0
+      ]
+    },
+    "6": {
+      "id": 6,
+      "name": "Ahogar",
+      "nameEn": "Drown Out",
+      "desc": "Al inicio de la batalla, reduce los PS máx. del Ejército enemigo en un %d%",
+      "pct": [
+        1.5,
+        2.0,
+        3.0,
+        4.0,
+        5.0,
+        6.5,
+        8.0,
+        9.5,
+        12.0,
+        15.0
+      ]
+    },
+    "7": {
+      "id": 7,
+      "name": "Perforación",
+      "nameEn": "Piercing Spike",
+      "desc": "Al inicio de la batalla, reduce los PS máx. de la Infantería enemiga en un %d%",
+      "pct": [
+        4.0,
+        5.6,
+        8.0,
+        11.2,
+        14.4,
+        17.6,
+        21.6,
+        25.6,
+        32.0,
+        40.0
+      ]
+    },
+    "8": {
+      "id": 8,
+      "name": "Puntas letales",
+      "nameEn": "Deadly Tips",
+      "desc": "Al inicio de la batalla, aumenta el ATQ de la Artillería en un %d%",
+      "pct": [
+        1.5,
+        2.0,
+        3.0,
+        4.0,
+        5.0,
+        6.5,
+        8.0,
+        9.5,
+        12.0,
+        15.0
+      ]
+    },
+    "9": {
+      "id": 9,
+      "name": "Lamento salvaje",
+      "nameEn": "Wild Wail",
+      "desc": "Al inicio de la batalla, reduce la DEF de la Caballería enemiga en un %d%",
+      "pct": [
+        4.0,
+        5.6,
+        8.0,
+        11.2,
+        14.4,
+        17.6,
+        21.6,
+        25.6,
+        32.0,
+        40.0
+      ]
+    },
+    "10": {
+      "id": 10,
+      "name": "Estocada fatal",
+      "nameEn": "Abominable Strike",
+      "desc": "Al inicio de la batalla, aumenta el ATQ de la Caballería en un %d%",
+      "pct": [
+        1.5,
+        2.0,
+        3.0,
+        4.0,
+        5.0,
+        6.5,
+        8.0,
+        9.5,
+        12.0,
+        15.0
+      ]
+    },
+    "11": {
+      "id": 11,
+      "name": "Últimos lamentos",
+      "nameEn": "Vermiphobia",
+      "desc": "Aturde a todos los Héroes enemigos durante %f segundos cuando haya caído el %a% de tus tropas",
+      "sec": [
+        15.0,
+        15.0,
+        15.0,
+        15.0,
+        15.0,
+        15.0,
+        15.0,
+        15.0,
+        15.0,
+        15.0
+      ]
+    },
+    "12": {
+      "id": 12,
+      "name": "Festín",
+      "nameEn": "Hearty Feast",
+      "desc": "Al inicio de la batalla, aumenta los PS máx. del Ejército en un %d%",
+      "pct": [
+        1.5,
+        2.0,
+        3.0,
+        4.0,
+        5.0,
+        6.5,
+        8.0,
+        9.5,
+        12.0,
+        15.0
+      ]
+    },
+    "13": {
+      "id": 13,
+      "name": "Tocando madera",
+      "nameEn": "Knock Wood",
+      "desc": "Aumenta la DEF de la Artillería en un %d% durante %f segundos cuando haya caído el %a% de tus tropas de Artillería",
+      "pct": [
+        20.0,
+        23.0,
+        26.0,
+        32.0,
+        36.0,
+        40.0,
+        43.0,
+        51.0,
+        64.0,
+        80.0
+      ],
+      "sec": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ]
+    },
+    "14": {
+      "id": 14,
+      "name": "Arremetida",
+      "nameEn": "Lash Out",
+      "desc": "Aumenta los PS máx. de la Caballería en un %d% durante %f segundos cuando haya caído el %a% de tus tropas de Caballería",
+      "pct": [
+        20.0,
+        23.0,
+        26.0,
+        32.0,
+        36.0,
+        40.0,
+        43.0,
+        51.0,
+        64.0,
+        80.0
+      ],
+      "sec": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ]
+    },
+    "15": {
+      "id": 15,
+      "name": "Brujería oscura",
+      "nameEn": "Strange Sorcery",
+      "desc": "Aumenta los PS máx. de la Artillería en un %d% durante %f segundos cuando haya caído el %a% de tus tropas de Artillería",
+      "pct": [
+        20.0,
+        23.0,
+        26.0,
+        32.0,
+        36.0,
+        40.0,
+        43.0,
+        51.0,
+        64.0,
+        80.0
+      ],
+      "sec": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ]
+    },
+    "16": {
+      "id": 16,
+      "name": "Corazón ígneo",
+      "nameEn": "Turbo Charge",
+      "desc": "Al inicio de la batalla, proporciona una mejora del %d% para las habilidades tácticas de los Héroes, aumentando el ATQ del Escuadrón causado como DAÑO a tropas enemigas durante %f segundos",
+      "pct": [
+        6.0,
+        8.4,
+        12.0,
+        16.8,
+        21.6,
+        26.4,
+        32.4,
+        38.4,
+        48.0,
+        60.0
+      ]
+    },
+    "17": {
+      "id": 17,
+      "name": "Defensa férrea",
+      "nameEn": "Rock On",
+      "desc": "Aumenta la DEF de la Caballería en un %d% durante %f segundos cuando haya caído el %a% de tus tropas de Caballería",
+      "pct": [
+        20.0,
+        23.0,
+        26.0,
+        32.0,
+        36.0,
+        40.0,
+        43.0,
+        51.0,
+        64.0,
+        80.0
+      ],
+      "sec": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ]
+    },
+    "18": {
+      "id": 18,
+      "name": "Muro de corazas",
+      "nameEn": "Shell Tier",
+      "desc": "Al inicio de la batalla, aumenta la DEF del Ejército en un %d%",
+      "pct": [
+        1.5,
+        2.0,
+        3.0,
+        4.0,
+        5.0,
+        6.5,
+        8.0,
+        9.5,
+        12.0,
+        15.0
+      ]
+    },
+    "19": {
+      "id": 19,
+      "name": "Ritos funerarios",
+      "nameEn": "Funeral Rites",
+      "desc": "Aumenta la DEF de la Infantería en un %d% durante %f segundos cuando haya caído el %a% de tus tropas de Infantería",
+      "pct": [
+        20.0,
+        23.0,
+        26.0,
+        32.0,
+        36.0,
+        40.0,
+        43.0,
+        51.0,
+        64.0,
+        80.0
+      ],
+      "sec": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ]
+    },
+    "20": {
+      "id": 20,
+      "name": "Último baile",
+      "nameEn": "Last Dance",
+      "desc": "Aumenta los PS máx. de la Infantería en un %d% durante %f segundos cuando haya caído el %a% de tus tropas de Infantería",
+      "pct": [
+        20.0,
+        23.0,
+        26.0,
+        32.0,
+        36.0,
+        40.0,
+        43.0,
+        51.0,
+        64.0,
+        80.0
+      ],
+      "sec": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ]
+    },
+    "21": {
+      "id": 21,
+      "name": "Viento de cola",
+      "nameEn": "Tailwind",
+      "desc": "Aumenta el ATQ de ejército en %d% durante %f segundos cuando haya caído el %a% de tus tropas",
+      "pct": [
+        50.0,
+        56.0,
+        67.0,
+        80.0,
+        90.0,
+        98.0,
+        108.0,
+        128.0,
+        160.0,
+        200.0
+      ],
+      "sec": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ]
+    },
+    "22": {
+      "id": 22,
+      "name": "Descarga eléctrica",
+      "nameEn": "Lightning Strike",
+      "desc": "Aumenta el ATQ de la caballería en un %d％ y los PS de la caballería en un %d％ durante %f segundos cuando el %a％ de tus tropas de caballería han caído.",
+      "pct": [
+        10.0,
+        14.0,
+        20.0,
+        28.0,
+        36.0,
+        44.0,
+        54.0,
+        64.0,
+        80.0,
+        100.0
+      ],
+      "sec": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ]
+    },
+    "23": {
+      "id": 23,
+      "name": "Lanza del horror",
+      "nameEn": "Fear Spike",
+      "desc": "Aumenta el ATQ de la Infantería %d% cuando haya caído el %a% de estas. Este efecto es acumulable. La cantidad de tropas caídas que se necesitan se recalculará después de cada activación.",
+      "pct": [
+        6.0,
+        8.4,
+        12.0,
+        16.8,
+        21.6,
+        26.4,
+        32.4,
+        38.4,
+        48.0,
+        60.0
+      ],
+      "sec": [
+        5.0,
+        5.0,
+        5.0,
+        5.0,
+        5.0,
+        5.0,
+        5.0,
+        5.0,
+        5.0,
+        5.0
+      ]
+    },
+    "24": {
+      "id": 24,
+      "name": "Premio de consolación",
+      "nameEn": "Booby Prize",
+      "desc": "Aumenta el ATQ de la Caballería %d% cuando haya caído el %a% de estas. Este efecto es acumulable. La cantidad de tropas caídas que se necesitan se recalculará después de cada activación.",
+      "pct": [
+        6.0,
+        8.4,
+        12.0,
+        16.8,
+        21.6,
+        26.4,
+        32.4,
+        38.4,
+        48.0,
+        60.0
+      ],
+      "sec": [
+        5.0,
+        5.0,
+        5.0,
+        5.0,
+        5.0,
+        5.0,
+        5.0,
+        5.0,
+        5.0,
+        5.0
+      ]
+    },
+    "25": {
+      "id": 25,
+      "name": "Tiro a distancia",
+      "nameEn": "Long Shot",
+      "desc": "Aumenta el ATQ de la Artillería en un %d% cuando haya caído el %a% de estas. Este efecto es acumulable. La cantidad de tropas caídas que se necesitan se recalculará después de cada activación.",
+      "pct": [
+        6.0,
+        8.4,
+        12.0,
+        16.8,
+        21.6,
+        26.4,
+        32.4,
+        38.4,
+        48.0,
+        60.0
+      ],
+      "sec": [
+        5.0,
+        5.0,
+        5.0,
+        5.0,
+        5.0,
+        5.0,
+        5.0,
+        5.0,
+        5.0,
+        5.0
+      ]
+    },
+    "26": {
+      "id": 26,
+      "name": "Sacrificio espiritual",
+      "nameEn": "Spirit Sacrifice",
+      "desc": "Aumenta el ATQ de la artillería en un %d％ y los PS de la artillería en un %d％ durante %f segundos cuando el %a％ de tus tropas de artillería han caído.",
+      "pct": [
+        10.0,
+        14.0,
+        20.0,
+        28.0,
+        36.0,
+        44.0,
+        54.0,
+        64.0,
+        80.0,
+        100.0
+      ],
+      "sec": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ]
+    },
+    "27": {
+      "id": 27,
+      "name": "Bendición del desierto",
+      "nameEn": "Shaman's Blessing",
+      "desc": "Aumenta el ATQ de la infantería en un %d％ y los PS de la infantería en un %d％ durante %f segundos cuando el %a％ de tus tropas de infantería han caído.",
+      "pct": [
+        10.0,
+        14.0,
+        20.0,
+        28.0,
+        36.0,
+        44.0,
+        54.0,
+        64.0,
+        80.0,
+        100.0
+      ],
+      "sec": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ]
+    },
+    "28": {
+      "id": 28,
+      "name": "Potencia de fuego",
+      "nameEn": "Firepower",
+      "desc": "Los enemigos de infantería reciben un %d ％ de daño aumentado cuando %a% de tus tropas han caído.",
+      "pct": [
+        5.0,
+        7.0,
+        10.0,
+        14.0,
+        18.0,
+        22.0,
+        27.0,
+        32.0,
+        40.0,
+        50.0
+      ],
+      "sec": [
+        5.0,
+        5.0,
+        5.0,
+        5.0,
+        5.0,
+        5.0,
+        5.0,
+        5.0,
+        5.0,
+        5.0
+      ]
+    },
+    "29": {
+      "id": 29,
+      "name": "Maldición nefasta",
+      "nameEn": "Grim Curse",
+      "desc": "Los enemigos de caballería reciben un %d ％ de daño aumentado cuando %a% de tus tropas han caído.",
+      "pct": [
+        5.0,
+        7.0,
+        10.0,
+        14.0,
+        18.0,
+        22.0,
+        27.0,
+        32.0,
+        40.0,
+        50.0
+      ],
+      "sec": [
+        5.0,
+        5.0,
+        5.0,
+        5.0,
+        5.0,
+        5.0,
+        5.0,
+        5.0,
+        5.0,
+        5.0
+      ]
+    },
+    "30": {
+      "id": 30,
+      "name": "Golpe de marea",
+      "nameEn": "Tidal Strike",
+      "desc": "Los enemigos de artillería reciben un %d ％ de daño aumentado cuando %a% de tus tropas han caído.",
+      "pct": [
+        5.0,
+        7.0,
+        10.0,
+        14.0,
+        18.0,
+        22.0,
+        27.0,
+        32.0,
+        40.0,
+        50.0
+      ],
+      "sec": [
+        5.0,
+        5.0,
+        5.0,
+        5.0,
+        5.0,
+        5.0,
+        5.0,
+        5.0,
+        5.0,
+        5.0
+      ]
+    },
+    "31": {
+      "id": 31,
+      "name": "Maldición infernal",
+      "nameEn": "Hellish Curse",
+      "desc": "Petrifica uno de los escuadrones enemigos más grandes durante %f segundos cuando %a% de tus tropas han caído.",
+      "sec": [
+        7.0,
+        7.0,
+        7.0,
+        7.0,
+        7.0,
+        7.0,
+        7.0,
+        7.0,
+        7.0,
+        7.0
+      ]
+    },
+    "32": {
+      "id": 32,
+      "name": "Torbellino",
+      "nameEn": "Whirlwind",
+      "desc": "Aturde a uno de los escuadrones enemigos más grandes durante %f segundos cuando haya caído el %a% de tus tropas",
+      "sec": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ]
+    },
+    "33": {
+      "id": 33,
+      "name": "Favor de la bestia",
+      "nameEn": "Feral Ward",
+      "desc": "Crea un escudo que protege al %h% de tus tropas de Caballería de un golpe mortal cuando haya caído el %a% de estas.",
+      "sec": [
+        12.0,
+        12.0,
+        12.0,
+        12.0,
+        12.0,
+        12.0,
+        12.0,
+        12.0,
+        12.0,
+        12.0
+      ]
+    },
+    "34": {
+      "id": 34,
+      "name": "Escudo frígido",
+      "nameEn": "Snow Shield",
+      "desc": "Crea un escudo que protege al %h% de tus tropas de Artillería de un golpe mortal cuando haya caído el %a% de estas.",
+      "sec": [
+        12.0,
+        12.0,
+        12.0,
+        12.0,
+        12.0,
+        12.0,
+        12.0,
+        12.0,
+        12.0,
+        12.0
+      ]
+    },
+    "35": {
+      "id": 35,
+      "name": "Escudo de héroe",
+      "nameEn": "Gilded Guard",
+      "desc": "Crea un escudo que protege al %h% de tus tropas de Infantería de un golpe mortal cuando haya caído el %a% de estas.",
+      "sec": [
+        12.0,
+        12.0,
+        12.0,
+        12.0,
+        12.0,
+        12.0,
+        12.0,
+        12.0,
+        12.0,
+        12.0
+      ]
+    },
+    "36": {
+      "id": 36,
+      "name": "Fuego divino",
+      "nameEn": "Divine Fire",
+      "desc": "Reduce el daño infligido por los enemigos en %d％ cuando un %a% de tus tropas han caído.",
+      "pct": [
+        0.9,
+        1.3,
+        1.8,
+        2.5,
+        3.2,
+        4.0,
+        4.8,
+        5.8,
+        7.2,
+        9.0
+      ],
+      "sec": [
+        4.0,
+        4.0,
+        4.0,
+        4.0,
+        4.0,
+        4.0,
+        4.0,
+        4.0,
+        4.0,
+        4.0
+      ]
+    },
+    "37": {
+      "id": 37,
+      "name": "Hálito salvaje",
+      "nameEn": "Savage Breath",
+      "desc": "Causa un %b% de daño según el ATQ inicial de tu Artillería a uno de los escuadrones enemigos más grandes cuando haya caído el %a% de tus tropas.",
+      "sec": [
+        4.0,
+        4.0,
+        4.0,
+        4.0,
+        4.0,
+        4.0,
+        4.0,
+        4.0,
+        4.0,
+        4.0
+      ]
+    },
+    "38": {
+      "id": 38,
+      "name": "Puño gigante",
+      "nameEn": "Giant Fist",
+      "desc": "Causa un %b% de daño según el ATQ inicial de tu Caballería a uno de los escuadrones enemigos más grandes cuando haya caído el %a% de tus tropas.",
+      "sec": [
+        4.0,
+        4.0,
+        4.0,
+        4.0,
+        4.0,
+        4.0,
+        4.0,
+        4.0,
+        4.0,
+        4.0
+      ]
+    },
+    "39": {
+      "id": 39,
+      "name": "Cirro nocivo",
+      "nameEn": "Stinging Swarm",
+      "desc": "Causa un %d% de daño cada %g segundos hasta un máximo de %e veces a uno de los escuadrones enemigos más grandes. El daño dependerá del ATQ inicial de tu Artillería cuando haya caído el %a% de tus tropas.",
+      "pct": [
+        37.5,
+        40.0,
+        42.5,
+        52.5,
+        67.5,
+        66.0,
+        81.0,
+        96.0,
+        120.0,
+        150.0
+      ],
+      "sec": [
+        8.0,
+        8.0,
+        8.0,
+        8.0,
+        8.0,
+        8.0,
+        8.0,
+        8.0,
+        8.0,
+        8.0
+      ]
+    },
+    "40": {
+      "id": 40,
+      "name": "Escarcha letal",
+      "nameEn": "Killing Frost",
+      "desc": "Causa un %d% de daño cada %g segundos hasta un máximo de %e veces a uno de los escuadrones enemigos más grandes. El daño dependerá del ATQ inicial de tu Caballería cuando haya caído el %a% de tus tropas.",
+      "pct": [
+        37.5,
+        40.0,
+        42.5,
+        52.5,
+        67.5,
+        66.0,
+        81.0,
+        96.0,
+        120.0,
+        150.0
+      ],
+      "sec": [
+        8.0,
+        8.0,
+        8.0,
+        8.0,
+        8.0,
+        8.0,
+        8.0,
+        8.0,
+        8.0,
+        8.0
+      ]
+    },
+    "41": {
+      "id": 41,
+      "name": "Terror sagrado",
+      "nameEn": "Holy Terror",
+      "desc": "Causa un %b% de daño según el ATQ inicial de tu Infantería a uno de los escuadrones enemigos más grandes cuando haya caído el %a% de tus tropas.",
+      "sec": [
+        4.0,
+        4.0,
+        4.0,
+        4.0,
+        4.0,
+        4.0,
+        4.0,
+        4.0,
+        4.0,
+        4.0
+      ]
+    },
+    "42": {
+      "id": 42,
+      "name": "Conejo feroz",
+      "nameEn": "Brutal Bunny",
+      "desc": "Causa un %d% de daño cada %g segundos hasta un máximo de %e veces a uno de los escuadrones enemigos más grandes. El daño dependerá del ATQ inicial de tu Infantería cuando haya caído el %a% de tus tropas.",
+      "pct": [
+        37.5,
+        40.0,
+        42.5,
+        52.5,
+        67.5,
+        66.0,
+        81.0,
+        96.0,
+        120.0,
+        150.0
+      ],
+      "sec": [
+        8.0,
+        8.0,
+        8.0,
+        8.0,
+        8.0,
+        8.0,
+        8.0,
+        8.0,
+        8.0,
+        8.0
+      ]
+    },
+    "43": {
+      "id": 43,
+      "name": "Escarcha letal",
+      "nameEn": "Killing Frost",
+      "desc": "Causa un %d% de daño cada %g segundos hasta un máximo de %e veces a uno de los escuadrones enemigos más grandes. El daño dependerá del ATQ inicial de tu Caballería cuando haya caído el %a% de tus tropas.",
+      "pct": [
+        0.5,
+        1.0,
+        1.5,
+        2.0,
+        2.5,
+        3.0,
+        3.6,
+        4.5,
+        5.6,
+        7.0
+      ],
+      "sec": [
+        0.5,
+        1.0,
+        1.5,
+        2.0,
+        2.5,
+        3.0,
+        3.6,
+        4.5,
+        5.6,
+        7.0
+      ]
+    }
+  }
+}

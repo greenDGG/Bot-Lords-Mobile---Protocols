@@ -76,15 +76,13 @@ export class AccountManager extends EventEmitter {
   private cleanConfig(doc: any): BotConfig {
     return {
       autoStart: doc.autoStart ?? true,
-      dailyResetTime: doc.dailyResetTime || '00:00',
-      limitTrain: doc.limitTrain ?? 0,
       reconnectTime: doc.reconnectTime ?? 30,
       sendHelp: doc.sendHelp ?? true,
       proxy: doc.proxy || '',
       warMode: doc.warMode ?? false,
       costumeWar: doc.costumeWar ?? 1,
       costumeNormal: doc.costumeNormal ?? 0,
-      train: doc.train || { enable: false, type: '', velTrain: 0, subsidiosPorcentaje: 0 },
+      train: { enable: !!doc.train?.enable, type: doc.train?.type || '' },
       shield: doc.shield || { enable: true, type: '1d', redeployTime: '1h' },
       giftDaily: { autoreclaim: true, next: 0, index: 0, ...doc.giftDaily },
       mysteryBox: { enable: true, next: 0, ...doc.mysteryBox },
@@ -98,6 +96,7 @@ export class AccountManager extends EventEmitter {
       treasureChamber: doc.treasureChamber || { enable: false },
       adminQuest: doc.adminQuest || { enable: true },
       guildQuest: doc.guildQuest || { enable: true },
+      sendEmoji: { enable: true, next: 0, ...doc.sendEmoji },
       resourceLimit: doc.resourceLimit || { wheat: 1_000_000_000, wood: 1_000_000_000, stone: 1_000_000_000, ore: 1_000_000_000, gold: 1_000_000_000 },
       supply: pickSupply(doc.supply),
       events: doc.events || { enable: true },
@@ -106,6 +105,7 @@ export class AccountManager extends EventEmitter {
       missions: doc.missions || { autoEliminate: false, wantedMissionIds: [] },
       hunt: { ...defaultBotConfig('').hunt, ...(doc.hunt || {}) },
       luckyCards: { ...defaultBotConfig('').luckyCards, ...(doc.luckyCards || {}) },
+      familiarSkills: { ...defaultBotConfig('').familiarSkills, ...(doc.familiarSkills || {}) },
     };
   }
 

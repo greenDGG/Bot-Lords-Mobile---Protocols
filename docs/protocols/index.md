@@ -33,6 +33,8 @@
 - [`2402`](2402.md) — Entrenamiento de tropas (respuesta del servidor)
 - [`2414`](2414.md) — Lista de marchas propias del castillo (S→C, sin request: límite + entries de 150 B con slot, estado, coord destino, nombre, ts y duración)
 - [`3112`](3112.md) — Respuesta de datos (barco / misiones) — identificar por tamaño y questType
+- [`3144`](3144.md) — Diario: estado completo (S→C, sin request: `u8 pa` + `u8 chestMask` + `u8 missionRank` + `u8 count` + count × `[u16 missionId][u32 value]`, 25 misiones; `value = FFFFFFFF` = reclamada)
+- [`3143`](3144.md#3143---_msg_resp_daily_update-s→c) — Diario: un contador (S→C, 6 B: `u16 missionId` + `u32 value`)
 - [`3125`](3125.md) — Cofre VIP — estado (máscara + timestamp) o rechazo de reclamo (servidor → cliente)
 - [`3126`](3126.md) — Cofre VIP — reclamar ranura (cliente → servidor)
 - [`3201`](3201.md) — Investigaciones / research (respuesta del servidor: cabecera 15 B con techId activa + nivel + timestamp + restantes, y cola de 250 B con el nivel de las 500 techs en nibbles)
@@ -59,6 +61,7 @@
 ## Solicitudes de datos (cliente → servidor)
 
 - [`3111`](3111.md) — Solicitar datos: `01` = barco, `02` = misiones admin/guild
+- `3141`/`3145` — Reclamar del Diario (C→S): `3141` con `u16 missionId`, `3145` con `u16 boxId` = cofre `(rank-1)*5+box`; ver [`3144`](3144.md#cofre--reclamar-cliente--servidor--no-implementado)
 - [`8226`](8226.md) — Usar habilidad activa de monstruito (C→S: `u32 seq` + coord del castillo emisor 3 B (`encodeCoord`) + `u16 petId` + `u16 skillId`; sin la coord el server rechaza con `8227 result=6`)
 - `8227` — Respuesta del uso de skill (S→C, 17 B: `u8 result` — 0 = usada con el `availableAt` nuevo, 6 = rechazada — + eco de petId/skillId)
 

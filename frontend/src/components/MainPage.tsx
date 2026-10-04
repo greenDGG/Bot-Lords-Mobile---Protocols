@@ -6,6 +6,7 @@ import WarDashboard from './WarDashboard';
 import EventsManager from './EventsManager';
 import { setItemsData } from '../data/items';
 import { setTechsData } from '../data/techs';
+import { setHeroStagesData } from '../data/hero-stages';
 import GlobalConfigModal from './GlobalConfigModal';
 import GlobalCommandsModal from './GlobalCommandsModal';
 import ProxyAuthModal from './ProxyAuthModal';
@@ -153,6 +154,8 @@ export default function MainPage({ onSelectBot }: { onSelectBot: (id: number, na
     socket.emit('getItems');
     socket.on('techs', (data: any) => setTechsData(data));
     socket.emit('getTechs');
+    socket.on('heroStages', (data: any) => setHeroStagesData(data));
+    socket.emit('getHeroStages');
   }, [socket]);
 
   // Decrement shield timers every second
@@ -192,6 +195,7 @@ export default function MainPage({ onSelectBot }: { onSelectBot: (id: number, na
     socket.emit('getRunningBots');
     socket.emit('getItems');
     socket.emit('getTechs');
+    socket.emit('getHeroStages');
     const onAccounts = (data: Account[]) => setAccounts(data);
     socket.on('accounts', onAccounts);
     return () => { socket.off('accounts', onAccounts); };

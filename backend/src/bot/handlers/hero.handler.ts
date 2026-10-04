@@ -1,5 +1,6 @@
 import type { BotInstance } from '../core/bot-instance';
 import { parseHeroListDetailed, formatHeroList } from '../models/heroes.types';
+import { computePlayerStats } from '../features/player-stats';
 
 export function handleHeroList(bot: BotInstance, body: Buffer): void {
   if (body.length < 20) return;
@@ -10,6 +11,7 @@ export function handleHeroList(bot: BotInstance, body: Buffer): void {
       return;
     }
     bot.heroes = heroes;
+    bot.playerStats = computePlayerStats(bot);
     bot.bot.log(`[HEROES] ${heroes.length} héroes (${layout}${strict ? '' : ', lectura laxa'}) ${body.subarray(0, 24).toString('hex')}`);
     bot.bot.log(formatHeroList(heroes));
     bot.emit('heroListUpdated', heroes);

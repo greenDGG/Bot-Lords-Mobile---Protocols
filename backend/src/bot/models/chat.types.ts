@@ -15,7 +15,7 @@
  *   [+8..15]   playID (u64 LE)
  *   [+16..23]  talkID (u64 LE, id del mensaje)
  *   [+24]      canal (0 = mundo/global, 1 = gremio)
- *   [+25]      num8 (0 = tiene texto, 109 = mensaje de sistema/reino)
+ *   [+25]      num8 (0 = texto, 109 = emoticono, resto = sistema)
  *   [+26..27]  picID (u16 LE)
  *   [+28..40]  playerName (13B null-terminated)
  *   [+41]      vipRank
@@ -23,11 +23,18 @@
  *   [+45]      specialBlockId
  *   [+46]      titleId
  *   [+47]      bHaveArabic
- *   [+48..49]  msgLen (u16 LE)
- *   [+50..]    texto (solo si num8 == 0)
+ *   [+48..49]  msgLen (u16 LE) — vale para TODOS los tipos
+ *   [+50..]    payload de msgLen bytes:
+ *              num8 = 0   → texto UTF-8
+ *              num8 = 109 → [u16 emojiId][u16 idx] (ver data/emojis-db.ts)
+ *              otro       → payload de sistema (no se interpreta)
  *
- * Tamaño del mensaje: si num8 == 0 -> 50 + msgLen; si no (sistema) -> 54 fijo.
+ * Tamaño del mensaje: 50 + msgLen (si msgLen es plausible); si no, 54.
+ * Medido sobre 564.140 mensajes de log: la regla "54 fijos para num8 != 0"
+ * desalineaba 10.433 mensajes, ésta 0.
  */
+
+import { emojiName } from '../data/emojis-db';
 
 export interface ChatMessage {
   msgId: number;
@@ -39,8 +46,15 @@ export interface ChatMessage {
   senderGuild: string;
   num8: number;
   message: string;
+  /** sólo num8 = 109: id del emoticono (EMOJI.txt) */
+  emojiId?: number;
+  /** sólo num8 = 109: orden del emoji en su pagina */
+  emojiIdx?: number;
   rawHex: string;
 }
+
+/** msgLen máximo aceptado para derivar el tamaño (ver nota del módulo). */
+const MAX_MSG_LEN = 400;
 
 function readCStr(buf: Buffer, offset: number, maxLen: number): string {
   const end = buf.indexOf(0, offset);
@@ -77,13 +91,19 @@ export function parseChatMessages(body: Buffer): ChatMessage[] {
     const senderGuild = readCStr(msg, 42, 3);
 
     let message = '';
+    let emojiId: number | undefined;
+    let emojiIdx: number | undefined;
+    const mlen = msg.length >= 50 ? msg.readUInt16LE(48) : 0;
     let size = 54;
-    if (num8 === 0 && msg.length >= 50) {
-      const mlen = msg.readUInt16LE(48);
-      if (mlen > 0 && mlen <= 200 && offset + 50 + mlen <= body.length) {
+    if (mlen > 0 && mlen <= MAX_MSG_LEN && offset + 50 + mlen <= body.length) {
+      size = 50 + mlen;
+      if (num8 === 109 && mlen === 4) {
+        emojiId = body.readUInt16LE(offset + 50);
+        emojiIdx = body.readUInt16LE(offset + 52);
+        message = `[Emoticono] ${emojiName(emojiId)}`;
+      } else if (num8 === 0) {
         message = body.subarray(offset + 50, offset + 50 + mlen).toString('utf8');
       }
-      size = 50 + mlen;
     }
 
     out.push({
@@ -96,6 +116,8 @@ export function parseChatMessages(body: Buffer): ChatMessage[] {
       senderGuild,
       num8,
       message,
+      emojiId,
+      emojiIdx,
       rawHex: msg.subarray(0, 50).toString('hex'),
     });
 

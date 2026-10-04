@@ -24,8 +24,6 @@ export const TokenModel = model<IToken>('Token', TokenSchema);
 export interface IConfig extends Document {
   iggId: number;
   autoStart: boolean;
-  dailyResetTime: string;
-  limitTrain: number;
   reconnectTime: number;
   sendHelp: boolean;
   warMode: boolean;
@@ -59,8 +57,6 @@ export interface IConfig extends Document {
 const ConfigSchema = new Schema<IConfig>({
   iggId: { type: Number, required: true, unique: true, index: true },
   autoStart: { type: Boolean, default: true },
-  dailyResetTime: { type: String, default: '00:00' },
-  limitTrain: { type: Number, default: 0 },
   reconnectTime: { type: Number, default: 30 },
   sendHelp: { type: Boolean, default: true },
   warMode: { type: Boolean, default: false },

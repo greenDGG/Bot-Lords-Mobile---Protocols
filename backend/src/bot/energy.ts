@@ -33,20 +33,40 @@ const TECHS: Record<string, TechEntry> = (() => {
  * investigaciones con el efecto 317. Hoy: "Recuperación de energía I" y "II".
  */
 export function computeEnergyRegenBonusPct(techLevels?: number[]): number {
+  return sumTechEffect(ENERGY_REGEN_EFFECT_ID, techLevels);
+}
+
+/**
+ * Suma el valor del nivel actual de TODAS las investigaciones que tienen el
+ * efecto dado (techs.json). 0 si no hay niveles cargados.
+ */
+function sumTechEffect(effectId: number, techLevels?: number[]): number {
   if (!Array.isArray(techLevels)) return 0;
-  let bonus = 0;
+  let total = 0;
   for (const key of Object.keys(TECHS)) {
     const t = TECHS[key];
-    if (!t || !t.effect || t.effect.id !== ENERGY_REGEN_EFFECT_ID) continue;
+    if (!t || !t.effect || t.effect.id !== effectId) continue;
     const id = Number(key);
     if (!Number.isFinite(id) || id < 1 || id > techLevels.length) continue;
     const level = techLevels[id - 1] || 0;
     if (level <= 0) continue;
     const values = t.effect.values;
     if (!Array.isArray(values) || values.length === 0) continue;
-    bonus += values[Math.min(level, values.length) - 1] || 0;
+    total += values[Math.min(level, values.length) - 1] || 0;
   }
-  return bonus;
+  return total;
+}
+
+/**
+ * Tope de energía: 15000 de base + el stat "Energía +" (efecto 319, techs
+ * "Límite de energía I/II/III"). Ej. de la cuenta real: 83 nv10 (9250) +
+ * 84 nv10 (13000) = 22250 → tope 37250.
+ */
+export const ENERGY_MAX_BASE = 15000;
+export const ENERGY_MAX_EFFECT_ID = 319;
+
+export function computeEnergyMax(techLevels?: number[]): number {
+  return ENERGY_MAX_BASE + sumTechEffect(ENERGY_MAX_EFFECT_ID, techLevels);
 }
 
 /**
@@ -74,20 +94,7 @@ export const HUNT_ENERGY_BASE: Record<number, number> = {
  * efecto 318. Hoy: "Ahorro de energía I" (tech 81) y "II" (tech 82).
  */
 export function computeEnergySaverPct(techLevels?: number[]): number {
-  if (!Array.isArray(techLevels)) return 0;
-  let saver = 0;
-  for (const key of Object.keys(TECHS)) {
-    const t = TECHS[key];
-    if (!t || !t.effect || t.effect.id !== ENERGY_SAVER_EFFECT_ID) continue;
-    const id = Number(key);
-    if (!Number.isFinite(id) || id < 1 || id > techLevels.length) continue;
-    const level = techLevels[id - 1] || 0;
-    if (level <= 0) continue;
-    const values = t.effect.values;
-    if (!Array.isArray(values) || values.length === 0) continue;
-    saver += values[Math.min(level, values.length) - 1] || 0;
-  }
-  return saver;
+  return sumTechEffect(ENERGY_SAVER_EFFECT_ID, techLevels);
 }
 
 /**

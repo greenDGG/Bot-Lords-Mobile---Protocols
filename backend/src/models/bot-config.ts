@@ -2,8 +2,6 @@ import type { HuntAttackType } from '../bot/data/monsters';
 
 export interface BotConfig {
   autoStart: boolean;
-  dailyResetTime: string;
-  limitTrain: number;
   reconnectTime: number;
   sendHelp: boolean;
   proxy: string;
@@ -24,6 +22,7 @@ export interface BotConfig {
   treasureChamber: TreasureChamberConfig;
   adminQuest: QuestConfig;
   guildQuest: QuestConfig;
+  sendEmoji: SendEmojiConfig;
   resourceLimit: ResourceLimitConfig;
   supply: SupplyConfig;
   events: EventsConfig;
@@ -32,13 +31,12 @@ export interface BotConfig {
   missions: MissionConfig;
   hunt: HuntConfig;
   luckyCards: LuckyCardsConfig;
+  familiarSkills: FamiliarSkillsConfig;
 }
 
 export interface TrainConfig {
   enable: boolean;
   type: string;
-  velTrain: number;
-  subsidiosPorcentaje: number;
 }
 
 export interface ShieldConfig {
@@ -99,6 +97,16 @@ export interface QuestConfig {
   enable: boolean;
 }
 
+/**
+ * Misión diaria "enviar 1 emoticono": manda un emoticono aleatorio del panel
+ * una vez por reset diario (ver actions/emoji.action.ts y data/emojis-db.ts).
+ */
+export interface SendEmojiConfig {
+  enable: boolean;
+  /** unix ts del próximo envío (0 = ya) */
+  next: number;
+}
+
 export interface ResourceLimitConfig {
   wheat: number;
   wood: number;
@@ -151,6 +159,9 @@ export function getColiseumHeroes(coliseum: ColiseumConfig): number[] {
 export interface SweepConfig {
   enable: boolean;
   payload: string;
+  auto?: boolean;
+  autoEtapa?: number;
+  autoTipo?: number;
 }
 
 export interface MissionConfig {
@@ -254,12 +265,34 @@ export function getLuckyCardsConfig(config: BotConfig): LuckyCardsConfig {
   };
 }
 
+/**
+ * Uso automático de skills activas de monstruitos (proto 8226, ver
+ * actions/familiar.action.ts). Sólo se disparan las skills `type=active` de
+ * los `pets` elegidos que están sin cooldown (8231) y con fatiga disponible
+ * si son ofensivas (8230).
+ */
+export interface FamiliarSkillsConfig {
+  /** activar el bucle automático de skills */
+  enable: boolean;
+  /** petIds (clave de PetTbl) cuyas skills activas se usan solas */
+  pets: number[];
+}
+
+/** Config de skills tolerando configs guardadas antes de que existiera la sección. */
+export function getFamiliarSkillsConfig(config: BotConfig): FamiliarSkillsConfig {
+  const c = config?.familiarSkills;
+  return {
+    enable: c?.enable ?? false,
+    pets: Array.isArray(c?.pets) ? c.pets.filter((n: any) => Number.isInteger(n) && n > 0) : [],
+  };
+}
+
 export function isHuntPayloadValid(hex: string): boolean {
   const clean = hex.replace(/\s/g, '');
   return clean.length >= 2 && clean.length % 2 === 0 && /^[0-9a-fA-F]+$/.test(clean);
 }
 
-export function parseSweepPayload(hex: string): { tipo: number; etapa: number; capitulo: number } | null {
+export function parseSweepPayload(hex: string): { tipo: number; etapa: number; idx: number } | null {
   const clean = hex.replace(/\s/g, '');
   if (clean.length < 10) return null;
   const buf = Buffer.from(clean, 'hex');
@@ -267,27 +300,20 @@ export function parseSweepPayload(hex: string): { tipo: number; etapa: number; c
   return {
     tipo: buf[0],
     etapa: buf[1],
-    capitulo: buf[2],
+    idx: buf[2],
   };
-}
-
-export function sweepResistenciaCost(tipo: number, etapa: number): number {
-  const base = etapa === 1 ? 6 : 12;
-  return tipo === 2 ? base * 10 : base;
 }
 
 export function defaultBotConfig(proxy?: string): BotConfig {
   return {
     autoStart: true,
-    dailyResetTime: '00:00',
-    limitTrain: 0,
     reconnectTime: 30,
     sendHelp: true,
     proxy: proxy || '',
     warMode: false,
     costumeWar: 1,
     costumeNormal: 0,
-    train: { enable: false, type: '', velTrain: 0, subsidiosPorcentaje: 0 },
+    train: { enable: false, type: '' },
     shield: { enable: true, type: '1d', redeployTime: '1h' },
     giftDaily: { autoreclaim: true, next: 0, index: 0 },
     mysteryBox: { enable: true, next: 0 },
@@ -301,11 +327,12 @@ export function defaultBotConfig(proxy?: string): BotConfig {
     treasureChamber: { enable: false },
     adminQuest: { enable: true },
     guildQuest: { enable: true },
+    sendEmoji: { enable: true, next: 0 },
     resourceLimit: { wheat: 1_000_000_000, wood: 1_000_000_000, stone: 1_000_000_000, ore: 1_000_000_000, gold: 1_000_000_000 },
     supply: { enable: false, targetPlayer: '', threshold: 7000000, caravanLimit: 4 },
     events: { enable: true },
     coliseum: { reclaimGems: false, autoAttack: false, hero0: 1, hero1: 3, hero2: 6, hero3: 5, hero4: 23 },
-    sweep: { enable: false, payload: '0202010001' },
+    sweep: { enable: false, payload: '0202010001', auto: false, autoEtapa: 1, autoTipo: 1 },
     missions: { autoEliminate: false, wantedMissionIds: [] },
     hunt: {
       enable: false,
@@ -315,5 +342,6 @@ export function defaultBotConfig(proxy?: string): BotConfig {
       levels: [{ level: 2, payloadHexMagia: '0110001400060004000500022700', payloadHexFisico: '0110001400060004000500022700' }],
     },
     luckyCards: { enable: true, intervalSec: 30, maxPerCycle: 3, exchangedTs: 0 },
+    familiarSkills: { enable: false, pets: [] },
   };
 }

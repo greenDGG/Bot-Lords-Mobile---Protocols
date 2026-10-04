@@ -1,15 +1,17 @@
 import {
   ENERGY_BASE_PER_SEC,
+  ENERGY_MAX_BASE,
   ENERGY_REGEN_EFFECT_ID,
   ENERGY_SAVER_EFFECT_ID,
   HUNT_ENERGY_BASE,
   computeEnergyRegenBonusPct,
   computeEnergyRegen,
+  computeEnergyMax,
   computeEnergySaverPct,
   computeHuntEnergyCost,
 } from '../src/bot/energy';
-import { computeResearchStats } from '../src/bot/research-stats';
-import { computePlayerStats } from '../src/bot/features/player-stats';
+import { computeResearchStats, ResearchStat } from '../src/bot/research-stats';
+import { computePlayerStats, getEnergyCap, ENERGY_CAP_STAT } from '../src/bot/features/player-stats';
 
 let ok = 0;
 const check = (cond: boolean, msg: string) => {
@@ -115,5 +117,28 @@ check(
   saverStat?.total === computeEnergySaverPct(saverReal),
   `ahorro === total mostrado en Player Stats (${saverStat?.total})`,
 );
+
+console.log('\n== tope de energía ==');
+check(ENERGY_MAX_BASE === 15000, 'base 15000');
+check(computeEnergyMax(undefined) === 15000, 'sin investigación => 15000');
+check(computeEnergyMax(lv(83, 10)) === 15000 + 9250, `tech 83 nv10 => 24250 (${computeEnergyMax(lv(83, 10))})`);
+check(computeEnergyMax(lv(84, 10)) === 15000 + 13000, `tech 84 nv10 => 28000 (${computeEnergyMax(lv(84, 10))})`);
+
+// Cuenta real del usuario: 83 nv10 (9250) + 84 nv10 (13000) = stat 22250 → 37250
+const capReal = (() => {
+  const arr = new Array(500).fill(0);
+  arr[82] = 10;
+  arr[83] = 10;
+  return arr;
+})();
+check(computeEnergyMax(capReal) === 37250, `83+84 nv10 => 37250 (15000 + 22250) (${computeEnergyMax(capReal)})`);
+check(computeEnergyMax(lv(155, 10)) === 15000 + 4750, 'tech 155 "Límite de Energía III" nv10 => 19750');
+
+const capStat = computePlayerStats({ research: { techLevels: capReal } }).find(s => s.name === ENERGY_CAP_STAT);
+check(!!capStat, `playerStats tiene el stat "${ENERGY_CAP_STAT}"`);
+check(capStat?.total === 22250, `stat = 22250 (${capStat?.total})`);
+check(getEnergyCap(computePlayerStats({ research: { techLevels: capReal } })) === 37250, 'getEnergyCap = 15000 + 22250 = 37250');
+check(getEnergyCap([]) === 15000, 'sin stat => 15000 (sólo la base)');
+check(getEnergyCap(undefined) === 15000, 'sin stats => 15000');
 
 console.log(`\n${ok} checks OK`);
