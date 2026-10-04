@@ -3,7 +3,15 @@ import type { BotAction } from './bot-action';
 import { attackRival, claimColiseumGems } from '../commands/coliseum.commands';
 import { sendSweep } from '../commands/sweep.commands';
 import { getColiseumHeroes, parseSweepPayload } from '../../models/bot-config';
-import { chapterForSweepIdx, getEliteStage, stageForSweepIdx, sweepStaminaCost } from '../data/hero-stages-db';
+import {
+  MAIN_PER_CHAPTER,
+  STAGES_PER_CHAPTER,
+  SWEEP_CHAPTERS as SWEEP_CHAPTER_LIST,
+  chapterForSweepIdx,
+  getEliteStage,
+  stageForSweepIdx,
+  sweepStaminaCost,
+} from '../data/hero-stages-db';
 
 export class ShieldAction implements BotAction {
   name = 'shield';
@@ -74,40 +82,79 @@ export class ColiseumAutoAttackAction implements BotAction {
   }
 }
 
+export function sweepCandidates(etapa: number): number[] {
+  const per = etapa === 1 ? STAGES_PER_CHAPTER : MAIN_PER_CHAPTER;
+  const total = SWEEP_CHAPTER_LIST.length * per;
+  const step = etapa === 1 ? 3 : 1;
+  const out: number[] = [];
+  for (let i = step; i <= total; i += step) out.push(i);
+  return out.reverse();
+}
+
+export function pickAutoSweep(bot: BotInstance): { etapa: number; idx: number; tipo: number } | null {
+  const sweep = bot.config.sweep;
+  const etapa = sweep.autoEtapa === 2 || sweep.autoEtapa === 3 ? sweep.autoEtapa : 1;
+  const tipo = sweep.autoTipo === 2 ? 2 : 1;
+  let unknownIdx = 0;
+  let okIdx = 0;
+  for (const idx of sweepCandidates(etapa)) {
+    const status = bot.sweepStageStatus(etapa, idx);
+    if (!status && !unknownIdx) unknownIdx = idx;
+    if (status === 'ok' && !okIdx) okIdx = idx;
+  }
+  const idx = unknownIdx > okIdx ? unknownIdx : okIdx || unknownIdx;
+  return idx ? { etapa, idx, tipo } : null;
+}
+
 export class SweepAction implements BotAction {
   name = 'sweep';
   async execute(bot: BotInstance): Promise<boolean> {
     if (!bot.config.sweep.enable) return false;
-    const hex = bot.config.sweep.payload;
-    const parsed = parseSweepPayload(hex);
-    if (!parsed) {
-      bot.bot.log(`[SWEEP] Payload inválido: ${hex}`);
+    const sweep = bot.config.sweep;
+    const target = sweep.auto
+      ? pickAutoSweep(bot)
+      : parseSweepPayload(sweep.payload || '');
+    if (!target) {
+      bot.bot.log('[SWEEP] Sin etapa válida ni aprendida — revisá Configuración → Barrido');
+      return false;
+    }
+    const { tipo, etapa, idx } = target;
+    if ((tipo !== 1 && tipo !== 2) || (etapa !== 1 && etapa !== 2 && etapa !== 3)) {
+      bot.bot.log(`[SWEEP] Payload inválido: tipo=${tipo} etapa=${etapa} idx=${idx}`);
+      return false;
+    }
+    if (chapterForSweepIdx(etapa, idx) === null) {
+      bot.bot.log(`[SWEEP] idx ${idx} fuera de rango para etapa ${etapa}`);
       return false;
     }
 
-    const cost = sweepStaminaCost(parsed.tipo, parsed.etapa, parsed.idx);
+    const cost = sweepStaminaCost(tipo, etapa, idx);
     const current = bot.getCurrentResistencia();
     if (current < cost) {
       bot.bot.log(`[SWEEP] Resistencia insuficiente: ${current}/${cost} necesaria`);
       return false;
     }
 
-    const buf = Buffer.from(hex.replace(/\s/g, ''), 'hex');
+    const buf = Buffer.from([tipo, etapa, idx & 0xff, 0, 1]);
+    const wait = bot.beginSweepRequest(etapa, idx, tipo);
     sendSweep(bot.bot, buf);
-    const tipoStr = parsed.tipo === 1 ? 'x1' : 'x10';
-    const etapaStr = parsed.etapa === 1 ? 'Normal' : parsed.etapa === 2 ? 'Elite' : 'Desafío';
-    const chapterId = chapterForSweepIdx(parsed.etapa, parsed.idx);
-    const stage = stageForSweepIdx(parsed.etapa, parsed.idx);
-    const isNormal = parsed.etapa === 1;
+    const tipoStr = tipo === 1 ? 'x1' : 'x10';
+    const etapaStr = etapa === 1 ? 'Normal' : etapa === 2 ? 'Elite' : 'Desafío';
+    const chapterId = chapterForSweepIdx(etapa, idx);
+    const stage = stageForSweepIdx(etapa, idx);
+    const isNormal = etapa === 1;
     const position = !isNormal && stage ? stage : null;
     const elite = chapterId && position ? getEliteStage(chapterId, position) : undefined;
     const where = chapterId && stage
       ? `capítulo ${chapterId} etapa ${chapterId}-${isNormal ? stage : stage * 3}`
-      : `idx ${parsed.idx} fuera de rango`;
+      : `idx ${idx} fuera de rango`;
     const medal = elite ? ` — ${elite.heroName} (medalla #${elite.medalItemId})` : '';
     bot.bot.log(`[SWEEP] ${tipoStr} ${etapaStr} ${where}${medal} — gastando ${cost} resistencia`);
-    bot.consumeResistencia(cost);
-    await new Promise(r => setTimeout(r, 2000));
+    const res = await wait;
+    if (!res) {
+      bot.bot.log('[SWEEP] Sin respuesta 1806 — se asume el gasto de resistencia');
+      bot.consumeResistencia(cost);
+    }
     return true;
   }
 }

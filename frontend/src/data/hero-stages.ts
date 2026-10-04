@@ -136,3 +136,17 @@ export function sweepTipoLabel(tipo: number): string {
 export function sweepEtapaLabel(etapa: number): string {
   return etapa === 1 ? 'Normal' : etapa === 2 ? 'Elite' : etapa === 3 ? 'Desafío' : `etapa ${etapa}`;
 }
+
+export function sweepCandidates(etapa: number): number[] {
+  const chapters = sweepChapters();
+  const ids = chapters.length ? chapters.map(c => c.id) : [1, 2, 3, 4, 5, 6, 7, 8];
+  const out: number[] = [];
+  for (const id of ids) {
+    if (etapa === 1) {
+      for (let s = 3; s <= STAGES_PER_CHAPTER; s += 3) out.push(normalSweepIdx(id, s));
+    } else {
+      for (let p = 1; p <= MAIN_PER_CHAPTER; p++) out.push(eliteSweepIdx(id, p));
+    }
+  }
+  return out;
+}

@@ -213,6 +213,15 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
     client.emit('heroStages', SWEEP_DATA);
   }
 
+  @SubscribeMessage('getSweepStages')
+  handleGetSweepStages(client: Socket, payload: { iggId: number }): void {
+    const instance = this.accountManager.instances.get(payload?.iggId);
+    client.emit('sweepStages', {
+      iggId: payload?.iggId,
+      stages: instance ? instance.sweepStagesSnapshot() : {},
+    });
+  }
+
   @SubscribeMessage('getRunningBots')
   handleGetRunningBots(client: Socket): void {
     const running: Record<number, boolean> = {};
@@ -382,6 +391,9 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
     });
     instance.on('resourcesUpdated', () => {
       this.server.emit('resources', { iggId, resources: instance.resources });
+    });
+    instance.on('sweepStagesUpdated', (stages: Record<string, { s: string; t: number }>) => {
+      this.server.emit('sweepStages', { iggId, stages });
     });
     instance.on('guildInfoUpdated', () => {
       this.server.emit('guildInfo', { iggId, info: instance.guildInfo });
@@ -638,6 +650,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
           }
         : null,
       resources: instance.resources,
+      sweepStages: instance.sweepStagesSnapshot(),
       shield: shield ? { remaining: shield.remaining, name: shield.def.name } : null,
       guildInfo: instance.guildInfo,
       troopTraining: instance.troopTraining,

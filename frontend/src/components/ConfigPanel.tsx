@@ -12,6 +12,7 @@ import {
   parseSweepHex,
   setHeroStagesData,
   stageForSweepIdx,
+  sweepCandidates,
   sweepChapters,
   sweepEtapaLabel,
   sweepStaminaCost,
@@ -205,6 +206,20 @@ export default function ConfigPanel({ config, socket, iggId, colors, applyTo, fa
     };
   }, [socket, heroStagesDoc]);
 
+  const [sweepStages, setSweepStages] = useState<Record<string, { s: string; t: number }>>({});
+  useEffect(() => {
+    if (!socket) return;
+    const onData = (d: any) => {
+      if (!d || (d.iggId != null && d.iggId !== iggId)) return;
+      setSweepStages(d.stages || {});
+    };
+    socket.on('sweepStages', onData);
+    socket.emit('getSweepStages', { iggId });
+    return () => {
+      socket.off('sweepStages', onData);
+    };
+  }, [socket, iggId]);
+
   return (
     <div style={{
       background: colors.surface, border: `1px solid ${colors.border}`,
@@ -350,6 +365,7 @@ export default function ConfigPanel({ config, socket, iggId, colors, applyTo, fa
 
       <Section title="Barrido (Sweep)">
         <Toggle label="Activar barrido automático" {...bool('sweep.enable')} />
+        <Toggle label="Usar la etapa más alta disponible (aprendida)" {...bool('sweep.auto')} />
         {(() => {
           const raw = parseSweepHex(getDeep(draft, 'sweep.payload') || '');
           const parsed = raw && [1, 2].includes(raw.tipo) && [1, 2, 3].includes(raw.etapa)
@@ -379,7 +395,16 @@ export default function ConfigPanel({ config, socket, iggId, colors, applyTo, fa
             color: colors.text, border: `1px solid ${colors.border}`, borderRadius: 4,
           };
           const lblStyle: React.CSSProperties = { fontSize: 13, display: 'flex', alignItems: 'center', gap: 6 };
-          const etapas = isNormal ? Array.from({ length: 18 }, (_, i) => i + 1) : [1, 2, 3, 4, 5, 6];
+          const auto = !!getDeep(draft, 'sweep.auto');
+          const autoEtapa = Number(getDeep(draft, 'sweep.autoEtapa') || 1);
+          const autoTipo = Number(getDeep(draft, 'sweep.autoTipo') || 1);
+          const selectStage = (etapaNueva: number, idx: number) => {
+            touch('sweep.auto', false);
+            touch('sweep.payload', buildSweepHex({ tipo: sel.tipo, etapa: etapaNueva, idx }));
+          };
+          const etapas = isNormal
+            ? Array.from({ length: 18 }, (_, i) => i + 1).filter(s => s % 3 === 0)
+            : [1, 2, 3, 4, 5, 6];
           const etapaLabel = (s: number) => {
             if (isNormal) {
               const main = s % 3 === 0 ? getEliteStage(chapterId, s / 3) : undefined;
@@ -391,6 +416,36 @@ export default function ConfigPanel({ config, socket, iggId, colors, applyTo, fa
           const stageLabel = isNormal ? `${chapterId}-${stage}` : `${chapterId}-${stage * 3}`;
           return (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 4 }}>
+              {auto && (
+                <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', alignItems: 'center' }}>
+                  <label style={lblStyle}>
+                    Tipo:
+                    <select
+                      value={autoTipo}
+                      onChange={e => touch('sweep.autoTipo', Number(e.target.value))}
+                      style={selStyle}
+                    >
+                      <option value={1}>x1</option>
+                      <option value={2}>x10</option>
+                    </select>
+                  </label>
+                  <label style={lblStyle}>
+                    Modo:
+                    <select
+                      value={autoEtapa}
+                      onChange={e => touch('sweep.autoEtapa', Number(e.target.value))}
+                      style={selStyle}
+                    >
+                      <option value={1}>Normal</option>
+                      <option value={2}>Elite</option>
+                    </select>
+                  </label>
+                  <span style={{ fontSize: 12, color: '#888' }}>
+                    Barre la etapa más alta que la cuenta pueda superar: cada intento aprende si está disponible
+                    (los rechazos no gastan resistencia).
+                  </span>
+                </div>
+              )}
               <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
                 <label style={lblStyle}>
                   Barrido:
@@ -475,8 +530,55 @@ export default function ConfigPanel({ config, socket, iggId, colors, applyTo, fa
               )}
               <div style={{ fontSize: 12, color: '#888' }}>
                 Payload 1805: <code style={{ fontFamily: 'monospace', color: colors.text }}>{buildSweepHex(sel)}</code>
-                {' — [tipo][modo][idx: normal 1..144 = (cap-1)*18+etapa, elite 1..48 = (cap-1)*6+posición][00][01]'}
+                {' — [tipo][modo][idx: normal sólo etapas main 3,6,…,18 por capítulo = (cap-1)*18+etapa, elite 1..48 = (cap-1)*6+posición][00][01]'}
               </div>
+              {(() => {
+                const listEtapa = auto ? autoEtapa : sel.etapa;
+                const cands = sweepCandidates(listEtapa);
+                const status = (i: number) => sweepStages[`${listEtapa}:${i}`]?.s;
+                const okList = cands.filter(i => status(i) === 'ok');
+                const blockedCount = cands.filter(i => status(i) === 'blocked').length;
+                const candLabel = (idx: number) => {
+                  const ch = chapterForSweepIdx(listEtapa, idx);
+                  const st = stageForSweepIdx(listEtapa, idx);
+                  if (!ch || !st) return `idx ${idx}`;
+                  if (listEtapa === 1) {
+                    const main = st % 3 === 0 ? getEliteStage(ch, st / 3) : undefined;
+                    return `${ch}-${st}${main ? ` · ${main.heroName}` : ''}`;
+                  }
+                  const e = getEliteStage(ch, st);
+                  return `${ch}-${st * 3}${e ? ` · ${e.heroName}` : ''}`;
+                };
+                const selected = (idx: number) => !auto && sel.etapa === listEtapa && sel.idx === idx;
+                return (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                    <div style={{ fontSize: 12, color: '#888' }}>
+                      {sweepEtapaLabel(listEtapa)} — {okList.length} disponibles aprendidas · {blockedCount} bloqueadas
+                      {' · '}{cands.length - okList.length - blockedCount} sin probar
+                    </div>
+                    <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                      {okList.length > 0 ? okList.map(idx => (
+                        <button
+                          key={idx}
+                          onClick={() => selectStage(listEtapa, idx)}
+                          style={{
+                            fontSize: 12, padding: '3px 8px', cursor: 'pointer', borderRadius: 4,
+                            background: selected(idx) ? colors.primary : colors.surface,
+                            color: selected(idx) ? '#fff' : colors.text,
+                            border: `1px solid ${selected(idx) ? colors.primary : colors.border}`,
+                          }}
+                        >
+                          {candLabel(idx)}
+                        </button>
+                      )) : (
+                        <span style={{ fontSize: 12, color: '#888' }}>
+                          Todavía no se aprendió ninguna etapa: activá el modo auto o enviá un barrido manual.
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                );
+              })()}
             </div>
           );
         })()}
